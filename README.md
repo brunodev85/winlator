@@ -29,4 +29,4 @@ Winlator is an Android application that lets you to run Windows (x86_64) applica
 - DXVK ([github.com/doitsujin/dxvk](https://github.com/doitsujin/dxvk))
 - D8VK ([github.com/AlpyneDreams/d8vk](https://github.com/AlpyneDreams/d8vk))
 
-Thanks to [alexvorxx](https://github.com/alexvorxx) for the Mesa mods and build instructions
+Thanks to [alexvorxx](https://github.com/alexvorxx) for the Mesa mods and build instructions.
