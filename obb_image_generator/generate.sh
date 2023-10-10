@@ -1,28 +1,34 @@
 #!/bin/bash
 
+OBB_IMG_VERSION=2
+
 clear
 echo "Winlator OBB Image Generator"	
 
-rm -r imagefs
+if [ -d imagefs ]; then
+	rm -r imagefs
+fi
+
 mkdir -p imagefs
 
-echo "Unzipping ubuntu-prepared.zip..."	
-unzip -q -o ubuntu-prepared.zip -d imagefs
+echo "Extracting ubuntu-prepared.txz..."	
+tar -xf ubuntu-prepared.txz -C imagefs
 
-echo "Unzipping wine.zip..."	
-mkdir -p imagefs/opt/wine
-unzip -q -o wine.zip -d imagefs/opt/wine
+echo "Extracting wine.txz..."
+tar -xf wine.txz -C imagefs/opt
 
-echo "Unzipping patches.zip..."	
-unzip -q -o patches.zip -d imagefs
+for f in imagefs/opt/*
+do
+	if [[ $f == *wine* ]]
+	then
+		mv $f imagefs/opt/wine
+	fi
+done
 
-cd imagefs
-rm -r .l2s
+echo "Extracting patches.txz..."	
+tar -xf patches.txz -C imagefs
 
 echo "Creating OBB Image..."
-tar -I 'zstd -19' -cf main.1.com.winlator.obb .
+tar -I 'zstd -19' -cf main.$OBB_IMG_VERSION.com.winlator.obb -C imagefs .
 
-cp main.1.com.winlator.obb ../
-
-cd ..
 rm -r imagefs
