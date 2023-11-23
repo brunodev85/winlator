@@ -1,6 +1,6 @@
 #!/bin/bash
 
-OBB_IMG_VERSION=2
+OBB_IMG_VERSION=3
 
 clear
 echo "Winlator OBB Image Generator"	
