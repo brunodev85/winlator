@@ -8,8 +8,8 @@ Winlator is an Android application that lets you to run Windows (x86_64) applica
 
 # Installation
 
-1. Download and install the APK from [GitHub Releases](https://github.com/brunodev85/Winlator/releases)
-2. Download the OBB file (main.1.com.winlator.obb) and put it into the directory `/storage/emulated/0/Android/obb/com.winlator` (create it if it doesn't exist)
+1. Download and install the APK (Winlator_3.0.apk) from [GitHub Releases](https://github.com/brunodev85/winlator/releases/tag/v3.0.0)
+2. Download the OBB file (main.3.com.winlator.obb) and put it into the directory `/storage/emulated/0/Android/obb/com.winlator` (create it if it doesn't exist)
 3. Launch the app and wait for the installation process to finish
 
 ----
