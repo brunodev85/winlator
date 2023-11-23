@@ -19,6 +19,7 @@ Shovel Knight.icp
 Singularity.icp
 Sonic Mania.icp
 Stalker CS.icp
+Star Wars Jedi Knight 2.icp
 SteamWorld Dig 2.icp
 Wolfenstein.icp
 Xanadu Next.icp
