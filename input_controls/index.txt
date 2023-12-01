@@ -8,6 +8,7 @@ Fallout 3.icp
 Final Fantasy 8.icp
 Final Fantasy Type-0.icp
 Front Mission Evolved.icp
+Hitman 2.icp
 IGI 2.icp
 La Mulana.icp
 Mass Effect 2.icp
@@ -18,6 +19,7 @@ Second Sight.icp
 Shovel Knight.icp
 Singularity.icp
 Sonic Mania.icp
+Spiderman Shattered Dimensions.icp
 Stalker CS.icp
 Star Wars Jedi Knight 2.icp
 SteamWorld Dig 2.icp
