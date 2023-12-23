@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="420dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/LLTableHead"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="4dp">
+
+        <TextView
+            style="@style/TableHeadBackground"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/process_name" />
+
+        <TextView
+            style="@style/TableHeadBackground"
+            android:layout_width="60dp"
+            android:text="@string/pid" />
+
+        <TextView
+            style="@style/TableHeadBackground"
+            android:layout_width="120dp"
+            android:text="@string/memory" />
+
+        <View
+            style="@style/TableHeadBackground"
+            android:layout_width="40dp" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:minHeight="140dp">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/LLProcessList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </ScrollView>
+
+        <TextView
+            android:id="@+id/TVEmptyText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/no_items_to_display"
+            android:visibility="gone" />
+    </FrameLayout>
+</LinearLayout>

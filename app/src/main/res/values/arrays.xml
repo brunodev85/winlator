@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="screen_size_entries">
+        <item>Custom</item>
+        <item>640x480 (4:3)</item>
+        <item>800x600 (4:3)</item>
+        <item>854x480 (16:9)</item>
+        <item>960x544 (16:9)</item>
+        <item>1024x768 (4:3)</item>
+        <item>1280x720 (16:9)</item>
+        <item>1280x800 (16:10)</item>
+        <item>1280x1024 (5:4)</item>
+        <item>1366x768 (16:9)</item>
+        <item>1440x900 (16:10)</item>
+        <item>1600x900 (16:9)</item>
+        <item>1920x1080 (16:9)</item>
+    </string-array>
+    <string-array name="graphics_driver_entries">
+        <item>LLVMpipe (Software)</item>
+        <item>Turnip + Zink</item>
+        <item>VirGL</item>
+    </string-array>
+    <string-array name="audio_driver_entries">
+        <item>ALSA</item>
+        <item>PulseAudio</item>
+    </string-array>
+    <string-array name="binding_type_entries">
+        <item>Keyboard</item>
+        <item>Mouse</item>
+    </string-array>
+    <string-array name="dxwrapper_entries">
+        <item>Original WineD3D</item>
+        <item>WineD3D 7.8</item>
+        <item>WineD3D 8.14</item>
+        <item>DXVK 0.96</item>
+        <item>DXVK 1.10.3</item>
+        <item>DXVK 1.5.5</item>
+        <item>DXVK 2.2</item>
+        <item>CNC DDraw</item>
+        <item>D8VK 1.0</item>
+    </string-array>
+    <string-array name="dxcomponent_entries">
+        <item>Builtin (Wine)</item>
+        <item>Native (Windows)</item>
+    </string-array>
+    <string-array name="box86_version_entries">
+        <item>0.3.0 (old)</item>
+        <item>0.3.2 (new)</item>
+    </string-array>
+    <string-array name="box64_version_entries">
+        <item>0.2.2 (old)</item>
+        <item>0.2.5 (new)</item>
+    </string-array>
+    <string-array name="turnip_version_entries">
+        <item>23.1.6 (a6xx)</item>
+        <item>23.3.0 (a7xx)</item>
+        <item>24.0.0 (a7xx)</item>
+    </string-array>
+</resources>

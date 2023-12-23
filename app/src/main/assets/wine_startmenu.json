@@ -1,0 +1,57 @@
+[
+    {
+        "name" : "Programs",
+        "children" : [
+            {
+                "name" : "Internet Explorer",
+                "path" : "C:/windows/system32/iexplore.exe"
+            },
+            {
+                "name" : "Notepad",
+                "path" : "C:/windows/notepad.exe"
+            },
+            {
+                "name" : "Wordpad",
+                "path" : "C:/windows/system32/wordpad.exe"
+            },
+            {
+                "name" : "Games",
+                "children" : [
+                    {
+                        "name" : "WineMine",
+                        "path" : "C:/windows/system32/winemine.exe"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name" : "System Tools",
+        "children" : [
+            {
+                "name" : "Computer",
+                "path" : "C:/windows/wfm.exe"
+            },
+            {
+                "name" : "Task Manager",
+                "path" : "C:/windows/system32/taskmgr.exe"
+            },
+            {
+                "name" : "Registry Editor",
+                "path" : "C:/windows/regedit.exe"
+            },
+            {
+                "name" : "Command Prompt",
+                "path" : "C:/windows/system32/cmd.exe"
+            },
+            {
+                "name" : "Wine Mono Installer",
+                "path" : "Z:/opt/resources/winemono.bat"
+            },
+            {
+                "name" : "Wine Configuration",
+                "path" : "C:/windows/system32/winecfg.exe"
+            }
+        ]
+    }
+]
