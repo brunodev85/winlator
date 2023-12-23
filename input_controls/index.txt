@@ -1,3 +1,5 @@
+Alien Versus Predator.icp
+Bioshock.icp
 Call of Juarez Gunslinger.icp
 Cyber Shadow.icp
 Dark Souls 2.icp
@@ -12,9 +14,11 @@ Hitman 2.icp
 IGI 2.icp
 La Mulana.icp
 Mass Effect 2.icp
+Metro 2033.icp
 Oblivion.icp
 Prey.icp
 Quake 4.icp
+Rayman 3.icp
 Second Sight.icp
 Shovel Knight.icp
 Singularity.icp
@@ -23,5 +27,6 @@ Spiderman Shattered Dimensions.icp
 Stalker CS.icp
 Star Wars Jedi Knight 2.icp
 SteamWorld Dig 2.icp
+The Saboteur.icp
 Wolfenstein.icp
 Xanadu Next.icp
