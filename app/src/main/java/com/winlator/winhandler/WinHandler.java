@@ -162,14 +162,16 @@ public class WinHandler {
     }
 
     private void connect() {
-        InetAddress address = null;
+        string address = null;
         try {
-            address = InetAddress.getLocalHost();
+            address = InetAddress.getLocalHost().getHostAddress();
         }
-        catch (UnknownHostException e) {}
+        catch (UnknownHostException e) {
+            address = "127.0.0.1";
+        }
 
         try {
-            socket = new Socket(address.getHostAddress(), DEFAULT_PORT);
+            socket = new Socket(address, DEFAULT_PORT);
         }
         catch (IOException e) {}
     }
