@@ -398,6 +398,10 @@ public class InputControlsView extends View {
                     for (ControlElement element : profile.getElements()) if (element.handleTouchUp(pointerId)) handled = true;
                     if (!handled) touchpadView.onTouchEvent(event);
                     break;
+                case MotionEvent.ACTION_CANCEL:
+                    for (ControlElement element : profile.getElements()) if (element.handleTouchUp(pointerId)) handled = true;
+                    if (!handled) touchpadView.onTouchEvent(event);
+                    break;
             }
         }
         return true;
