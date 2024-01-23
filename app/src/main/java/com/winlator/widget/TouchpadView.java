@@ -120,6 +120,9 @@ public class TouchpadView extends View {
                     numFingers--;
                 }
                 break;
+            case MotionEvent.ACTION_CANCEL:
+                numFingers = 0;
+                break;
         }
 
         return true;
