@@ -4,6 +4,8 @@ import android.view.KeyEvent;
 
 import androidx.collection.ArraySet;
 
+import com.winlator.inputcontrols.ExternalController;
+
 import java.util.ArrayList;
 
 public class Keyboard {
@@ -92,6 +94,8 @@ public class Keyboard {
     }
 
     public boolean onKeyEvent(KeyEvent event) {
+        if (ExternalController.isGameController(event.getDevice())) return false;
+
         int action = event.getAction();
         if (action == KeyEvent.ACTION_DOWN || action == KeyEvent.ACTION_UP) {
             int keyCode = event.getKeyCode();

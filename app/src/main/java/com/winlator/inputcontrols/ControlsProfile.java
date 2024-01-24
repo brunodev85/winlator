@@ -26,7 +26,9 @@ public class ControlsProfile implements Comparable<ControlsProfile> {
     private final List<ControlElement> immutableElements = Collections.unmodifiableList(elements);
     private boolean elementsLoaded = false;
     private boolean controllersLoaded = false;
+    private boolean virtualGamepad = false;
     private final Context context;
+    private GamepadState gamepadState;
 
     public ControlsProfile(Context context, int id) {
         this.context = context;
@@ -49,9 +51,19 @@ public class ControlsProfile implements Comparable<ControlsProfile> {
         this.cursorSpeed = cursorSpeed;
     }
 
+    public boolean isVirtualGamepad() {
+        return virtualGamepad;
+    }
+
+    public GamepadState getGamepadState() {
+        if (gamepadState == null) gamepadState = new GamepadState();
+        return gamepadState;
+    }
+
     public ExternalController addController(String id) {
         ExternalController controller = getController(id);
         if (controller == null) controllers.add(controller = ExternalController.getController(id));
+        controllersLoaded = true;
         return controller;
     }
 
@@ -95,6 +107,7 @@ public class ControlsProfile implements Comparable<ControlsProfile> {
             data.put("id", id);
             data.put("name", name);
             data.put("cursorSpeed", Float.valueOf(cursorSpeed));
+            if (virtualGamepad) data.put("virtualGamepad", true);
 
             JSONArray elementsJSONArray = new JSONArray();
             if (!elementsLoaded && file.isFile()) {
@@ -183,8 +196,9 @@ public class ControlsProfile implements Comparable<ControlsProfile> {
     public void loadElements(InputControlsView inputControlsView) {
         elements.clear();
         elementsLoaded = false;
+        virtualGamepad = false;
 
-        File file = getProfileFile(inputControlsView.getContext(), id);
+        File file = getProfileFile(context, id);
         if (!file.isFile()) return;
 
         try {
@@ -204,10 +218,15 @@ public class ControlsProfile implements Comparable<ControlsProfile> {
                 if (elementJSONObject.has("range")) element.setRange(ControlElement.Range.valueOf(elementJSONObject.getString("range")));
                 if (elementJSONObject.has("orientation")) element.setOrientation((byte)elementJSONObject.getInt("orientation"));
 
+                boolean hasGamepadBinding = true;
                 JSONArray bindingsJSONArray = elementJSONObject.getJSONArray("bindings");
                 for (int j = 0; j < bindingsJSONArray.length(); j++) {
+                    Binding binding = Binding.fromString(bindingsJSONArray.getString(j));
                     element.setBindingAt(j, Binding.fromString(bindingsJSONArray.getString(j)));
+                    if (!binding.isGamepad()) hasGamepadBinding = false;
                 }
+
+                if (!virtualGamepad && hasGamepadBinding) virtualGamepad = true;
                 elements.add(element);
             }
             elementsLoaded = true;

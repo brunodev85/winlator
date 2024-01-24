@@ -83,17 +83,20 @@ public abstract class WineUtils {
             return;
         }
 
-        File wineBin = new File(binDir, "wine");
-        if (!wineBin.isFile()) {
+        File wineBin32 = new File(binDir, "wine");
+        File wineBin64 = new File(binDir, "wine64");
+
+        if (!wineBin32.isFile()) {
             callback.call(null);
             return;
         }
 
-        final String arch = (new File(binDir, "wine64")).isFile() ? "x86_64" : "x86";
+        final String arch = wineBin64.isFile() ? "x86_64" : "x86";
 
         ImageFs imageFs = ImageFs.find(context);
         File rootDir = ImageFs.find(context).getRootDir();
-        String wineBinRelPath = FileUtils.toRelativePath(rootDir.getPath(), wineBin.getPath());
+        String wineBinAbsPath = arch.equals("x86_64") ? wineBin64.getPath() : wineBin32.getPath();
+        String wineBinRelPath = FileUtils.toRelativePath(rootDir.getPath(), wineBinAbsPath);
         final String winePath = wineDir.getPath();
 
         try {
@@ -140,14 +143,26 @@ public abstract class WineUtils {
         return wineInfos;
     }
 
-    public static void applyRegistryKeyTweaks(Context context) {
+    public static void applyRegistryTweaks(Context context) {
         File rootDir = ImageFs.find(context).getRootDir();
         File systemRegFile = new File(rootDir, ImageFs.WINEPREFIX+"/system.reg");
+        File userRegFile = new File(rootDir, ImageFs.WINEPREFIX+"/user.reg");
 
         try (WineRegistryEditor registryEditor = new WineRegistryEditor(systemRegFile)) {
             registryEditor.setStringValue("Software\\Classes\\.reg", null, "REGfile");
             registryEditor.setStringValue("Software\\Classes\\.reg", "Content Type", "application/reg");
             registryEditor.setStringValue("Software\\Classes\\REGfile\\Shell\\Open\\command", null, "C:\\windows\\regedit.exe /C \"%1\"");
+
+            registryEditor.setDwordValue("System\\CurrentControlSet\\Services\\winebus", "DisableHidraw", 1);
+            registryEditor.setDwordValue("System\\CurrentControlSet\\Services\\winebus", "DisableInput", 1);
+            registryEditor.setDwordValue("System\\CurrentControlSet\\Services\\winebus", "Enable SDL", 0);
+        }
+
+        final String[] dllOverrides = {"d3d8", "d3d9", "d3d10", "d3d10_1", "d3d10core", "d3d11", "d3d12", "d3d12core", "ddraw", "dxgi", "wined3d", "dinput", "dinput8", "xinput1_1", "xinput1_2", "xinput1_3", "xinput1_4", "xinput9_1_0", "xinputuap"};
+        final String dllOverridesKey = "Software\\Wine\\DllOverrides";
+
+        try (WineRegistryEditor registryEditor = new WineRegistryEditor(userRegFile)) {
+            for (String name : dllOverrides) registryEditor.setStringValue(dllOverridesKey, name, "native,builtin");
         }
     }
 

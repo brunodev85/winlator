@@ -34,12 +34,6 @@
         android:text="@string/show_touchscreen_controls" />
 
     <CheckBox
-        android:id="@+id/CBCursorVisible"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/cursor_visible" />
-
-    <CheckBox
         android:id="@+id/CBLockCursor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

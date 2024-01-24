@@ -19,10 +19,11 @@ import com.winlator.contentdialog.ContentDialog;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class TaskManagerDialog extends ContentDialog {
+public class TaskManagerDialog extends ContentDialog implements OnGetProcessInfoListener {
     private final XServerDisplayActivity activity;
     private final LayoutInflater inflater;
     private Timer timer;
+    private final Object lock = new Object();
 
     public TaskManagerDialog(XServerDisplayActivity activity) {
         super(activity, R.layout.task_manager_dialog);
@@ -43,32 +44,17 @@ public class TaskManagerDialog extends ContentDialog {
                 timer.cancel();
                 timer = null;
             }
+
+            activity.getWinHandler().setOnGetProcessInfoListener(null);
         });
 
         inflater = LayoutInflater.from(activity);
     }
 
     private void update() {
-        WinHandler winHandler = activity.getWinHandler();
-        winHandler.getProcesses((processes) -> activity.runOnUiThread(() -> {
-            final LinearLayout container = findViewById(R.id.LLProcessList);
-            container.removeAllViews();
-            setBottomBarText(activity.getString(R.string.processes)+": "+processes.size());
-
-            if (!processes.isEmpty()) {
-                findViewById(R.id.TVEmptyText).setVisibility(View.GONE);
-
-                for (final ProcessInfo processInfo : processes) {
-                    View itemView = inflater.inflate(R.layout.process_info_list_item, container, false);
-                    ((TextView)itemView.findViewById(R.id.TVName)).setText(processInfo.name);
-                    ((TextView)itemView.findViewById(R.id.TVPID)).setText(String.valueOf(processInfo.pid));
-                    ((TextView)itemView.findViewById(R.id.TVMemoryUsage)).setText(processInfo.getFormattedMemoryUsage());
-                    itemView.findViewById(R.id.BTMenu).setOnClickListener((v) -> showListItemMenu(v, processInfo));
-                    container.addView(itemView);
-                }
-            }
-            else findViewById(R.id.TVEmptyText).setVisibility(View.VISIBLE);
-        }));
+        synchronized (lock) {
+            activity.getWinHandler().listProcesses();
+        }
 
         LinearLayout tableHead = findViewById(R.id.LLTableHead);
         TextView tvMemoryInfo = (TextView)tableHead.getChildAt(2);
@@ -120,13 +106,45 @@ public class TaskManagerDialog extends ContentDialog {
     @Override
     public void show() {
         update();
+        activity.getWinHandler().setOnGetProcessInfoListener(this);
+
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                update();
+                activity.runOnUiThread(TaskManagerDialog.this::update);
             }
         }, 0, 1000);
         super.show();
+    }
+
+    @Override
+    public void onGetProcessInfo(int index, int numProcesses, ProcessInfo processInfo) {
+        activity.runOnUiThread(() -> {
+            synchronized (lock) {
+                final LinearLayout container = findViewById(R.id.LLProcessList);
+                setBottomBarText(activity.getString(R.string.processes)+": " + numProcesses);
+
+                if (numProcesses == 0) {
+                    container.removeAllViews();
+                    findViewById(R.id.TVEmptyText).setVisibility(View.VISIBLE);
+                    return;
+                }
+
+                findViewById(R.id.TVEmptyText).setVisibility(View.GONE);
+
+                int childCount = container.getChildCount();
+                View itemView = index < childCount ? container.getChildAt(index) : inflater.inflate(R.layout.process_info_list_item, container, false);
+                ((TextView)itemView.findViewById(R.id.TVName)).setText(processInfo.name);
+                ((TextView)itemView.findViewById(R.id.TVPID)).setText(String.valueOf(processInfo.pid));
+                ((TextView)itemView.findViewById(R.id.TVMemoryUsage)).setText(processInfo.getFormattedMemoryUsage());
+                itemView.findViewById(R.id.BTMenu).setOnClickListener((v) -> showListItemMenu(v, processInfo));
+                if (index >= childCount) container.addView(itemView);
+
+                if (index == numProcesses-1 && childCount > numProcesses) {
+                    for (int i = numProcesses; i < childCount; i++) container.removeViewAt(i);
+                }
+            }
+        });
     }
 }

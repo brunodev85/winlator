@@ -127,11 +127,15 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
         envVars.put("ANDROID_SYSVSHM_SERVER", UnixSocketConfig.SYSVSHM_SERVER_PATH);
         if (this.envVars != null) envVars.putAll(this.envVars);
 
+        File shmDir = new File(rootDir, "/tmp/shm");
+        shmDir.mkdirs();
+
         String command = nativeLibraryDir+"/libproot.so";
         command += " --kill-on-exit";
         command += " --rootfs="+rootDir;
         command += " --cwd="+ImageFs.HOME_PATH;
         command += " --bind=/dev";
+        command += " --bind="+shmDir.getAbsolutePath()+":/dev/shm";
         command += " --bind=/proc";
         command += " --bind=/sys";
 

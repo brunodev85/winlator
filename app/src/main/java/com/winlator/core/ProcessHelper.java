@@ -131,12 +131,6 @@ public abstract class ProcessHelper {
         return result.toArray(new String[0]);
     }
 
-    public static String getSingleCPUAffinityMask() {
-        int numProcessors = (byte)Runtime.getRuntime().availableProcessors();
-        int affinityMask = (int)Math.pow(2, numProcessors-1);
-        return Integer.toHexString(affinityMask);
-    }
-
     public static String getAffinityMask(String cpuList) {
         String[] values = cpuList.split(",");
         int affinityMask = 0;

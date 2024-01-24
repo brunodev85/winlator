@@ -1,6 +1,5 @@
 package com.winlator.contentdialog;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.view.LayoutInflater;
@@ -24,6 +23,7 @@ import com.winlator.core.AppUtils;
 import com.winlator.core.ArrayUtils;
 import com.winlator.core.EnvVars;
 import com.winlator.core.StringUtils;
+import com.winlator.winhandler.WinHandler;
 
 import java.io.File;
 
@@ -75,9 +75,6 @@ public class ShortcutSettingsDialog extends ContentDialog {
         sAudioDriver.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, audioDriverEntries));
         AppUtils.setSpinnerSelectionFromIdentifier(sAudioDriver, shortcut.getExtra("audioDriver"));
 
-        final CheckBox cbSingleCPU = findViewById(R.id.CBSingleCPU);
-        cbSingleCPU.setChecked(shortcut.getExtra("singleCPU", "0").equals("1"));
-
         final CheckBox cbForceFullscreen = findViewById(R.id.CBForceFullscreen);
         cbForceFullscreen.setChecked(shortcut.getExtra("forceFullscreen", "0").equals("1"));
 
@@ -86,6 +83,9 @@ public class ShortcutSettingsDialog extends ContentDialog {
 
         final Spinner sBox64Preset = findViewById(R.id.SBox64Preset);
         Box86_64PresetManager.loadSpinner("box64", sBox64Preset, shortcut.getExtra("box64Preset", shortcut.container.getBox64Preset()));
+
+        final Spinner sDInputMapperType = findViewById(R.id.SDInputMapperType);
+        sDInputMapperType.setSelection(Byte.parseByte(shortcut.getExtra("dinputMapperType", String.valueOf(WinHandler.DINPUT_MAPPER_TYPE_XINPUT))));
 
         createDXComponentsTab();
         createEnvVarsTab();
@@ -118,7 +118,6 @@ public class ShortcutSettingsDialog extends ContentDialog {
                 shortcut.putExtra("dxwrapper", sDXWrapper.getSelectedItemPosition() > 0 ? StringUtils.parseIdentifier(sDXWrapper.getSelectedItem()) : null);
                 shortcut.putExtra("audioDriver", sAudioDriver.getSelectedItemPosition() > 0 ? StringUtils.parseIdentifier(sAudioDriver.getSelectedItem()) : null);
                 shortcut.putExtra("forceFullscreen", cbForceFullscreen.isChecked() ? "1" : null);
-                shortcut.putExtra("singleCPU", cbSingleCPU.isChecked() ? "1" : null);
                 shortcut.putExtra("dxcomponents", getDXComponents());
                 shortcut.putExtra("envVars", getEnvVars());
 
@@ -127,6 +126,8 @@ public class ShortcutSettingsDialog extends ContentDialog {
                 shortcut.putExtra("box86Preset", !box86Preset.equals(shortcut.container.getBox86Preset()) ? box86Preset : null);
                 shortcut.putExtra("box64Preset", !box64Preset.equals(shortcut.container.getBox64Preset()) ? box64Preset : null);
 
+                int dinputMapperType = sDInputMapperType.getSelectedItemPosition();
+                shortcut.putExtra("dinputMapperType", dinputMapperType != WinHandler.DINPUT_MAPPER_TYPE_XINPUT ? String.valueOf(dinputMapperType) : null);
                 shortcut.saveData();
             }
         });

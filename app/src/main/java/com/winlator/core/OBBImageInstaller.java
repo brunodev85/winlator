@@ -2,14 +2,12 @@ package com.winlator.core;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 
-import androidx.preference.PreferenceManager;
-
 import com.winlator.MainActivity;
 import com.winlator.R;
+import com.winlator.SettingsFragment;
 import com.winlator.contentdialog.ContentDialog;
 import com.winlator.xenvironment.ImageFs;
 
@@ -39,11 +37,7 @@ public abstract class OBBImageInstaller {
         ImageFs imageFs = ImageFs.find(activity);
         final File rootDir = imageFs.getRootDir();
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.remove("current_box86_version");
-        editor.remove("current_box64_version");
-        editor.apply();
+        SettingsFragment.resetBox86_64Version(activity);
 
         if (foundVersion <= 0) foundVersion = imageFs.isValid() ? imageFs.getVersion() + 1 : 1;
         final int finalVersion = foundVersion;

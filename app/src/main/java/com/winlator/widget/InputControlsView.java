@@ -23,6 +23,7 @@ import com.winlator.inputcontrols.ControlElement;
 import com.winlator.inputcontrols.ControlsProfile;
 import com.winlator.inputcontrols.ExternalController;
 import com.winlator.inputcontrols.ExternalControllerBinding;
+import com.winlator.inputcontrols.GamepadState;
 import com.winlator.math.Mathf;
 import com.winlator.xserver.Pointer;
 import com.winlator.xserver.XServer;
@@ -34,8 +35,6 @@ import java.util.TimerTask;
 
 public class InputControlsView extends View {
     public static final float DEFAULT_OVERLAY_OPACITY = 0.4f;
-    public static final float JOYSTICK_DEAD_ZONE = 0.15f;
-    public static final float DPAD_DEAD_ZONE = 0.3f;
     private boolean editMode = false;
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Path path = new Path();
@@ -241,6 +240,10 @@ public class InputControlsView extends View {
         this.touchpadView = touchpadView;
     }
 
+    public XServer getXServer() {
+        return xServer;
+    }
+
     public void setXServer(XServer xServer) {
         this.xServer = xServer;
         createMouseMoveTimer();
@@ -267,36 +270,22 @@ public class InputControlsView extends View {
         }
     }
 
-    private void processJoystickInput(MotionEvent event, ExternalController controller, int historyPos) {
+    private void processJoystickInput(ExternalController controller) {
         ExternalControllerBinding controllerBinding;
         final int[] axes = {MotionEvent.AXIS_X, MotionEvent.AXIS_Y, MotionEvent.AXIS_Z, MotionEvent.AXIS_RZ, MotionEvent.AXIS_HAT_X, MotionEvent.AXIS_HAT_Y};
-        for (int axis : axes) {
-            float value = ExternalController.getCenteredAxis(event, axis, historyPos);
-            if (Math.abs(value) > JOYSTICK_DEAD_ZONE) {
-                controllerBinding = controller.getControllerBinding(ExternalControllerBinding.getKeyCodeForAxis(axis, Mathf.sign(value)));
-                if (controllerBinding != null) handleInputEvent(controllerBinding.getBinding(), true, value);
+        final float[] values = {controller.state.thumbLX, controller.state.thumbLY, controller.state.thumbRX, controller.state.thumbRY, controller.state.getDPadX(), controller.state.getDPadY()};
+
+        for (byte i = 0; i < axes.length; i++) {
+            if (Math.abs(values[i]) > ControlElement.STICK_DEAD_ZONE) {
+                controllerBinding = controller.getControllerBinding(ExternalControllerBinding.getKeyCodeForAxis(axes[i], Mathf.sign(values[i])));
+                if (controllerBinding != null) handleInputEvent(controllerBinding.getBinding(), true, values[i]);
             }
             else {
-                controllerBinding = controller.getControllerBinding(ExternalControllerBinding.getKeyCodeForAxis(axis, (byte) 1));
-                if (controllerBinding != null) handleInputEvent(controllerBinding.getBinding(), false, value);
-                controllerBinding = controller.getControllerBinding(ExternalControllerBinding.getKeyCodeForAxis(axis, (byte)-1));
-                if (controllerBinding != null) handleInputEvent(controllerBinding.getBinding(), false, value);
+                controllerBinding = controller.getControllerBinding(ExternalControllerBinding.getKeyCodeForAxis(axes[i], (byte) 1));
+                if (controllerBinding != null) handleInputEvent(controllerBinding.getBinding(), false, values[i]);
+                controllerBinding = controller.getControllerBinding(ExternalControllerBinding.getKeyCodeForAxis(axes[i], (byte)-1));
+                if (controllerBinding != null) handleInputEvent(controllerBinding.getBinding(), false, values[i]);
             }
-        }
-    }
-
-    private void processTriggerButton(MotionEvent event, ExternalController controller) {
-        ExternalControllerBinding controllerBinding;
-        controllerBinding = controller.getControllerBinding(ExternalControllerBinding.AXIS_LTRIGGER);
-        if (controllerBinding != null) {
-            boolean pressed = event.getAxisValue(MotionEvent.AXIS_LTRIGGER) == 1 || event.getAxisValue(MotionEvent.AXIS_BRAKE) == 1;
-            handleInputEvent(controllerBinding.getBinding(), pressed);
-        }
-
-        controllerBinding = controller.getControllerBinding(ExternalControllerBinding.AXIS_RTRIGGER);
-        if (controllerBinding != null) {
-            boolean pressed = event.getAxisValue(MotionEvent.AXIS_RTRIGGER) == 1 || event.getAxisValue(MotionEvent.AXIS_GAS) == 1;
-            handleInputEvent(controllerBinding.getBinding(), pressed);
         }
     }
 
@@ -304,21 +293,18 @@ public class InputControlsView extends View {
     public boolean onGenericMotionEvent(MotionEvent event) {
         if (!editMode && profile != null) {
             ExternalController controller = profile.getController(event.getDeviceId());
-            if (controller != null) {
-                if (ExternalController.isDPadDevice(event)) {
-                    processTriggerButton(event, controller);
-                    processJoystickInput(event, controller, -1);
-                    return true;
-                }
-                else if (ExternalController.isJoystickDevice(event)) {
-                    int historySize = event.getHistorySize();
-                    for (int i = 0; i < historySize; i++) processJoystickInput(event, controller, i);
-                    processJoystickInput(event, controller, -1);
-                    return true;
-                }
+            if (controller != null && controller.updateStateFromMotionEvent(event)) {
+                ExternalControllerBinding controllerBinding;
+                controllerBinding = controller.getControllerBinding(KeyEvent.KEYCODE_BUTTON_L2);
+                if (controllerBinding != null) handleInputEvent(controllerBinding.getBinding(), controller.state.isPressed(ExternalController.IDX_BUTTON_L2));
+
+                controllerBinding = controller.getControllerBinding(KeyEvent.KEYCODE_BUTTON_R2);
+                if (controllerBinding != null) handleInputEvent(controllerBinding.getBinding(), controller.state.isPressed(ExternalController.IDX_BUTTON_R2));
+
+                processJoystickInput(controller);
+                return true;
             }
         }
-
         return super.onGenericMotionEvent(event);
     }
 
@@ -395,9 +381,6 @@ public class InputControlsView extends View {
                 }
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_POINTER_UP:
-                    for (ControlElement element : profile.getElements()) if (element.handleTouchUp(pointerId)) handled = true;
-                    if (!handled) touchpadView.onTouchEvent(event);
-                    break;
                 case MotionEvent.ACTION_CANCEL:
                     for (ControlElement element : profile.getElements()) if (element.handleTouchUp(pointerId)) handled = true;
                     if (!handled) touchpadView.onTouchEvent(event);
@@ -433,36 +416,54 @@ public class InputControlsView extends View {
     }
 
     public void handleInputEvent(Binding binding, boolean isActionDown, float offset) {
-        if (isActionDown) {
-            if (binding == Binding.MOUSE_MOVE_LEFT || binding == Binding.MOUSE_MOVE_RIGHT) {
-                mouseMoveOffset.x = offset != 0 ? offset : (binding == Binding.MOUSE_MOVE_LEFT ? -1 : 1);
-                createMouseMoveTimer();
+        if (binding.isGamepad()) {
+            GamepadState state = profile.getGamepadState();
+
+            int buttonIdx = binding.ordinal() - Binding.GAMEPAD_BUTTON_A.ordinal();
+            if (buttonIdx <= 11) {
+                state.setPressed(buttonIdx, isActionDown);
+                if (xServer != null) xServer.getWinHandler().saveGamepadState(state);
             }
-            else if (binding == Binding.MOUSE_MOVE_DOWN || binding == Binding.MOUSE_MOVE_UP) {
-                mouseMoveOffset.y = offset != 0 ? offset : (binding == Binding.MOUSE_MOVE_UP ? -1 : 1);
-                createMouseMoveTimer();
+            else if (binding == Binding.GAMEPAD_LEFT_THUMB_UP || binding == Binding.GAMEPAD_LEFT_THUMB_DOWN) {
+                state.thumbLY = isActionDown ? offset : 0;
             }
-            else {
-                Pointer.Button pointerButton = binding.getPointerButton();
-                if (pointerButton != null) {
-                    xServer.injectPointerButtonPress(pointerButton);
-                }
-                else xServer.injectKeyPress(binding.keycode);
+            else if (binding == Binding.GAMEPAD_LEFT_THUMB_LEFT || binding == Binding.GAMEPAD_LEFT_THUMB_RIGHT) {
+                state.thumbLX = isActionDown ? offset : 0;
+            }
+            else if (binding == Binding.GAMEPAD_RIGHT_THUMB_UP || binding == Binding.GAMEPAD_RIGHT_THUMB_DOWN) {
+                state.thumbRY = isActionDown ? offset : 0;
+            }
+            else if (binding == Binding.GAMEPAD_RIGHT_THUMB_LEFT || binding == Binding.GAMEPAD_RIGHT_THUMB_RIGHT) {
+                state.thumbRX = isActionDown ? offset : 0;
+            }
+            else if (binding == Binding.GAMEPAD_DPAD_UP || binding == Binding.GAMEPAD_DPAD_RIGHT ||
+                     binding == Binding.GAMEPAD_DPAD_DOWN || binding == Binding.GAMEPAD_DPAD_LEFT) {
+                state.dpad[binding.ordinal() - Binding.GAMEPAD_DPAD_UP.ordinal()] = isActionDown;
             }
         }
         else {
             if (binding == Binding.MOUSE_MOVE_LEFT || binding == Binding.MOUSE_MOVE_RIGHT) {
-                if (Math.abs(offset) < InputControlsView.JOYSTICK_DEAD_ZONE) mouseMoveOffset.x = 0;
+                mouseMoveOffset.x = isActionDown ? offset : 0;
+                createMouseMoveTimer();
             }
-            else if (binding == Binding.MOUSE_MOVE_UP || binding == Binding.MOUSE_MOVE_DOWN) {
-                if (Math.abs(offset) < InputControlsView.JOYSTICK_DEAD_ZONE) mouseMoveOffset.y = 0;
+            else if (binding == Binding.MOUSE_MOVE_DOWN || binding == Binding.MOUSE_MOVE_UP) {
+                mouseMoveOffset.y = isActionDown ? offset : 0;
+                createMouseMoveTimer();
             }
             else {
                 Pointer.Button pointerButton = binding.getPointerButton();
-                if (pointerButton != null) {
-                    xServer.injectPointerButtonRelease(pointerButton);
+                if (isActionDown) {
+                    if (pointerButton != null) {
+                        xServer.injectPointerButtonPress(pointerButton);
+                    }
+                    else xServer.injectKeyPress(binding.keycode);
                 }
-                else xServer.injectKeyRelease(binding.keycode);
+                else {
+                    if (pointerButton != null) {
+                        xServer.injectPointerButtonRelease(pointerButton);
+                    }
+                    else xServer.injectKeyRelease(binding.keycode);
+                }
             }
         }
     }

@@ -62,7 +62,6 @@
     <string name="value">Value</string>
     <string name="processor_affinity">Processor Affinity</string>
     <string name="cursor_speed">Cursor Speed</string>
-    <string name="cursor_visible">Cursor Visible</string>
     <string name="lock_cursor">Lock Cursor</string>
     <string name="toggle_switch">Toggle Switch</string>
     <string name="profile_exported_to">Profile exported to</string>
@@ -144,7 +143,7 @@
     <string name="letter">Letter</string>
     <string name="target_path">Target Path</string>
     <string name="xserver">XServer</string>
-    <string name="use_dri3_extension_experimental">Use DRI3 extension (Experimental)</string>
+    <string name="use_dri3_extension">Use DRI3 extension</string>
     <string name="width">Width</string>
     <string name="height">Height</string>
     <string name="old">old</string>
@@ -174,7 +173,6 @@
     <string name="performance_unstable">Performance (Unstable)</string>
     <string name="preset">Preset</string>
     <string name="you_cannot_remove_this_preset">You cannot remove this preset</string>
-    <string name="use_single_cpu">Use single CPU</string>
     <string name="dxwrapper_help_content"><![CDATA[
         <i><b>WineD3D</b></i> is a translation layer for DirectX 1-11 to OpenGL.<br /><br />
         <i><b>DXVK</b></i> is a translation layer for Direct3D 9-11 to Vulkan.<br /><br />
@@ -207,4 +205,6 @@
     <string name="box86_64_env_var_help__dynarec_forward">Defines the max allowed forward value when building Block</string>
     <string name="box86_64_env_var_help__dynarec_callret">Optimization of CALL/RET opcodes</string>
     <string name="box86_64_env_var_help__dynarec_wait">Defines whether or not Dynarec will wait for the FillBlock to be ready</string>
+    <string name="columns">Columns</string>
+    <string name="directinput_mapper_type">DirectInput Mapper Type</string>
 </resources>

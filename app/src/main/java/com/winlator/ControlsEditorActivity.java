@@ -28,6 +28,7 @@ import com.winlator.core.AppUtils;
 import com.winlator.core.FileUtils;
 import com.winlator.core.UnitUtils;
 import com.winlator.widget.InputControlsView;
+import com.winlator.widget.NumberPicker;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -113,6 +114,14 @@ public class ControlsEditorActivity extends AppCompatActivity implements View.On
         rgOrientation.check(element.getOrientation() == 1 ? R.id.RBVertical : R.id.RBHorizontal);
         rgOrientation.setOnCheckedChangeListener((group, checkedId) -> {
             element.setOrientation((byte)(checkedId == R.id.RBVertical ? 1 : 0));
+            profile.save();
+            inputControlsView.invalidate();
+        });
+
+        NumberPicker npColumns = view.findViewById(R.id.NPColumns);
+        npColumns.setValue(element.getBindingCount());
+        npColumns.setOnValueChangeListener((numberPicker, value) -> {
+            element.setBindingCount(value);
             profile.save();
             inputControlsView.invalidate();
         });
@@ -229,7 +238,19 @@ public class ControlsEditorActivity extends AppCompatActivity implements View.On
         final Spinner sBinding = view.findViewById(R.id.SBinding);
 
         Runnable update = () -> {
-            String[] bindingEntries = sBindingType.getSelectedItemPosition() == 0 ? Binding.keyboardBindingLabels() : Binding.mouseBindingLabels();
+            String[] bindingEntries = null;
+            switch (sBindingType.getSelectedItemPosition()) {
+                case 0:
+                    bindingEntries = Binding.keyboardBindingLabels();
+                    break;
+                case 1:
+                    bindingEntries = Binding.mouseBindingLabels();
+                    break;
+                case 2:
+                    bindingEntries = Binding.gamepadBindingLabels();
+                    break;
+            }
+
             sBinding.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, bindingEntries));
             AppUtils.setSpinnerSelectionFromValue(sBinding, element.getBindingAt(index).toString());
         };
@@ -243,13 +264,34 @@ public class ControlsEditorActivity extends AppCompatActivity implements View.On
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
-        sBindingType.setSelection(element.getBindingAt(index).isKeyboard() ? 0 : 1, false);
+
+        Binding selectedBinding = element.getBindingAt(index);
+        if (selectedBinding.isKeyboard()) {
+            sBindingType.setSelection(0, false);
+        }
+        else if (selectedBinding.isMouse()) {
+            sBindingType.setSelection(1, false);
+        }
+        else if (selectedBinding.isGamepad()) {
+            sBindingType.setSelection(2, false);
+        }
 
         sBinding.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                boolean isKeyboard = sBindingType.getSelectedItemPosition() == 0;
-                Binding binding = isKeyboard ? Binding.keyboardBindingValues()[position] : Binding.mouseBindingValues()[position];
+                Binding binding = Binding.NONE;
+                switch (sBindingType.getSelectedItemPosition()) {
+                    case 0:
+                        binding = Binding.keyboardBindingValues()[position];
+                        break;
+                    case 1:
+                        binding = Binding.mouseBindingValues()[position];
+                        break;
+                    case 2:
+                        binding = Binding.gamepadBindingValues()[position];
+                        break;
+                }
+
                 if (binding != element.getBindingAt(index)) {
                     element.setBindingAt(index, binding);
                     profile.save();

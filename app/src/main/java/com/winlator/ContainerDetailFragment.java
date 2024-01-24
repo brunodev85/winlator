@@ -58,7 +58,6 @@ public class ContainerDetailFragment extends Fragment {
     private PreloaderDialog preloaderDialog;
     private JSONArray gpuNames;
     private Callback<String> openDirectoryCallback;
-    private final String[] defaultDLLOverrides = {"d3d8", "d3d9", "d3d10", "d3d10_1", "d3d10core", "d3d11", "d3d12", "d3d12core", "ddraw", "dxgi", "wined3d"};
 
     public ContainerDetailFragment() {
         this(0);
@@ -276,9 +275,6 @@ public class ContainerDetailFragment extends Fragment {
 
             registryEditor.setStringValue("Software\\Wine\\Direct3D", "shader_backend", "glsl");
             registryEditor.setStringValue("Software\\Wine\\Direct3D", "UseGLSL", "enabled");
-
-            final String dllOverridesKey = "Software\\Wine\\DllOverrides";
-            for (String name : defaultDLLOverrides) registryEditor.setStringValue(dllOverridesKey, name, "native,builtin");
         }
     }
 

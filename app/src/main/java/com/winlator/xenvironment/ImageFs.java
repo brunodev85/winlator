@@ -75,6 +75,10 @@ public class ImageFs {
         return new File(rootDir, "/opt/installed-wine");
     }
 
+    public File getTmpDir() {
+        return new File(rootDir, "/tmp");
+    }
+
     @NonNull
     @Override
     public String toString() {

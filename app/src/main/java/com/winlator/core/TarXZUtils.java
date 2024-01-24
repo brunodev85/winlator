@@ -11,14 +11,45 @@ import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 public abstract class TarXZUtils {
+    public static boolean extract(Context context, String assetFile, File destination) {
+        try {
+            return extract(context.getAssets().open(assetFile), destination);
+        }
+        catch (IOException e) {
+            return false;
+        }
+    }
+
+    public static boolean extract(File source, File destination) {
+        if (source == null || !source.isFile()) return false;
+        try {
+            return extract(new BufferedInputStream(new FileInputStream(source), StreamUtils.BUFFER_SIZE), destination);
+        }
+        catch (FileNotFoundException e) {
+            return false;
+        }
+    }
+
     public static boolean extract(Context context, Uri source, File destination) {
         if (source == null) return false;
-        try (InputStream inStream = new XZCompressorInputStream(new BufferedInputStream(context.getContentResolver().openInputStream(source), StreamUtils.BUFFER_SIZE));
+        try {
+            return extract(context.getContentResolver().openInputStream(source), destination);
+        }
+        catch (FileNotFoundException e) {
+            return false;
+        }
+    }
+
+    private static boolean extract(InputStream source, File destination) {
+        if (source == null) return false;
+        try (InputStream inStream = new XZCompressorInputStream(source);
              ArchiveInputStream tar = new TarArchiveInputStream(inStream)) {
             TarArchiveEntry entry;
             while ((entry = (TarArchiveEntry)tar.getNextEntry()) != null) {

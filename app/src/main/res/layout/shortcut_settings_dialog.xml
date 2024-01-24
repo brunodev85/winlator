@@ -258,6 +258,17 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="@string/directinput_mapper_type" />
+
+                    <Spinner
+                        style="@style/ComboBox"
+                        android:id="@+id/SDInputMapperType"
+                        android:layout_width="match_parent"
+                        android:entries="@array/dinput_mapper_type_entries" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:text="@string/exec_arguments" />
 
                     <LinearLayout
@@ -277,13 +288,6 @@
                             android:id="@+id/BTExtraArgsMenu"
                             android:src="@drawable/icon_menu" />
                     </LinearLayout>
-
-                    <CheckBox
-                        android:id="@+id/CBSingleCPU"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/use_single_cpu"
-                        android:layout_marginTop="4dp" />
 
                     <CheckBox
                         android:id="@+id/CBForceFullscreen"

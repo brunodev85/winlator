@@ -1,35 +1,55 @@
 package com.winlator.winhandler;
 
-import com.winlator.core.Callback;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+
+import com.winlator.XServerDisplayActivity;
 import com.winlator.core.StringUtils;
+import com.winlator.inputcontrols.ControlsProfile;
+import com.winlator.inputcontrols.ExternalController;
+import com.winlator.inputcontrols.GamepadState;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.Executors;
 
 public class WinHandler {
-    private static final short DEFAULT_PORT = 7946;
-    private Socket socket;
-    private final Object lock = new Object();
-    private ByteBuffer data = ByteBuffer.allocate(128).order(ByteOrder.LITTLE_ENDIAN);
+    private static final short SERVER_PORT = 7947;
+    private static final short CLIENT_PORT = 7946;
+    public static final byte DINPUT_MAPPER_TYPE_STANDARD = 0;
+    public static final byte DINPUT_MAPPER_TYPE_XINPUT = 1;
+    private DatagramSocket socket;
+    private final ByteBuffer sendData = ByteBuffer.allocate(64).order(ByteOrder.LITTLE_ENDIAN);
+    private final ByteBuffer receiveData = ByteBuffer.allocate(64).order(ByteOrder.LITTLE_ENDIAN);
+    private final DatagramPacket sendPacket = new DatagramPacket(sendData.array(), 64);
+    private final DatagramPacket receivePacket = new DatagramPacket(receiveData.array(), 64);
     private final ArrayDeque<Runnable> actions = new ArrayDeque<>();
+    private boolean initReceived = false;
+    private boolean running = false;
+    private OnGetProcessInfoListener onGetProcessInfoListener;
+    private ExternalController currentController;
+    private final ArrayDeque<byte[]> gamepadStateQueue = new ArrayDeque<>();
+    private InetAddress localhost;
+    private byte dinputMapperType = DINPUT_MAPPER_TYPE_XINPUT;
+    private final XServerDisplayActivity activity;
 
-    private boolean sendData() {
+    public WinHandler(XServerDisplayActivity activity) {
+        this.activity = activity;
+    }
+
+    private boolean sendPacket(int port) {
         try {
-            int size = data.position();
-            if (size == 0) return true;
-            OutputStream outStream = socket.getOutputStream();
-            outStream.write(data.array(), 0, size);
+            int size = sendData.position();
+            if (size == 0) return false;
+            sendPacket.setAddress(localhost);
+            sendPacket.setPort(port);
+            socket.send(sendPacket);
             return true;
         }
         catch (IOException e) {
@@ -37,158 +57,269 @@ public class WinHandler {
         }
     }
 
-    private boolean receiveData(int length) {
-        try {
-            while (length > data.capacity()) {
-                data = ByteBuffer.allocate(data.capacity() * 2).order(ByteOrder.LITTLE_ENDIAN);
-            }
-
-            data.rewind();
-            InputStream inStream = socket.getInputStream();
-            int bytesRead = inStream.read(data.array(), 0, length);
-            if (bytesRead > 0) {
-                data.limit(length);
-                return true;
-            }
-        }
-        catch (IOException e) {}
-        return false;
-    }
-
     public void exec(String command) {
-        command = command.trim();
-        if (command.isEmpty()) return;
-        String[] cmdList = command.split(" ", 2);
-        final String filename = cmdList[0];
-        final String parameters = cmdList.length > 1 ? cmdList[1] : "";
+        synchronized (actions) {
+            command = command.trim();
+            if (command.isEmpty()) return;
+            String[] cmdList = command.split(" ", 2);
+            final String filename = cmdList[0];
+            final String parameters = cmdList.length > 1 ? cmdList[1] : "";
 
-        synchronized (lock) {
             actions.add(() -> {
                 byte[] filenameBytes = filename.getBytes();
                 byte[] parametersBytes = parameters.getBytes();
 
-                data.rewind();
-                data.put(RequestCodes.EXEC);
-                data.putInt(filenameBytes.length + parametersBytes.length + 8);
-                data.putInt(filenameBytes.length);
-                data.putInt(parametersBytes.length);
-                data.put(filenameBytes);
-                data.put(parametersBytes);
-                sendData();
+                sendData.rewind();
+                sendData.put(RequestCodes.EXEC);
+                sendData.putInt(filenameBytes.length + parametersBytes.length + 8);
+                sendData.putInt(filenameBytes.length);
+                sendData.putInt(parametersBytes.length);
+                sendData.put(filenameBytes);
+                sendData.put(parametersBytes);
+                sendPacket(CLIENT_PORT);
             });
         }
     }
 
     public void killProcess(final String processName) {
-        synchronized (lock) {
+        synchronized (actions) {
             actions.add(() -> {
-                data.rewind();
-                data.put(RequestCodes.KILL_PROCESS);
+                sendData.rewind();
+                sendData.put(RequestCodes.KILL_PROCESS);
                 byte[] bytes = processName.getBytes();
-                data.putInt(bytes.length);
-                data.put(bytes);
-                sendData();
+                sendData.putInt(bytes.length);
+                sendData.put(bytes);
+                sendPacket(CLIENT_PORT);
             });
         }
     }
 
-    public void getProcesses(final Callback<List<ProcessInfo>> callback) {
-        synchronized (lock) {
+    public void listProcesses() {
+        synchronized (actions) {
             actions.add(() -> {
-                data.rewind();
-                data.put(RequestCodes.GET_PROCESSES);
-                data.putInt(0);
+                sendData.rewind();
+                sendData.put(RequestCodes.LIST_PROCESSES);
+                sendData.putInt(0);
 
-                if (sendData() && receiveData(5)) {
-                    boolean success = data.get() == 1;
-                    int responseLength = data.getInt();
-                    if (success && receiveData(responseLength)) {
-                        ArrayList<ProcessInfo> processes = new ArrayList<>();
-                        while (data.position() < data.limit()) {
-                            int numBytesBefore = data.position();
-                            int pid = data.getInt();
-                            long memoryUsage = data.getLong();
-                            int affinityMask = data.getInt();
-
-                            byte[] bytes = new byte[32];
-                            data.get(bytes);
-                            String name = StringUtils.fromANSIString(bytes);
-
-                            processes.add(new ProcessInfo(pid, name, memoryUsage, affinityMask));
-
-                            int bytesRead = data.position() - numBytesBefore;
-                            data.position(data.position() + (64 - bytesRead));
-                        }
-                        callback.call(processes);
-                    }
-                    else callback.call(Collections.emptyList());
+                if (!sendPacket(CLIENT_PORT) && onGetProcessInfoListener != null) {
+                    onGetProcessInfoListener.onGetProcessInfo(0, 0, null);
                 }
-                else callback.call(Collections.emptyList());
             });
         }
     }
 
     public void setProcessAffinity(final int pid, final int affinityMask) {
-        synchronized (lock) {
+        synchronized (actions) {
             actions.add(() -> {
-                data.rewind();
-                data.put(RequestCodes.SET_PROCESS_AFFINITY);
-                data.putInt(8);
-                data.putInt(pid);
-                data.putInt(affinityMask);
-                sendData();
+                sendData.rewind();
+                sendData.put(RequestCodes.SET_PROCESS_AFFINITY);
+                sendData.putInt(8);
+                sendData.putInt(pid);
+                sendData.putInt(affinityMask);
+                sendPacket(CLIENT_PORT);
             });
         }
     }
 
     public void mouseEvent(int flags, int dx, int dy, int wheelDelta) {
-        synchronized (lock) {
-            if (!isConnected()) return;
+        synchronized (actions) {
+            if (!initReceived) return;
             actions.add(() -> {
-                data.rewind();
-                data.put(RequestCodes.MOUSE_EVENT);
-                data.putInt(10);
-                data.putInt(flags);
-                data.putShort((short)dx);
-                data.putShort((short)dy);
-                data.putShort((short)wheelDelta);
-                sendData();
+                sendData.rewind();
+                sendData.put(RequestCodes.MOUSE_EVENT);
+                sendData.putInt(10);
+                sendData.putInt(flags);
+                sendData.putShort((short)dx);
+                sendData.putShort((short)dy);
+                sendData.putShort((short)wheelDelta);
+                sendPacket(CLIENT_PORT);
             });
         }
     }
 
-    public boolean isConnected() {
-        return socket != null && !socket.isClosed() && socket.isConnected();
+    public OnGetProcessInfoListener getOnGetProcessInfoListener() {
+        return onGetProcessInfoListener;
     }
 
-    private void connect() {
-        InetAddress address = null;
-        try {
-            address = InetAddress.getLocalHost();
+    public void setOnGetProcessInfoListener(OnGetProcessInfoListener onGetProcessInfoListener) {
+        synchronized (actions) {
+            this.onGetProcessInfoListener = onGetProcessInfoListener;
         }
-        catch (UnknownHostException e) {}
-
-        try {
-            socket = new Socket(address.getHostAddress(), DEFAULT_PORT);
-        }
-        catch (IOException e) {}
     }
 
-    public void start() {
+    private void startSendThread() {
         Executors.newSingleThreadExecutor().execute(() -> {
-            while (true) {
-                synchronized (lock) {
-                    if (!isConnected()) connect();
-                    if (isConnected()) while (!actions.isEmpty()) actions.poll().run();
-                }
-
-                if (!isConnected()) {
-                    try {
-                        Thread.sleep(100);
-                    }
-                    catch (InterruptedException e) {}
+            while (running) {
+                synchronized (actions) {
+                    while (initReceived && !actions.isEmpty()) actions.poll().run();
                 }
             }
         });
+    }
+
+    public void stop() {
+        running = false;
+        if (socket != null) {
+            socket.close();
+            socket = null;
+        }
+    }
+
+    private void handleRequest(byte requestCode, final int port) {
+        switch (requestCode) {
+            case RequestCodes.INIT: {
+                initReceived = true;
+                break;
+            }
+            case RequestCodes.GET_PROCESS: {
+                if (onGetProcessInfoListener == null) return;
+                receiveData.position(receiveData.position() + 4);
+                int numProcesses = receiveData.getShort();
+                int index = receiveData.getShort();
+                int pid = receiveData.getInt();
+                long memoryUsage = receiveData.getLong();
+                int affinityMask = receiveData.getInt();
+
+                byte[] bytes = new byte[32];
+                receiveData.get(bytes);
+                String name = StringUtils.fromANSIString(bytes);
+
+                onGetProcessInfoListener.onGetProcessInfo(index, numProcesses, new ProcessInfo(pid, name, memoryUsage, affinityMask));
+                break;
+            }
+            case RequestCodes.GET_GAMEPAD: {
+                boolean isXInput = receiveData.get() == 1;
+                final ControlsProfile profile = activity.getInputControlsView().getProfile();
+                boolean useVirtualGamepad = profile != null && profile.isVirtualGamepad();
+
+                if (!useVirtualGamepad && (currentController == null || !currentController.isConnected())) {
+                    releaseCurrentController();
+                    currentController = ExternalController.getController(0);
+                }
+
+                actions.add(() -> {
+                    sendData.rewind();
+                    sendData.put(RequestCodes.GET_GAMEPAD);
+
+                    if (currentController != null || useVirtualGamepad) {
+                        sendData.putInt(!useVirtualGamepad ? currentController.getDeviceId() : profile.id);
+                        sendData.put(dinputMapperType);
+                        byte[] bytes = (useVirtualGamepad ? profile.getName() : currentController.getName()).getBytes();
+                        sendData.putInt(bytes.length);
+                        sendData.put(bytes);
+                    }
+                    else sendData.putInt(0);
+
+                    sendPacket(port);
+                });
+                break;
+            }
+            case RequestCodes.GET_GAMEPAD_STATE: {
+                int gamepadId = receiveData.getInt();
+                final ControlsProfile profile = activity.getInputControlsView().getProfile();
+                boolean useVirtualGamepad = profile != null && profile.isVirtualGamepad();
+
+                if (currentController != null && currentController.getDeviceId() != gamepadId) currentController = null;
+
+                actions.add(() -> {
+                    sendData.rewind();
+                    sendData.put(RequestCodes.GET_GAMEPAD_STATE);
+                    sendData.put((byte)(currentController != null || useVirtualGamepad ? 1 : 0));
+
+                    if (currentController != null || useVirtualGamepad) {
+                        sendData.putInt(gamepadId);
+
+                        synchronized (gamepadStateQueue) {
+                            if (gamepadStateQueue.isEmpty()) {
+                                if (useVirtualGamepad) {
+                                    profile.getGamepadState().writeTo(sendData);
+                                }
+                                else currentController.state.writeTo(sendData);
+                            }
+                            else sendData.put(gamepadStateQueue.poll());
+                        }
+                    }
+
+                    sendPacket(port);
+                });
+                break;
+            }
+            case RequestCodes.RELEASE_GAMEPAD:
+                releaseCurrentController();
+                break;
+        }
+    }
+
+    public void start() {
+        try {
+            localhost = InetAddress.getLocalHost();
+        }
+        catch (UnknownHostException e) {}
+
+        running = true;
+        startSendThread();
+        Executors.newSingleThreadExecutor().execute(() -> {
+            try {
+                socket = new DatagramSocket(SERVER_PORT);
+
+                while (running) {
+                    socket.receive(receivePacket);
+
+                    synchronized (actions) {
+                        receiveData.rewind();
+                        byte requestCode = receiveData.get();
+                        handleRequest(requestCode, receivePacket.getPort());
+                    }
+                }
+            }
+            catch (IOException e) {}
+        });
+    }
+
+    public void saveGamepadState(GamepadState state) {
+        synchronized (gamepadStateQueue) {
+            if (gamepadStateQueue.size() > 20) gamepadStateQueue.removeLast();
+            gamepadStateQueue.add(state.toByteArray());
+        }
+    }
+
+    private void releaseCurrentController() {
+        currentController = null;
+        synchronized (gamepadStateQueue) {
+            gamepadStateQueue.clear();
+        }
+    }
+
+    public boolean onGenericMotionEvent(MotionEvent event) {
+        boolean handled = false;
+        if (currentController != null && currentController.getDeviceId() == event.getDeviceId()) {
+            handled = currentController.updateStateFromMotionEvent(event);
+        }
+        return handled;
+    }
+
+    public boolean onKeyEvent(KeyEvent event) {
+        boolean handled = false;
+        if (currentController != null && currentController.getDeviceId() == event.getDeviceId() && event.getRepeatCount() == 0) {
+            int action = event.getAction();
+
+            if (action == KeyEvent.ACTION_DOWN) {
+                handled = currentController.updateStateFromKeyEvent(event);
+            }
+            else if (action == KeyEvent.ACTION_UP) {
+                handled = currentController.updateStateFromKeyEvent(event);
+            }
+
+            if (handled) saveGamepadState(currentController.state);
+        }
+        return handled;
+    }
+
+    public byte getDInputMapperType() {
+        return dinputMapperType;
+    }
+
+    public void setDInputMapperType(byte dinputMapperType) {
+        this.dinputMapperType = dinputMapperType;
     }
 }

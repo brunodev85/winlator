@@ -17,8 +17,6 @@ public class ExternalControllerBinding {
     public static final byte AXIS_Z_POSITIVE = -6;
     public static final byte AXIS_RZ_NEGATIVE = -7;
     public static final byte AXIS_RZ_POSITIVE = -8;
-    public static final byte AXIS_LTRIGGER = -9;
-    public static final byte AXIS_RTRIGGER = -10;
     private short keyCode;
     private Binding binding = Binding.NONE;
 
@@ -70,10 +68,6 @@ public class ExternalControllerBinding {
                 return "AXIS RZ-";
             case AXIS_RZ_POSITIVE:
                 return "AXIS RZ+";
-            case AXIS_LTRIGGER:
-                return "L TRIGGER";
-            case AXIS_RTRIGGER:
-                return "R TRIGGER";
             default:
                 return KeyEvent.keyCodeToString(keyCode).replace("KEYCODE_", "").replace("_", " ");
         }

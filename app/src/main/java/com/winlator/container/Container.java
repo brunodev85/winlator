@@ -19,7 +19,7 @@ public class Container {
     public static final String DEFAULT_GRAPHICS_DRIVER = "turnip-zink";
     public static final String DEFAULT_AUDIO_DRIVER = "alsa";
     public static final String DEFAULT_DXWRAPPER = "original-wined3d";
-    public static final String DEFAULT_DXCOMPONENTS = "direct3d=0,directsound=0,directmusic=0,directshow=0,directplay=0";
+    public static final String DEFAULT_DXCOMPONENTS = "direct3d=1,directsound=1,directmusic=0,directshow=0,directplay=0";
     public static final String DEFAULT_DRIVES = "D:"+Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
     public static final byte MAX_DRIVE_LETTERS = 8;
     public final int id;

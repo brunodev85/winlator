@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -27,6 +28,7 @@ import com.winlator.core.AppUtils;
 import com.winlator.core.CursorLocker;
 import com.winlator.core.EnvVars;
 import com.winlator.core.FileUtils;
+import com.winlator.core.OBBImageInstaller;
 import com.winlator.core.OnExtractFileListener;
 import com.winlator.core.PreloaderDialog;
 import com.winlator.core.ProcessHelper;
@@ -89,7 +91,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
     private boolean firstTimeBoot = false;
     private SharedPreferences preferences;
     private OnExtractFileListener onExtractFileListener;
-    private final WinHandler winHandler = new WinHandler();
+    private final WinHandler winHandler = new WinHandler(this);
     private float globalCursorSpeed = 1.0f;
 
     @Override
@@ -136,6 +138,9 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
                 graphicsDriver = shortcut.getExtra("graphicsDriver", container.getGraphicsDriver());
                 audioDriver = shortcut.getExtra("audioDriver", container.getAudioDriver());
                 screenSize = shortcut.getExtra("screenSize", container.getScreenSize());
+
+                String dinputMapperType = shortcut.getExtra("dinputMapperType");
+                if (!dinputMapperType.isEmpty()) winHandler.setDInputMapperType(Byte.parseByte(dinputMapperType));
             }
 
             if (!wineInfo.isWin64()) {
@@ -199,6 +204,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
 
     @Override
     protected void onDestroy() {
+        winHandler.stop();
         if (environment != null) environment.stopEnvironmentComponents();
         super.onDestroy();
     }
@@ -243,6 +249,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
     }
 
     private void exit() {
+        winHandler.stop();
         if (environment != null) environment.stopEnvironmentComponents();
         AppUtils.restartApplication(this);
     }
@@ -257,9 +264,10 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
             File pulseaudioDir = new File(getFilesDir(), "pulseaudio");
             TarZstdUtils.extract(this, "patches.tzst", rootDir, onExtractFileListener);
             TarZstdUtils.extract(this, "pulseaudio.tzst", pulseaudioDir);
-            WineUtils.applyRegistryKeyTweaks(this);
+            WineUtils.applyRegistryTweaks(this);
             container.putExtra("appVersion", appVersion);
             container.putExtra("imgVersion", imgVersion);
+            SettingsFragment.resetBox86_64Version(this);
             containerDataChanged = true;
         }
 
@@ -288,9 +296,11 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         envVars.put("MESA_DEBUG", "silent");
         envVars.put("MESA_NO_ERROR", "1");
         envVars.put("WINEPREFIX", ImageFs.WINEPREFIX);
+        envVars.put("WINEESYNC", "1");
         if (MainActivity.DEBUG_LEVEL <= 1) envVars.put("WINEDEBUG", "-all");
 
         String rootPath = imageFs.getRootDir().getPath();
+        FileUtils.clear(imageFs.getTmpDir());
 
         GuestProgramLauncherComponent guestProgramLauncherComponent = new GuestProgramLauncherComponent();
 
@@ -399,10 +409,6 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         };
         loadProfileSpinner.run();
 
-        final GLRenderer renderer = xServerView.getRenderer();
-        final CheckBox cbCursorVisible = dialog.findViewById(R.id.CBCursorVisible);
-        cbCursorVisible.setChecked(renderer.isCursorVisible());
-
         final CheckBox cbLockCursor = dialog.findViewById(R.id.CBLockCursor);
         cbLockCursor.setChecked(xServer.cursorLocker.getState() == CursorLocker.State.LOCKED);
 
@@ -423,7 +429,6 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         });
 
         dialog.setOnConfirmCallback(() -> {
-            renderer.setCursorVisible(cbCursorVisible.isChecked());
             xServer.cursorLocker.setState(cbLockCursor.isChecked() ? CursorLocker.State.LOCKED : CursorLocker.State.CONFINED);
             inputControlsView.setShowTouchscreenControls(cbShowTouchscreenControls.isChecked());
             int position = sProfile.getSelectedItemPosition();
@@ -511,9 +516,18 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
     }
 
     @Override
+    public boolean dispatchGenericMotionEvent(MotionEvent event) {
+        return !winHandler.onGenericMotionEvent(event) && super.dispatchGenericMotionEvent(event);
+    }
+
+    @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        return (!inputControlsView.onKeyEvent(event) && xServer.keyboard.onKeyEvent(event)) ||
+        return (!inputControlsView.onKeyEvent(event) && !winHandler.onKeyEvent(event) && xServer.keyboard.onKeyEvent(event)) ||
                (!ExternalController.isGameController(event.getDevice()) && super.dispatchKeyEvent(event));
+    }
+
+    public InputControlsView getInputControlsView() {
+        return inputControlsView;
     }
 
     private void generateWineprefix() {
@@ -731,7 +745,6 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
 
         String args = "";
         if (shortcut != null) {
-            if (shortcut.getExtra("singleCPU", "0").equals("1")) args += "/affinity "+ProcessHelper.getSingleCPUAffinityMask()+" ";
             String execArgs = shortcut.getExtra("execArgs");
             execArgs = !execArgs.isEmpty() ? " "+execArgs : "";
 

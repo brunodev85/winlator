@@ -27,6 +27,7 @@
     <string-array name="binding_type_entries">
         <item>Keyboard</item>
         <item>Mouse</item>
+        <item>Gamepad</item>
     </string-array>
     <string-array name="dxwrapper_entries">
         <item>Original WineD3D</item>
@@ -49,11 +50,15 @@
     </string-array>
     <string-array name="box64_version_entries">
         <item>0.2.2 (old)</item>
-        <item>0.2.5 (new)</item>
+        <item>0.2.6 (new)</item>
     </string-array>
     <string-array name="turnip_version_entries">
         <item>23.1.6 (a6xx)</item>
         <item>23.3.0 (a7xx)</item>
         <item>24.0.0 (a7xx)</item>
+    </string-array>
+    <string-array name="dinput_mapper_type_entries">
+        <item>Standard (Old Gamepads)</item>
+        <item>XInput</item>
     </string-array>
 </resources>

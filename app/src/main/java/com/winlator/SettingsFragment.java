@@ -53,7 +53,7 @@ import java.util.concurrent.Executors;
 
 public class SettingsFragment extends Fragment {
     public static final String DEFAULT_BOX86_VERSION = "0.3.0";
-    public static final String DEFAULT_BOX64_VERSION = "0.2.5";
+    public static final String DEFAULT_BOX64_VERSION = "0.2.6";
     private Callback<Uri> selectWineFileCallback;
     private PreloaderDialog preloaderDialog;
     private SharedPreferences preferences;
@@ -96,17 +96,27 @@ public class SettingsFragment extends Fragment {
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
         final Spinner sBox86Version = view.findViewById(R.id.SBox86Version);
-        AppUtils.setSpinnerSelectionFromIdentifier(sBox86Version, preferences.getString("box86_version", DEFAULT_BOX86_VERSION));
+        String box86Version = preferences.getString("box86_version", DEFAULT_BOX86_VERSION);
+        if (!AppUtils.setSpinnerSelectionFromIdentifier(sBox86Version, box86Version)) {
+            AppUtils.setSpinnerSelectionFromIdentifier(sBox86Version, DEFAULT_BOX86_VERSION);
+        }
 
         final Spinner sBox64Version = view.findViewById(R.id.SBox64Version);
-        AppUtils.setSpinnerSelectionFromIdentifier(sBox64Version, preferences.getString("box64_version", DEFAULT_BOX64_VERSION));
+        String box64Version = preferences.getString("box64_version", DEFAULT_BOX64_VERSION);
+        if (!AppUtils.setSpinnerSelectionFromIdentifier(sBox64Version, box64Version)) {
+            AppUtils.setSpinnerSelectionFromIdentifier(sBox64Version, DEFAULT_BOX64_VERSION);
+        }
 
         final Spinner sBox86Preset = view.findViewById(R.id.SBox86Preset);
         final Spinner sBox64Preset = view.findViewById(R.id.SBox64Preset);
         loadBox86_64PresetSpinners(view, sBox86Preset, sBox64Preset);
 
         final Spinner sTurnipVersion = view.findViewById(R.id.STurnipVersion);
-        AppUtils.setSpinnerSelectionFromIdentifier(sTurnipVersion, preferences.getString("turnip_version", getDefaultTurnipVersion(context)));
+        String defaultTurnipVersion = getDefaultTurnipVersion(context);
+        String turnipVersion = preferences.getString("turnip_version", defaultTurnipVersion);
+        if (!AppUtils.setSpinnerSelectionFromIdentifier(sTurnipVersion, turnipVersion)) {
+            AppUtils.setSpinnerSelectionFromIdentifier(sTurnipVersion, defaultTurnipVersion);
+        }
 
         final CheckBox cbUseDRI3 = view.findViewById(R.id.CBUseDRI3);
         cbUseDRI3.setChecked(preferences.getBoolean("use_dri3", true));
@@ -350,5 +360,15 @@ public class SettingsFragment extends Fragment {
             installWine(wineInfo);
         });
         dialog.show();
+    }
+
+    public static void resetBox86_64Version(AppCompatActivity activity) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("box86_version", DEFAULT_BOX86_VERSION);
+        editor.putString("box64_version", DEFAULT_BOX64_VERSION);
+        editor.remove("current_box86_version");
+        editor.remove("current_box64_version");
+        editor.apply();
     }
 }

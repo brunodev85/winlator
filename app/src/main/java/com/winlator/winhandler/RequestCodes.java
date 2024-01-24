@@ -2,9 +2,14 @@ package com.winlator.winhandler;
 
 abstract class RequestCodes {
     public static final byte EXIT = 0;
-    public static final byte EXEC = 1;
-    public static final byte KILL_PROCESS = 2;
-    public static final byte GET_PROCESSES = 3;
-    public static final byte SET_PROCESS_AFFINITY = 4;
-    public static final byte MOUSE_EVENT = 5;
+    public static final byte INIT = 1;
+    public static final byte EXEC = 2;
+    public static final byte KILL_PROCESS = 3;
+    public static final byte LIST_PROCESSES = 4;
+    public static final byte GET_PROCESS = 5;
+    public static final byte SET_PROCESS_AFFINITY = 6;
+    public static final byte MOUSE_EVENT = 7;
+    public static final byte GET_GAMEPAD = 8;
+    public static final byte GET_GAMEPAD_STATE = 9;
+    public static final byte RELEASE_GAMEPAD = 10;
 }

@@ -26,10 +26,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.navigation.NavigationView;
+import com.winlator.contentdialog.ContentDialog;
 import com.winlator.core.Callback;
 import com.winlator.core.OBBImageInstaller;
 import com.winlator.core.PreloaderDialog;
-import com.winlator.contentdialog.ContentDialog;
 import com.winlator.xenvironment.ImageFs;
 
 import java.util.List;
