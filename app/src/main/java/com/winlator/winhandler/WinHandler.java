@@ -254,7 +254,11 @@ public class WinHandler {
         try {
             localhost = InetAddress.getLocalHost();
         }
-        catch (UnknownHostException e) {}
+        catch (UnknownHostException e) {
+            try {
+                localhost = InetAddress.getByName("127.0.0.1");
+            } catch (UnknownHostException ex) {}
+        }
 
         running = true;
         startSendThread();
