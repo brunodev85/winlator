@@ -10,9 +10,11 @@ Fallout 3.icp
 Final Fantasy 8.icp
 Final Fantasy Type-0.icp
 Front Mission Evolved.icp
+GTA 5.icp
 Hitman 2.icp
 IGI 2.icp
 La Mulana.icp
+Marvel Ultimate Alliance.icp
 Mass Effect 2.icp
 Metro 2033.icp
 Oblivion.icp
