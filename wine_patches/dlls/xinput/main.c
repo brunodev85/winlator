@@ -93,6 +93,7 @@ static HANDLE update_event;
 
 static SOCKET server_sock = INVALID_SOCKET;
 static BOOL winsock_loaded = FALSE;
+static char xinput_min_index = 3;
 
 static void close_server_socket(void) 
 {
@@ -199,6 +200,7 @@ static void controller_disable(void)
 static void controller_destroy(void)
 {
 	release_gamepad_request();
+	xinput_min_index = 3;
 	
     if (controller.connected)
     {
@@ -400,6 +402,11 @@ static void start_update_thread(void)
     InitOnceExecuteOnce(&init_once, start_update_thread_once, NULL, NULL);
 }
 
+static BOOL controller_is_connected(DWORD index) 
+{
+	return index == 0 && controller.connected;
+}
+
 BOOL WINAPI DllMain(HINSTANCE inst, DWORD reason, LPVOID reserved)
 {
     TRACE("inst %p, reason %lu, reserved %p.\n", inst, reason, reserved);
@@ -440,6 +447,7 @@ DWORD WINAPI DECLSPEC_HOTPATCH XInputSetState(DWORD index, XINPUT_VIBRATION *vib
     start_update_thread();
 
     if (index >= XUSER_MAX_COUNT) return ERROR_BAD_ARGUMENTS;
+	if (!controller_is_connected(index)) return ERROR_DEVICE_NOT_CONNECTED;
 
     return ERROR_SUCCESS;
 }
@@ -453,7 +461,9 @@ static DWORD xinput_get_state(DWORD index, XINPUT_STATE *state)
     start_update_thread();
 
     if (index >= XUSER_MAX_COUNT) return ERROR_BAD_ARGUMENTS;
-    if (index != 0 || !controller.connected) return ERROR_DEVICE_NOT_CONNECTED;
+	if (index < xinput_min_index) xinput_min_index = index;
+	if (index == xinput_min_index) index = 0;
+    if (!controller_is_connected(index)) return ERROR_DEVICE_NOT_CONNECTED;
 
     *state = controller.state;
     return ERROR_SUCCESS;
@@ -486,7 +496,7 @@ DWORD WINAPI DECLSPEC_HOTPATCH XInputGetKeystroke(DWORD index, DWORD reserved, P
     TRACE("index %lu, reserved %lu, keystroke %p.\n", index, reserved, keystroke);
 
     if (index >= XUSER_MAX_COUNT && index != XUSER_INDEX_ANY) return ERROR_BAD_ARGUMENTS;
-	if (!controller.connected) return ERROR_DEVICE_NOT_CONNECTED;
+	if (!controller_is_connected(index)) return ERROR_DEVICE_NOT_CONNECTED;
 	
     return ERROR_SUCCESS;
 }
@@ -498,7 +508,7 @@ DWORD WINAPI DECLSPEC_HOTPATCH XInputGetCapabilities(DWORD index, DWORD flags, X
     start_update_thread();
 
     if (index >= XUSER_MAX_COUNT) return ERROR_BAD_ARGUMENTS;
-    if (index != 0 || !controller.connected) return ERROR_DEVICE_NOT_CONNECTED;
+    if (!controller_is_connected(index)) return ERROR_DEVICE_NOT_CONNECTED;
 
     if (flags & XINPUT_FLAG_GAMEPAD && controller.caps.SubType != XINPUT_DEVSUBTYPE_GAMEPAD) return ERROR_DEVICE_NOT_CONNECTED;
     memcpy(capabilities, &controller.caps, sizeof(*capabilities));
@@ -509,7 +519,7 @@ DWORD WINAPI DECLSPEC_HOTPATCH XInputGetCapabilities(DWORD index, DWORD flags, X
 DWORD WINAPI DECLSPEC_HOTPATCH XInputGetDSoundAudioDeviceGuids(DWORD index, GUID *render_guid, GUID *capture_guid)
 {
     if (index >= XUSER_MAX_COUNT) return ERROR_BAD_ARGUMENTS;
-    if (index != 0 || !controller.connected) return ERROR_DEVICE_NOT_CONNECTED;
+    if (!controller_is_connected(index)) return ERROR_DEVICE_NOT_CONNECTED;
 
     return ERROR_NOT_SUPPORTED;
 }
@@ -517,7 +527,7 @@ DWORD WINAPI DECLSPEC_HOTPATCH XInputGetDSoundAudioDeviceGuids(DWORD index, GUID
 DWORD WINAPI DECLSPEC_HOTPATCH XInputGetBatteryInformation(DWORD index, BYTE type, XINPUT_BATTERY_INFORMATION* battery)
 {
     if (index >= XUSER_MAX_COUNT) return ERROR_BAD_ARGUMENTS;
-    if (index != 0 || !controller.connected) return ERROR_DEVICE_NOT_CONNECTED;
+    if (!controller_is_connected(index)) return ERROR_DEVICE_NOT_CONNECTED;
 
     return ERROR_NOT_SUPPORTED;
 }

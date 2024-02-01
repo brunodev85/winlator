@@ -722,6 +722,7 @@ static HRESULT gamepad_get_property(IDirectInputDevice8W *iface, DWORD property,
     {
         DIPROPGUIDANDPATH *value = (DIPROPGUIDANDPATH *)header;
         value->guidClass = GUID_DEVCLASS_HIDCLASS;
+		lstrcpynW( value->wszPath, L"virtual#vid_045e&pid_028e&ig_00", MAX_PATH );
         return DI_OK;
     }
     }
