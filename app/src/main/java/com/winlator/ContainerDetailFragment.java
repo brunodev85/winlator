@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -38,8 +39,10 @@ import com.winlator.core.PreloaderDialog;
 import com.winlator.core.StringUtils;
 import com.winlator.core.WineInfo;
 import com.winlator.core.WineRegistryEditor;
+import com.winlator.core.WineThemeManager;
 import com.winlator.core.WineUtils;
 import com.winlator.widget.CPUListView;
+import com.winlator.widget.ColorPickerView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -148,13 +151,13 @@ public class ContainerDetailFragment extends Fragment {
         final CPUListView cpuListView = view.findViewById(R.id.CPUListView);
         if (editContainer) cpuListView.setCheckedCPUList(container.getCPUList());
 
-        createWineRegistryKeysTab(view);
+        createWineConfigurationTab(view);
         createDXComponentsTab(view);
         createEnvVarsTab(view);
         createDrivesTab(view);
 
         view.findViewById(R.id.BTAddEnvVar).setOnClickListener((v) -> (new AddEnvVarDialog(context, view)).show());
-        AppUtils.setupTabLayout(view, R.id.TabLayout, R.id.LLTabWineRegistryKeys, R.id.LLTabDXComponents, R.id.LLTabEnvVars, R.id.LLTabDrives, R.id.LLTabAdvanced);
+        AppUtils.setupTabLayout(view, R.id.TabLayout, R.id.LLTabWineConfiguration, R.id.LLTabDXComponents, R.id.LLTabEnvVars, R.id.LLTabDrives, R.id.LLTabAdvanced);
 
         view.findViewById(R.id.BTConfirm).setOnClickListener((v) -> {
             try {
@@ -171,6 +174,7 @@ public class ContainerDetailFragment extends Fragment {
                 boolean stopServicesOnStartup = cbStopServicesOnStartup.isChecked();
                 String box86Preset = Box86_64PresetManager.getSpinnerSelectedId(sBox86Preset);
                 String box64Preset = Box86_64PresetManager.getSpinnerSelectedId(sBox64Preset);
+                String desktopTheme = getDesktopTheme(view);
 
                 if (editContainer) {
                     container.setName(name);
@@ -186,6 +190,7 @@ public class ContainerDetailFragment extends Fragment {
                     container.setStopServicesOnStartup(stopServicesOnStartup);
                     container.setBox86Preset(box86Preset);
                     container.setBox64Preset(box64Preset);
+                    container.setDesktopTheme(desktopTheme);
                     container.saveData();
                     saveWineRegistryKeys(view);
                     getActivity().onBackPressed();
@@ -205,6 +210,7 @@ public class ContainerDetailFragment extends Fragment {
                     data.put("stopServicesOnStartup", stopServicesOnStartup);
                     data.put("box86Preset", box86Preset);
                     data.put("box64Preset", box64Preset);
+                    data.put("desktopTheme", desktopTheme);
 
                     if (wineInfos.size() > 1) {
                         data.put("wineVersion", wineInfos.get(sWineVersion.getSelectedItemPosition()).identifier());
@@ -278,8 +284,15 @@ public class ContainerDetailFragment extends Fragment {
         }
     }
 
-    private void createWineRegistryKeysTab(View view) {
+    private void createWineConfigurationTab(View view) {
         Context context = getContext();
+
+        String[] desktopTheme = (container != null ? container.getDesktopTheme() : WineThemeManager.DEFAULT_THEME+","+WineThemeManager.DEFAULT_BACKGROUND).split(",");
+        Spinner sDesktopTheme = view.findViewById(R.id.SDesktopTheme);
+        sDesktopTheme.setSelection(WineThemeManager.Theme.valueOf(desktopTheme[0]).ordinal());
+        ColorPickerView cpvDesktopBackground = view.findViewById(R.id.CPVDesktopBackground);
+        cpvDesktopBackground.setColor(Color.parseColor(desktopTheme[1]));
+
         File containerDir = container != null ? container.getRootDir() : null;
         File userRegFile = new File(containerDir, ".wine/user.reg");
 
@@ -369,6 +382,13 @@ public class ContainerDetailFragment extends Fragment {
             }
         }
         return StringUtils.parseIdentifier(value);
+    }
+
+    private String getDesktopTheme(View view) {
+        Spinner sDesktopTheme = view.findViewById(R.id.SDesktopTheme);
+        ColorPickerView cpvDesktopBackground = view.findViewById(R.id.CPVDesktopBackground);
+        WineThemeManager.Theme theme = WineThemeManager.Theme.values()[sDesktopTheme.getSelectedItemPosition()];
+        return theme+","+cpvDesktopBackground.getColorAsString();
     }
 
     private void loadScreenSizeSpinner(View view, String selectedValue) {

@@ -61,4 +61,8 @@
         <item>Standard (Old Gamepads)</item>
         <item>XInput</item>
     </string-array>
+    <string-array name="desktop_theme_entries">
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
 </resources>

@@ -59,7 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:min="50"
-            android:max="125" />
+            android:max="150" />
 
         <LinearLayout
             android:id="@+id/LLRangeOptions"

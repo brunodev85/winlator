@@ -5,6 +5,7 @@ import android.os.Environment;
 import com.winlator.box86_64.Box86_64Preset;
 import com.winlator.core.FileUtils;
 import com.winlator.core.WineInfo;
+import com.winlator.core.WineThemeManager;
 import com.winlator.xenvironment.ImageFs;
 
 import org.json.JSONException;
@@ -35,6 +36,7 @@ public class Container {
     private boolean showFPS;
     private boolean stopServicesOnStartup;
     private String cpuList;
+    private String desktopTheme = WineThemeManager.DEFAULT_THEME+","+WineThemeManager.DEFAULT_BACKGROUND;
     private String box86Preset = Box86_64Preset.COMPATIBILITY;
     private String box64Preset = Box86_64Preset.COMPATIBILITY;
     private File rootDir;
@@ -209,6 +211,14 @@ public class Container {
         return new File(rootDir, ".local/share/icons/hicolor/"+size+"x"+size+"/apps/");
     }
 
+    public String getDesktopTheme() {
+        return desktopTheme;
+    }
+
+    public void setDesktopTheme(String desktopTheme) {
+        this.desktopTheme = desktopTheme;
+    }
+
     public Iterable<String[]> drivesIterator() {
         return drivesIterator(drives);
     }
@@ -277,6 +287,7 @@ public class Container {
             data.put("stopServicesOnStartup", stopServicesOnStartup);
             data.put("box86Preset", box86Preset);
             data.put("box64Preset", box64Preset);
+            data.put("desktopTheme", desktopTheme);
             data.put("extraData", extraData);
 
             if (!wineVersion.equals(WineInfo.MAIN_WINE_VERSION.identifier())) {

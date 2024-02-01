@@ -50,7 +50,7 @@ public class InputControlsView extends View {
     private float overlayOpacity = DEFAULT_OVERLAY_OPACITY;
     private TouchpadView touchpadView;
     private XServer xServer;
-    private final Bitmap[] icons = new Bitmap[16];
+    private final Bitmap[] icons = new Bitmap[17];
     private Timer mouseMoveTimer;
     private final PointF mouseMoveOffset = new PointF();
     private boolean showTouchscreenControls = true;
@@ -443,12 +443,12 @@ public class InputControlsView extends View {
         }
         else {
             if (binding == Binding.MOUSE_MOVE_LEFT || binding == Binding.MOUSE_MOVE_RIGHT) {
-                mouseMoveOffset.x = isActionDown ? offset : 0;
-                createMouseMoveTimer();
+                mouseMoveOffset.x = isActionDown ? (offset != 0 ? offset : (binding == Binding.MOUSE_MOVE_LEFT ? -1 : 1)) : 0;
+                if (isActionDown) createMouseMoveTimer();
             }
             else if (binding == Binding.MOUSE_MOVE_DOWN || binding == Binding.MOUSE_MOVE_UP) {
-                mouseMoveOffset.y = isActionDown ? offset : 0;
-                createMouseMoveTimer();
+                mouseMoveOffset.y = isActionDown ? (offset != 0 ? offset : (binding == Binding.MOUSE_MOVE_UP ? -1 : 1)) : 0;
+                if (isActionDown) createMouseMoveTimer();
             }
             else {
                 Pointer.Button pointerButton = binding.getPointerButton();

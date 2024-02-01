@@ -246,7 +246,7 @@ public class GLRenderer implements GLSurfaceView.Renderer, WindowManager.OnWindo
             boolean viewable = true;
 
             if (unviewableWMClasses != null) {
-                String wmClass = window.getPropertyValue("WM_CLASS");
+                String wmClass = window.getClassName();
                 for (String unviewableWMClass : unviewableWMClasses) {
                     if (wmClass.contains(unviewableWMClass)) {
                         if (window.attributes.isEnabled()) window.disableAllDescendants();
@@ -264,8 +264,8 @@ public class GLRenderer implements GLSurfaceView.Renderer, WindowManager.OnWindo
 
                     if (width >= 320 && height >= 200 && width < xServer.screenInfo.width && height < xServer.screenInfo.height) {
                         Window parent = window.getParent();
-                        boolean parentHasWMClass = parent.getPropertyValue("WM_CLASS").contains(forceFullscreenWMClass);
-                        boolean hasWMClass = window.getPropertyValue("WM_CLASS").contains(forceFullscreenWMClass);
+                        boolean parentHasWMClass = parent.getClassName().contains(forceFullscreenWMClass);
+                        boolean hasWMClass = window.getClassName().contains(forceFullscreenWMClass);
                         if (hasWMClass) {
                             forceFullscreen = !parentHasWMClass && window.getChildCount() == 0;
                         }

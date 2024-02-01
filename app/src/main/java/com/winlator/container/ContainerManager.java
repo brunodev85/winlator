@@ -65,6 +65,7 @@ public class ContainerManager {
                             if (data.has("box86Preset")) container.setBox86Preset(data.getString("box86Preset"));
                             if (data.has("box64Preset")) container.setBox64Preset(data.getString("box64Preset"));
                             if (data.has("audioDriver")) container.setAudioDriver(data.getString("audioDriver"));
+                            if (data.has("desktopTheme")) container.setDesktopTheme(data.getString("desktopTheme"));
 
                             containers.add(container);
                             maxContainerId = Math.max(maxContainerId, container.id);
@@ -130,6 +131,7 @@ public class ContainerManager {
             container.setStopServicesOnStartup(data.getBoolean("stopServicesOnStartup"));
             container.setBox86Preset(data.getString("box86Preset"));
             container.setBox64Preset(data.getString("box64Preset"));
+            container.setDesktopTheme(data.getString("desktopTheme"));
 
             boolean isMainWineVersion = !data.has("wineVersion") || data.getString("wineVersion").equals(WineInfo.MAIN_WINE_VERSION.identifier());
             if (!isMainWineVersion) container.setWineVersion(data.getString("wineVersion"));
@@ -174,6 +176,7 @@ public class ContainerManager {
         dstContainer.setStopServicesOnStartup(srcContainer.isStopServicesOnStartup());
         dstContainer.setBox86Preset(srcContainer.getBox86Preset());
         dstContainer.setBox64Preset(srcContainer.getBox64Preset());
+        dstContainer.setDesktopTheme(srcContainer.getDesktopTheme());
         dstContainer.saveData();
 
         maxContainerId++;

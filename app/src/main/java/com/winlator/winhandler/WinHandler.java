@@ -58,82 +58,90 @@ public class WinHandler {
     }
 
     public void exec(String command) {
-        synchronized (actions) {
-            command = command.trim();
-            if (command.isEmpty()) return;
-            String[] cmdList = command.split(" ", 2);
-            final String filename = cmdList[0];
-            final String parameters = cmdList.length > 1 ? cmdList[1] : "";
+        command = command.trim();
+        if (command.isEmpty()) return;
+        String[] cmdList = command.split(" ", 2);
+        final String filename = cmdList[0];
+        final String parameters = cmdList.length > 1 ? cmdList[1] : "";
 
-            actions.add(() -> {
-                byte[] filenameBytes = filename.getBytes();
-                byte[] parametersBytes = parameters.getBytes();
+        addAction(() -> {
+            byte[] filenameBytes = filename.getBytes();
+            byte[] parametersBytes = parameters.getBytes();
 
-                sendData.rewind();
-                sendData.put(RequestCodes.EXEC);
-                sendData.putInt(filenameBytes.length + parametersBytes.length + 8);
-                sendData.putInt(filenameBytes.length);
-                sendData.putInt(parametersBytes.length);
-                sendData.put(filenameBytes);
-                sendData.put(parametersBytes);
-                sendPacket(CLIENT_PORT);
-            });
-        }
+            sendData.rewind();
+            sendData.put(RequestCodes.EXEC);
+            sendData.putInt(filenameBytes.length + parametersBytes.length + 8);
+            sendData.putInt(filenameBytes.length);
+            sendData.putInt(parametersBytes.length);
+            sendData.put(filenameBytes);
+            sendData.put(parametersBytes);
+            sendPacket(CLIENT_PORT);
+        });
     }
 
     public void killProcess(final String processName) {
-        synchronized (actions) {
-            actions.add(() -> {
-                sendData.rewind();
-                sendData.put(RequestCodes.KILL_PROCESS);
-                byte[] bytes = processName.getBytes();
-                sendData.putInt(bytes.length);
-                sendData.put(bytes);
-                sendPacket(CLIENT_PORT);
-            });
-        }
+        addAction(() -> {
+            sendData.rewind();
+            sendData.put(RequestCodes.KILL_PROCESS);
+            byte[] bytes = processName.getBytes();
+            sendData.putInt(bytes.length);
+            sendData.put(bytes);
+            sendPacket(CLIENT_PORT);
+        });
     }
 
     public void listProcesses() {
-        synchronized (actions) {
-            actions.add(() -> {
-                sendData.rewind();
-                sendData.put(RequestCodes.LIST_PROCESSES);
-                sendData.putInt(0);
+        addAction(() -> {
+            sendData.rewind();
+            sendData.put(RequestCodes.LIST_PROCESSES);
+            sendData.putInt(0);
 
-                if (!sendPacket(CLIENT_PORT) && onGetProcessInfoListener != null) {
-                    onGetProcessInfoListener.onGetProcessInfo(0, 0, null);
-                }
-            });
-        }
+            if (!sendPacket(CLIENT_PORT) && onGetProcessInfoListener != null) {
+                onGetProcessInfoListener.onGetProcessInfo(0, 0, null);
+            }
+        });
     }
 
     public void setProcessAffinity(final int pid, final int affinityMask) {
-        synchronized (actions) {
-            actions.add(() -> {
-                sendData.rewind();
-                sendData.put(RequestCodes.SET_PROCESS_AFFINITY);
-                sendData.putInt(8);
-                sendData.putInt(pid);
-                sendData.putInt(affinityMask);
-                sendPacket(CLIENT_PORT);
-            });
-        }
+        addAction(() -> {
+            sendData.rewind();
+            sendData.put(RequestCodes.SET_PROCESS_AFFINITY);
+            sendData.putInt(8);
+            sendData.putInt(pid);
+            sendData.putInt(affinityMask);
+            sendPacket(CLIENT_PORT);
+        });
     }
 
     public void mouseEvent(int flags, int dx, int dy, int wheelDelta) {
+        if (!initReceived) return;
+        addAction(() -> {
+            sendData.rewind();
+            sendData.put(RequestCodes.MOUSE_EVENT);
+            sendData.putInt(10);
+            sendData.putInt(flags);
+            sendData.putShort((short)dx);
+            sendData.putShort((short)dy);
+            sendData.putShort((short)wheelDelta);
+            sendPacket(CLIENT_PORT);
+        });
+    }
+
+    public void keyboardEvent(byte vkey, int flags) {
+        if (!initReceived) return;
+        addAction(() -> {
+            sendData.rewind();
+            sendData.put(RequestCodes.KEYBOARD_EVENT);
+            sendData.put(vkey);
+            sendData.putInt(flags);
+            sendPacket(CLIENT_PORT);
+        });
+    }
+
+    private void addAction(Runnable action) {
         synchronized (actions) {
-            if (!initReceived) return;
-            actions.add(() -> {
-                sendData.rewind();
-                sendData.put(RequestCodes.MOUSE_EVENT);
-                sendData.putInt(10);
-                sendData.putInt(flags);
-                sendData.putShort((short)dx);
-                sendData.putShort((short)dy);
-                sendData.putShort((short)wheelDelta);
-                sendPacket(CLIENT_PORT);
-            });
+            actions.add(action);
+            actions.notify();
         }
     }
 
@@ -152,6 +160,10 @@ public class WinHandler {
             while (running) {
                 synchronized (actions) {
                     while (initReceived && !actions.isEmpty()) actions.poll().run();
+                    try {
+                        actions.wait();
+                    }
+                    catch (InterruptedException e) {}
                 }
             }
         });
@@ -159,9 +171,14 @@ public class WinHandler {
 
     public void stop() {
         running = false;
+
         if (socket != null) {
             socket.close();
             socket = null;
+        }
+
+        synchronized (actions) {
+            actions.notify();
         }
     }
 
@@ -197,7 +214,7 @@ public class WinHandler {
                     currentController = ExternalController.getController(0);
                 }
 
-                actions.add(() -> {
+                addAction(() -> {
                     sendData.rewind();
                     sendData.put(RequestCodes.GET_GAMEPAD);
 
@@ -221,7 +238,7 @@ public class WinHandler {
 
                 if (currentController != null && currentController.getDeviceId() != gamepadId) currentController = null;
 
-                actions.add(() -> {
+                addAction(() -> {
                     sendData.rewind();
                     sendData.put(RequestCodes.GET_GAMEPAD_STATE);
                     sendData.put((byte)(currentController != null || useVirtualGamepad ? 1 : 0));
@@ -257,7 +274,8 @@ public class WinHandler {
         catch (UnknownHostException e) {
             try {
                 localhost = InetAddress.getByName("127.0.0.1");
-            } catch (UnknownHostException ex) {}
+            }
+            catch (UnknownHostException ex) {}
         }
 
         running = true;

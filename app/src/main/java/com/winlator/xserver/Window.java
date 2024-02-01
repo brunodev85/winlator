@@ -149,6 +149,14 @@ public class Window extends XResource {
         return modified;
     }
 
+    public String getName() {
+        return getPropertyValue("WM_NAME");
+    }
+
+    public String getClassName() {
+        return getPropertyValue("WM_CLASS");
+    }
+
     public boolean isInputOutput() {
         return content != null;
     }

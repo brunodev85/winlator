@@ -36,7 +36,6 @@ public class CPUListView extends LinearLayout {
 
     private void refreshContent() {
         removeAllViews();
-        int numProcessors = Runtime.getRuntime().availableProcessors();
         LayoutInflater inflater = LayoutInflater.from(getContext());
 
         for (int i = 0; i < numProcessors; i++) {
@@ -44,7 +43,7 @@ public class CPUListView extends LinearLayout {
             String tag = "CPU"+i;
             CheckBox checkBox = itemView.findViewById(R.id.CheckBox);
             checkBox.setTag(tag);
-            checkBox.setChecked(checkedCPUList != null ? checkedCPUList.contains(String.valueOf(i)) : i >= numProcessors / 2);
+            checkBox.setChecked(checkedCPUList != null ? checkedCPUList.contains(String.valueOf(i)) : i > 0);
 
             ((TextView)itemView.findViewById(R.id.TextView)).setText(tag);
             addView(itemView);

@@ -12,4 +12,5 @@ abstract class RequestCodes {
     public static final byte GET_GAMEPAD = 8;
     public static final byte GET_GAMEPAD_STATE = 9;
     public static final byte RELEASE_GAMEPAD = 10;
+    public static final byte KEYBOARD_EVENT = 11;
 }

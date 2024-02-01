@@ -22,7 +22,7 @@
 
     <TextView
         android:id="@+id/TVMemoryUsage"
-        android:layout_width="120dp"
+        android:layout_width="110dp"
         android:layout_height="wrap_content"
         android:paddingLeft="4dp" />
 

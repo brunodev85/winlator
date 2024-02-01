@@ -36,6 +36,7 @@ import com.winlator.core.TarZstdUtils;
 import com.winlator.core.WineInfo;
 import com.winlator.core.WineRegistryEditor;
 import com.winlator.core.WineStartMenuCreator;
+import com.winlator.core.WineThemeManager;
 import com.winlator.core.WineUtils;
 import com.winlator.inputcontrols.ControlsProfile;
 import com.winlator.inputcontrols.ExternalController;
@@ -284,6 +285,13 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
             extractDXComponentFiles();
             container.putExtra("dxcomponents", dxcomponents);
             containerDataChanged = true;
+        }
+
+        String desktopTheme = container.getDesktopTheme();
+        if (!desktopTheme.equals(container.getExtra("desktopTheme"))) {
+            String[] desktopThemeArray = desktopTheme.split(",");
+            WineThemeManager.apply(this, WineThemeManager.Theme.valueOf(desktopThemeArray[0]), desktopThemeArray[1]);
+            container.putExtra("desktopTheme", desktopTheme);
         }
 
         if (containerDataChanged) container.saveData();

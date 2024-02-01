@@ -66,7 +66,8 @@
     <string name="toggle_switch">Toggle Switch</string>
     <string name="profile_exported_to">Profile exported to</string>
     <string name="unable_to_import_profile">Unable to import profile</string>
-    <string name="wine_registry_keys">Wine Registry Keys</string>
+    <string name="wine_configuration">Wine Configuration</string>
+    <string name="registry_keys">Registry Keys</string>
     <string name="csmt">CSMT (Command Stream Multi-Thread)</string>
     <string name="gpu_name">GPU Name</string>
     <string name="offscreen_rendering_mode">Offscreen Rendering Mode</string>
@@ -100,7 +101,6 @@
     <string name="dxwrapper">DX Wrapper</string>
     <string name="mouse_warp_override">Mouse Warp Override</string>
     <string name="direct3d">Direct3D</string>
-    <string name="directinput">DirectInput</string>
     <string name="directsound">DirectSound</string>
     <string name="directmusic">DirectMusic</string>
     <string name="directplay">DirectPlay</string>
@@ -207,4 +207,7 @@
     <string name="box86_64_env_var_help__dynarec_wait">Defines whether or not Dynarec will wait for the FillBlock to be ready</string>
     <string name="columns">Columns</string>
     <string name="directinput_mapper_type">DirectInput Mapper Type</string>
+    <string name="desktop">Desktop</string>
+    <string name="theme">Theme</string>
+    <string name="background">Background</string>
 </resources>

@@ -45,10 +45,15 @@ public class StringUtils {
     }
 
     public static String formatBytes(long bytes) {
+        return formatBytes(bytes, true);
+    }
+
+    public static String formatBytes(long bytes, boolean withSuffix) {
         if (bytes <= 0) return "0 bytes";
         final String[] units = new String[]{"bytes", "KB", "MB", "GB", "TB"};
         int digitGroups = (int)(Math.log10(bytes) / Math.log10(1024));
-        return String.format(Locale.ENGLISH, "%.2f", bytes / Math.pow(1024, digitGroups))+" "+units[digitGroups];
+        String suffix = withSuffix ? " "+units[digitGroups] : "";
+        return String.format(Locale.ENGLISH, "%.2f", bytes / Math.pow(1024, digitGroups))+suffix;
     }
 
     public static String fromANSIString(byte[] bytes) {

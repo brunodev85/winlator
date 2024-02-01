@@ -132,6 +132,13 @@
         <item name="android:layout_marginTop">8dp</item>
         <item name="android:layout_marginBottom">8dp</item>
     </style>
+    <style name="FieldSeparator">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">#eeeeee</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+    </style>
     <style name="FieldSet">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>

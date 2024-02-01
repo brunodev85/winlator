@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -316,5 +317,17 @@ public abstract class FileUtils {
 
     public static String toRelativePath(String basePath, String fullPath) {
         return StringUtils.removeEndSlash((fullPath.startsWith("/") ? "/" : "")+(new File(basePath).toURI().relativize(new File(fullPath).toURI()).getPath()));
+    }
+
+    public static int readInt(String path) {
+        int result = 0;
+        try {
+            try (RandomAccessFile reader = new RandomAccessFile(path, "r")) {
+                String line = reader.readLine();
+                result = !line.isEmpty() ? Integer.parseInt(line) : 0;
+            }
+        }
+        catch (Exception e) {}
+        return result;
     }
 }

@@ -3,6 +3,7 @@ package com.winlator.winhandler;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Build;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -12,7 +13,9 @@ import android.widget.TextView;
 
 import com.winlator.R;
 import com.winlator.XServerDisplayActivity;
+import com.winlator.core.CPUStatus;
 import com.winlator.core.ProcessHelper;
+import com.winlator.core.StringUtils;
 import com.winlator.widget.CPUListView;
 import com.winlator.contentdialog.ContentDialog;
 
@@ -54,11 +57,13 @@ public class TaskManagerDialog extends ContentDialog implements OnGetProcessInfo
     private void update() {
         synchronized (lock) {
             activity.getWinHandler().listProcesses();
+
+            final LinearLayout container = findViewById(R.id.LLProcessList);
+            if (container.getChildCount() == 0) findViewById(R.id.TVEmptyText).setVisibility(View.VISIBLE);
         }
 
-        LinearLayout tableHead = findViewById(R.id.LLTableHead);
-        TextView tvMemoryInfo = (TextView)tableHead.getChildAt(2);
-        tvMemoryInfo.setText(activity.getString(R.string.memory)+" ("+ getMemoryUsagePercent()+"%)");
+        updateCPUInfoView();
+        updateMemoryInfoView();
     }
 
     private void showListItemMenu(final View anchorView, final ProcessInfo processInfo) {
@@ -93,14 +98,6 @@ public class TaskManagerDialog extends ContentDialog implements OnGetProcessInfo
             update();
         });
         dialog.show();
-    }
-
-    private byte getMemoryUsagePercent() {
-        ActivityManager activityManager = (ActivityManager)activity.getSystemService(Context.ACTIVITY_SERVICE);
-        ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
-        activityManager.getMemoryInfo(memoryInfo);
-        long usedMem = memoryInfo.totalMem - memoryInfo.availMem;
-        return (byte)(((double)usedMem / memoryInfo.totalMem) * 100.0f);
     }
 
     @Override
@@ -142,9 +139,46 @@ public class TaskManagerDialog extends ContentDialog implements OnGetProcessInfo
                 if (index >= childCount) container.addView(itemView);
 
                 if (index == numProcesses-1 && childCount > numProcesses) {
-                    for (int i = numProcesses; i < childCount; i++) container.removeViewAt(i);
+                    for (int i = childCount-1; i >= numProcesses; i--) container.removeViewAt(i);
                 }
             }
         });
+    }
+
+    private void updateCPUInfoView() {
+        LinearLayout llCPUInfo = findViewById(R.id.LLCPUInfo);
+        llCPUInfo.removeAllViews();
+        short[] clockSpeeds = CPUStatus.getCurrentClockSpeeds();
+        int totalClockSpeed = 0;
+        short maxClockSpeed = 0;
+
+        for (int i = 0; i < clockSpeeds.length; i++) {
+            TextView textView = new TextView(activity);
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+            short clockSpeed = CPUStatus.getMaxClockSpeed(i);
+            textView.setText(clockSpeeds[i]+"/"+clockSpeed+" MHz");
+            llCPUInfo.addView(textView);
+            totalClockSpeed += clockSpeeds[i];
+            maxClockSpeed = (short)Math.max(maxClockSpeed, clockSpeed);
+        }
+
+        int avgClockSpeed = totalClockSpeed / clockSpeeds.length;
+        TextView tvCPUTitle = findViewById(R.id.TVCPUTitle);
+        byte cpuUsagePercent = (byte)(((float)avgClockSpeed / maxClockSpeed) * 100.0f);
+        tvCPUTitle.setText("CPU ("+cpuUsagePercent+"%)");
+    }
+
+    private void updateMemoryInfoView() {
+        ActivityManager activityManager = (ActivityManager)activity.getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
+        activityManager.getMemoryInfo(memoryInfo);
+        long usedMem = memoryInfo.totalMem - memoryInfo.availMem;
+        byte memUsagePercent = (byte)(((double)usedMem / memoryInfo.totalMem) * 100.0f);
+
+        TextView tvMemoryTitle = findViewById(R.id.TVMemoryTitle);
+        tvMemoryTitle.setText(activity.getString(R.string.memory)+" ("+memUsagePercent+"%)");
+
+        TextView tvMemoryInfo = findViewById(R.id.TVMemoryInfo);
+        tvMemoryInfo.setText(StringUtils.formatBytes(usedMem, false)+"/"+StringUtils.formatBytes(memoryInfo.totalMem));
     }
 }
