@@ -1,4 +1,4 @@
-/*		DirectInput
+/*        DirectInput
  *
  * Copyright 1998 Marcus Meissner
  * Copyright 1998,1999 Lionel Ulmer
@@ -158,7 +158,7 @@ static HRESULT dinput_create( IUnknown **out )
 }
 
 /******************************************************************************
- *	DirectInputCreateEx (DINPUT.@)
+ *    DirectInputCreateEx (DINPUT.@)
  */
 HRESULT WINAPI DirectInputCreateEx( HINSTANCE hinst, DWORD version, REFIID iid, void **out, IUnknown *outer )
 {
@@ -191,7 +191,7 @@ HRESULT WINAPI DirectInputCreateEx( HINSTANCE hinst, DWORD version, REFIID iid, 
 }
 
 /******************************************************************************
- *	DirectInput8Create (DINPUT8.@)
+ *    DirectInput8Create (DINPUT8.@)
  */
 HRESULT WINAPI DECLSPEC_HOTPATCH DirectInput8Create( HINSTANCE hinst, DWORD version, REFIID iid, void **out, IUnknown *outer )
 {
@@ -226,7 +226,7 @@ HRESULT WINAPI DECLSPEC_HOTPATCH DirectInput8Create( HINSTANCE hinst, DWORD vers
 }
 
 /******************************************************************************
- *	DirectInputCreateA (DINPUT.@)
+ *    DirectInputCreateA (DINPUT.@)
  */
 HRESULT WINAPI DECLSPEC_HOTPATCH DirectInputCreateA( HINSTANCE hinst, DWORD version, IDirectInputA **out, IUnknown *outer )
 {
@@ -234,7 +234,7 @@ HRESULT WINAPI DECLSPEC_HOTPATCH DirectInputCreateA( HINSTANCE hinst, DWORD vers
 }
 
 /******************************************************************************
- *	DirectInputCreateW (DINPUT.@)
+ *    DirectInputCreateW (DINPUT.@)
  */
 HRESULT WINAPI DECLSPEC_HOTPATCH DirectInputCreateW( HINSTANCE hinst, DWORD version, IDirectInputW **out, IUnknown *outer )
 {
@@ -288,7 +288,7 @@ __ASM_GLOBAL_FUNC( enum_callback_wrapper,
 #endif
 
 /******************************************************************************
- *	IDirectInputW_EnumDevices
+ *    IDirectInputW_EnumDevices
  */
 static HRESULT WINAPI dinput7_EnumDevices( IDirectInput7W *iface, DWORD type, LPDIENUMDEVICESCALLBACKW callback,
                                            void *context, DWORD flags )
@@ -542,7 +542,7 @@ static HRESULT WINAPI dinput7_CreateDeviceEx( IDirectInput7W *iface, const GUID 
 
     if (IsEqualGUID( &GUID_SysKeyboard, guid )) hr = keyboard_create_device( impl, guid, &device );
     else if (IsEqualGUID( &GUID_SysMouse, guid )) hr = mouse_create_device( impl, guid, &device );
-	else if (IsEqualGUID( &GUID_Joystick, guid )) hr = gamepad_create_device( impl, guid, &device );
+    else if (IsEqualGUID( &GUID_Joystick, guid )) hr = gamepad_create_device( impl, guid, &device );
     else hr = hid_joystick_create_device( impl, guid, &device );
 
     if (FAILED(hr)) return hr;
@@ -649,10 +649,10 @@ static HRESULT WINAPI dinput8_EnumDevices( IDirectInput8W *iface, DWORD type, LP
             if (hr == DI_OK && try_enum_device( device_type, callback, &instance, context, flags ) == DIENUM_STOP)
                 return DI_OK;
         } while (SUCCEEDED(hr));
-		
-		hr = gamepad_enum_device( type, flags, &instance, impl->dwVersion );
+        
+        hr = gamepad_enum_device( type, flags, &instance, impl->dwVersion );
         if (hr == DI_OK && try_enum_device( device_type, callback, &instance, context, flags ) == DIENUM_STOP)
-            return DI_OK;		
+            return DI_OK;        
     }
 
     return DI_OK;
@@ -1130,7 +1130,7 @@ static const IClassFactoryVtbl class_factory_vtbl =
 static struct class_factory class_factory = {{&class_factory_vtbl}};
 
 /***********************************************************************
- *		DllGetClassObject (DINPUT.@)
+ *        DllGetClassObject (DINPUT.@)
  */
 HRESULT WINAPI DllGetClassObject( REFCLSID clsid, REFIID iid, void **out )
 {
@@ -1149,7 +1149,7 @@ HRESULT WINAPI DllGetClassObject( REFCLSID clsid, REFIID iid, void **out )
 }
 
 /******************************************************************************
- *	DInput hook thread
+ *    DInput hook thread
  */
 
 static LRESULT CALLBACK LL_hook_proc( int code, WPARAM wparam, LPARAM lparam )
