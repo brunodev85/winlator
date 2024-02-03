@@ -21,6 +21,13 @@ Winlator is an Android application that lets you to run Windows (x86_64) applica
 
 ----
 
+# Useful Tips
+
+- If you are experiencing performance issues, try changing the preset for Box86/Box64 in Container Settings -> Advanced Tab.
+- For applications that use .NET Framework, try installing Wine Mono found in Start Menu -> System Tools.
+- If some older games don't open, try adding the environment variable MESA_EXTENSION_MAX_YEAR=2003 in Container Settings -> Environment Variables.
+- Try running the games using the shortcut on the Winlator home screen, there you can define individual settings for each game.
+
 # Credits and Third-party apps
 - Ubuntu RootFs ([Focal Fossa](https://releases.ubuntu.com/focal))
 - Wine ([winehq.org](https://www.winehq.org/))
