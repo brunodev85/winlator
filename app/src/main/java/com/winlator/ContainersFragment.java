@@ -145,9 +145,13 @@ public class ContainersFragment extends Fragment {
             listItemMenu.setOnMenuItemClickListener((menuItem) -> {
                 switch (menuItem.getItemId()) {
                     case R.id.container_run:
-                        Intent intent = new Intent(context, XServerDisplayActivity.class);
-                        intent.putExtra("container_id", container.id);
-                        context.startActivity(intent);
+                        if (XrActivity.isSupported()) {
+                            XrActivity.openIntent(getActivity(), container.id, null);
+                        } else {
+                            Intent intent = new Intent(context, XServerDisplayActivity.class);
+                            intent.putExtra("container_id", container.id);
+                            context.startActivity(intent);
+                        }
                         break;
                     case R.id.container_edit:
                         FragmentManager fragmentManager = getParentFragmentManager();

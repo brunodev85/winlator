@@ -133,11 +133,15 @@ public class ShortcutsFragment extends Fragment {
         }
 
         private void runFromShortcut(Shortcut shortcut) {
-            Context context = getContext();
-            Intent intent = new Intent(context, XServerDisplayActivity.class);
-            intent.putExtra("container_id", shortcut.container.id);
-            intent.putExtra("shortcut_path", shortcut.file.getPath());
-            context.startActivity(intent);
+            if (XrActivity.isSupported()) {
+                XrActivity.openIntent(getActivity(), shortcut.container.id, shortcut.file.getPath());
+            } else {
+                Context context = getContext();
+                Intent intent = new Intent(context, XServerDisplayActivity.class);
+                intent.putExtra("container_id", shortcut.container.id);
+                intent.putExtra("shortcut_path", shortcut.file.getPath());
+                context.startActivity(intent);
+            }
         }
     }
 }
