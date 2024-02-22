@@ -10,6 +10,18 @@ import android.view.Display;
 
 public class XrActivity extends XServerDisplayActivity {
 
+    // Order of the enum has to be the as in xr/main.cpp
+    public enum ControllerAxis {
+        L_PITCH, L_ROLL, L_YAW, L_THUMBSTICK_X, L_THUMBSTICK_Y, L_X, L_Y, L_Z,
+        R_PITCH, R_ROLL, R_YAW, R_THUMBSTICK_X, R_THUMBSTICK_Y, R_X, R_Y, R_Z,
+    }
+
+    // Order of the enum has to be the as in xr/main.cpp
+    public enum ControllerButton {
+        L_GRIP,  L_MENU, L_THUMBSTICK_PRESS, L_THUMBSTICK_LEFT, L_THUMBSTICK_RIGHT, L_THUMBSTICK_UP, L_THUMBSTICK_DOWN, L_TRIGGER, L_X, L_Y,
+        R_A, R_B, R_GRIP, R_THUMBSTICK_PRESS, R_THUMBSTICK_LEFT, R_THUMBSTICK_RIGHT, R_THUMBSTICK_UP, R_THUMBSTICK_DOWN, R_TRIGGER,
+    }
+
     private static boolean isDeviceDetectionFinished = false;
     private static boolean isDeviceSupported = false;
 
@@ -62,6 +74,13 @@ public class XrActivity extends XServerDisplayActivity {
         context.finish();
     }
 
+    public static void updateControllers() {
+        float[] axes = instance.getAxes();
+        boolean[] buttons = instance.getButtons();
+
+        //TODO:pass the data into the X server
+    }
+
     private static int getMainDisplay(Context context) {
         final DisplayManager displayManager =
                 (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
@@ -73,10 +92,15 @@ public class XrActivity extends XServerDisplayActivity {
         return -1;
     }
 
+    // Rendering
     public native void init();
     public native void bindFramebuffer();
     public native int getWidth();
     public native int getHeight();
     public native boolean beginFrame();
     public native void endFrame();
+
+    // Input
+    public native float[] getAxes();
+    public native boolean[] getButtons();
 }
