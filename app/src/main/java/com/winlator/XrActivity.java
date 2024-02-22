@@ -8,6 +8,10 @@ import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.view.Display;
 
+import com.winlator.xserver.Keyboard;
+import com.winlator.xserver.Pointer;
+import com.winlator.xserver.XKeycode;
+
 public class XrActivity extends XServerDisplayActivity {
 
     // Order of the enum has to be the as in xr/main.cpp
@@ -24,6 +28,9 @@ public class XrActivity extends XServerDisplayActivity {
 
     private static boolean isDeviceDetectionFinished = false;
     private static boolean isDeviceSupported = false;
+    private static float[] lastAxes = new float[ControllerAxis.values().length];
+    private static boolean[] lastButtons = new boolean[ControllerButton.values().length];
+    private static float[] smoothedMouse = new float[2];
 
     private static XrActivity instance;
 
@@ -75,10 +82,44 @@ public class XrActivity extends XServerDisplayActivity {
     }
 
     public static void updateControllers() {
+        // Get OpenXR data
         float[] axes = instance.getAxes();
         boolean[] buttons = instance.getButtons();
 
-        //TODO:pass the data into the X server
+        // Update mouse
+        float f = 0.9f;
+        float meter2px = instance.getXServer().screenInfo.width * 25.0f;
+        float dx = (axes[ControllerAxis.R_X.ordinal()] - lastAxes[ControllerAxis.R_X.ordinal()]) * meter2px;
+        float dy = (axes[ControllerAxis.R_Y.ordinal()] - lastAxes[ControllerAxis.R_Y.ordinal()]) * meter2px;
+        Pointer mouse = instance.getXServer().pointer;
+        smoothedMouse[0] = smoothedMouse[0] * f + (mouse.getClampedX() + dx) * (1 - f);
+        smoothedMouse[1] = smoothedMouse[1] * f + (mouse.getClampedY() - dy) * (1 - f);
+        mouse.moveTo((int) smoothedMouse[0], (int) smoothedMouse[1]);
+        mouse.setButton(Pointer.Button.BUTTON_LEFT, buttons[ControllerButton.R_TRIGGER.ordinal()]);
+        mouse.setButton(Pointer.Button.BUTTON_RIGHT, buttons[ControllerButton.R_GRIP.ordinal()]);
+        mouse.setButton(Pointer.Button.BUTTON_MIDDLE, buttons[ControllerButton.R_THUMBSTICK_PRESS.ordinal()]);
+        mouse.setButton(Pointer.Button.BUTTON_SCROLL_UP, buttons[ControllerButton.R_THUMBSTICK_UP.ordinal()]);
+        mouse.setButton(Pointer.Button.BUTTON_SCROLL_DOWN, buttons[ControllerButton.R_THUMBSTICK_DOWN.ordinal()]);
+
+        // Store the OpenXR data
+        System.arraycopy(axes, 0, lastAxes, 0, axes.length);
+        System.arraycopy(buttons, 0, lastButtons, 0, buttons.length);
+
+        // Update keyboard
+        mapKey(ControllerButton.R_A, XKeycode.KEY_A.id);
+        mapKey(ControllerButton.R_B, XKeycode.KEY_B.id);
+        mapKey(ControllerButton.L_X, XKeycode.KEY_X.id);
+        mapKey(ControllerButton.L_Y, XKeycode.KEY_Y.id);
+        mapKey(ControllerButton.L_GRIP, XKeycode.KEY_SPACE.id);
+        mapKey(ControllerButton.L_MENU, XKeycode.KEY_ESC.id);
+        mapKey(ControllerButton.L_TRIGGER, XKeycode.KEY_ENTER.id);
+        mapKey(ControllerButton.L_THUMBSTICK_LEFT, XKeycode.KEY_LEFT.id);
+        mapKey(ControllerButton.L_THUMBSTICK_RIGHT, XKeycode.KEY_RIGHT.id);
+        mapKey(ControllerButton.L_THUMBSTICK_UP, XKeycode.KEY_UP.id);
+        mapKey(ControllerButton.L_THUMBSTICK_DOWN, XKeycode.KEY_DOWN.id);
+        mapKey(ControllerButton.R_THUMBSTICK_LEFT, XKeycode.KEY_KP_SUBTRACT.id);
+        mapKey(ControllerButton.R_THUMBSTICK_RIGHT, XKeycode.KEY_KP_ADD.id);
+        //L_THUMBSTICK_PRESS unused
     }
 
     private static int getMainDisplay(Context context) {
@@ -90,6 +131,15 @@ public class XrActivity extends XServerDisplayActivity {
             }
         }
         return -1;
+    }
+
+    private static void mapKey(ControllerButton xrButton, byte xKeycode) {
+        Keyboard keyboard = instance.getXServer().keyboard;
+        if (lastButtons[xrButton.ordinal()]) {
+            keyboard.setKeyPress(xKeycode, 0);
+        } else {
+            keyboard.setKeyRelease(xKeycode);
+        }
     }
 
     // Rendering
