@@ -1,7 +1,6 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-#include "loader.h"
 #include "base.h"
 #include "math.h"
 #include "renderer.h"

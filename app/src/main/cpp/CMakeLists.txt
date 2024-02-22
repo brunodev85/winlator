@@ -10,7 +10,6 @@ add_library(winlator SHARED
             xr/base.cpp
             xr/framebuffer.cpp
             xr/input.cpp
-            xr/loader.cpp
             xr/main.cpp
             xr/math.cpp
             xr/renderer.cpp

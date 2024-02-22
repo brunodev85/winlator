@@ -1,6 +1,15 @@
 #pragma once
 
-#include "loader.h"
+#ifdef ANDROID
+#include <jni.h>
+#define XR_USE_PLATFORM_ANDROID 1
+#define XR_USE_GRAPHICS_API_OPENGL_ES 1
+#include <EGL/egl.h>
+#include <EGL/eglext.h>
+#endif
+
+#include <openxr/openxr.h>
+#include <openxr/openxr_platform.h>
 
 class Framebuffer
 {

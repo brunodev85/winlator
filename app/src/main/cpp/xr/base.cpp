@@ -16,12 +16,6 @@ void Base::Init(void* system, const char* name, int version)
   if (m_initialized)
     return;
 
-  if (!XRLoad())
-  {
-    ALOGE("Failed to load OpenXR")
-    return;
-  }
-
 #ifdef ANDROID
   PFN_xrInitializeLoaderKHR xrInitializeLoaderKHR;
   xrGetInstanceProcAddr(XR_NULL_HANDLE, "xrInitializeLoaderKHR",
@@ -99,8 +93,6 @@ void Base::Init(void* system, const char* name, int version)
     exit(1);
   }
 
-  XRLoadInstanceFunctions(m_instance);
-
   XrInstanceProperties instance_properties;
   instance_properties.type = XR_TYPE_INSTANCE_PROPERTIES;
   instance_properties.next = NULL;
@@ -172,8 +164,6 @@ void Base::EnterXR()
   graphics_binding_gl.config = NULL;
   graphics_binding_gl.context = eglGetCurrentContext();
   session_info.next = &graphics_binding_gl;
-#else
-  // TODO:PCVR definition
 #endif
   session_info.type = XR_TYPE_SESSION_CREATE_INFO;
   session_info.createFlags = 0;
