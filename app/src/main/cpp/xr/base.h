@@ -43,6 +43,7 @@ enum PlatformFlag
   PLATFORM_CONTROLLER_PICO,
   PLATFORM_CONTROLLER_QUEST,
   PLATFORM_EXTENSION_INSTANCE,
+  PLATFORM_EXTENSION_PASSTHROUGH,
   PLATFORM_EXTENSION_PERFORMANCE,
   PLATFORM_TRACKING_FLOOR,
   PLATFORM_MAX
@@ -52,6 +53,7 @@ typedef union
 {
   XrCompositionLayerProjection projection;
   XrCompositionLayerCylinderKHR cylinder;
+  XrCompositionLayerPassthroughFB Passthrough;
 } CompositorLayer;
 
 #ifdef ANDROID

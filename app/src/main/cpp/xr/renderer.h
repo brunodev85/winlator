@@ -16,8 +16,9 @@ enum ConfigFloat
 
 enum ConfigInt
 {
-  // switching between 2D and 3D
+  // switching between modes
   CONFIG_MODE,
+  CONFIG_PASSTHROUGH,
   // viewport setup
   CONFIG_VIEWPORT_WIDTH,
   CONFIG_VIEWPORT_HEIGHT,
@@ -41,7 +42,7 @@ class Renderer
 public:
   void GetResolution(Base* engine, int* pWidth, int* pHeight);
   void Init(Base* engine, bool multiview);
-  void Destroy();
+  void Destroy(Base* engine);
 
   bool InitFrame(Base* engine);
   void BeginFrame(int fbo_index);
@@ -73,6 +74,8 @@ private:
 
   int m_layer_count = 0;
   CompositorLayer m_layers[MaxLayerCount] = {};
+  XrPassthroughFB m_passthrough = XR_NULL_HANDLE;
+  XrPassthroughLayerFB m_passthroughLayer = XR_NULL_HANDLE;
   XrViewConfigurationProperties m_viewport_config = {};
   XrViewConfigurationView m_view_config[MaxNumEyes] = {};
   Framebuffer m_framebuffer[MaxNumEyes] = {};

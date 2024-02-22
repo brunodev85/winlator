@@ -49,6 +49,10 @@ void Base::Init(void* system, const char* name, int version)
   {
     extensions.push_back(XR_KHR_ANDROID_CREATE_INSTANCE_EXTENSION_NAME);
   }
+  if (GetPlatformFlag(PLATFORM_EXTENSION_PASSTHROUGH))
+  {
+    extensions.push_back(XR_FB_PASSTHROUGH_EXTENSION_NAME);
+  }
   if (GetPlatformFlag(PLATFORM_EXTENSION_PERFORMANCE))
   {
     extensions.push_back(XR_EXT_PERFORMANCE_SETTINGS_EXTENSION_NAME);

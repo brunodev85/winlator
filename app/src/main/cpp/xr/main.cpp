@@ -44,9 +44,11 @@ JNIEXPORT void JNICALL Java_com_winlator_XrActivity_init(JNIEnv *env, jclass obj
     s_module_input = new Input();
     s_module_renderer = new Renderer();
     s_module_renderer->SetConfigFloat(CONFIG_CANVAS_DISTANCE, 4.0f);
+    s_module_renderer->SetConfigInt(CONFIG_PASSTHROUGH, true);
 
     // Set platform flags
     s_module_base->SetPlatformFlag(PLATFORM_CONTROLLER_QUEST, true);
+    s_module_base->SetPlatformFlag(PLATFORM_EXTENSION_PASSTHROUGH, true);
     s_module_base->SetPlatformFlag(PLATFORM_EXTENSION_PERFORMANCE, true);
 
     // Get Java VM

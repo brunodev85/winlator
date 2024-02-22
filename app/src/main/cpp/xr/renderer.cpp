@@ -9,6 +9,19 @@
 #include <cstdlib>
 #include <cstring>
 
+
+#define DECL_PFN(pfn) PFN_##pfn pfn = nullptr
+#define INIT_PFN(pfn) OXR(xrGetInstanceProcAddr(engine->GetInstance(), #pfn, (PFN_xrVoidFunction*)(&pfn)))
+
+DECL_PFN(xrCreatePassthroughFB);
+DECL_PFN(xrDestroyPassthroughFB);
+DECL_PFN(xrPassthroughStartFB);
+DECL_PFN(xrPassthroughPauseFB);
+DECL_PFN(xrCreatePassthroughLayerFB);
+DECL_PFN(xrDestroyPassthroughLayerFB);
+DECL_PFN(xrPassthroughLayerPauseFB);
+DECL_PFN(xrPassthroughLayerResumeFB);
+
 void Renderer::GetResolution(Base* engine, int* pWidth, int* pHeight)
 {
   static int width = 0;
@@ -93,7 +106,19 @@ void Renderer::Init(Base* engine, bool multiview)
 {
   if (m_initialized)
   {
-    Destroy();
+    Destroy(engine);
+  }
+
+  if (engine->GetPlatformFlag(PlatformFlag::PLATFORM_EXTENSION_PASSTHROUGH))
+  {
+    INIT_PFN(xrCreatePassthroughFB);
+    INIT_PFN(xrDestroyPassthroughFB);
+    INIT_PFN(xrPassthroughStartFB);
+    INIT_PFN(xrPassthroughPauseFB);
+    INIT_PFN(xrCreatePassthroughLayerFB);
+    INIT_PFN(xrDestroyPassthroughLayerFB);
+    INIT_PFN(xrPassthroughLayerPauseFB);
+    INIT_PFN(xrPassthroughLayerResumeFB);
   }
 
   int eyeW, eyeH;
@@ -139,11 +164,37 @@ void Renderer::Init(Base* engine, bool multiview)
   {
     m_framebuffer[i].Create(engine->GetSession(), width, height, multiview);
   }
+
+  if (engine->GetPlatformFlag(PlatformFlag::PLATFORM_EXTENSION_PASSTHROUGH))
+  {
+    XrPassthroughCreateInfoFB ptci = {XR_TYPE_PASSTHROUGH_CREATE_INFO_FB};
+    XrResult result;
+    OXR(result = xrCreatePassthroughFB(engine->GetSession(), &ptci, &m_passthrough));
+
+    if (XR_SUCCEEDED(result))
+    {
+      XrPassthroughLayerCreateInfoFB plci = {XR_TYPE_PASSTHROUGH_LAYER_CREATE_INFO_FB};
+      plci.passthrough = m_passthrough;
+      plci.purpose = XR_PASSTHROUGH_LAYER_PURPOSE_RECONSTRUCTION_FB;
+      OXR(xrCreatePassthroughLayerFB(engine->GetSession(), &plci, &m_passthroughLayer));
+    }
+
+    OXR(xrPassthroughStartFB(m_passthrough));
+    OXR(xrPassthroughLayerResumeFB(m_passthroughLayer));
+  }
   m_initialized = true;
 }
 
-void Renderer::Destroy()
+void Renderer::Destroy(Base* engine)
 {
+  if (engine->GetPlatformFlag(PlatformFlag::PLATFORM_EXTENSION_PASSTHROUGH))
+  {
+    OXR(xrPassthroughLayerPauseFB(m_passthroughLayer));
+    OXR(xrPassthroughPauseFB(m_passthrough));
+    OXR(xrDestroyPassthroughFB(m_passthrough));
+    m_passthrough = XR_NULL_HANDLE;
+  }
+
   int instances = m_multiview ? 1 : MaxNumEyes;
   for (int i = 0; i < instances; i++)
   {
@@ -224,6 +275,18 @@ void Renderer::EndFrame()
 
 void Renderer::FinishFrame(Base* engine)
 {
+  if (engine->GetPlatformFlag(PlatformFlag::PLATFORM_EXTENSION_PASSTHROUGH) && GetConfigInt(CONFIG_PASSTHROUGH))
+  {
+    if (m_passthroughLayer != XR_NULL_HANDLE)
+    {
+      XrCompositionLayerPassthroughFB passthrough_layer = {XR_TYPE_COMPOSITION_LAYER_PASSTHROUGH_FB};
+      passthrough_layer.layerHandle = m_passthroughLayer;
+      passthrough_layer.flags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT;
+      passthrough_layer.space = XR_NULL_HANDLE;
+      m_layers[m_layer_count++].Passthrough = passthrough_layer;
+    }
+  }
+
   int mode = m_config_int[CONFIG_MODE];
   XrCompositionLayerProjectionView projection_layer_elements[2] = {};
   if ((mode == RENDER_MODE_MONO_6DOF) || (mode == RENDER_MODE_STEREO_6DOF))
