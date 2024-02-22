@@ -62,7 +62,7 @@ void Framebuffer::Acquire()
 #if XR_USE_GRAPHICS_API_OPENGL_ES
   GL(glEnable(GL_SCISSOR_TEST));
   GL(glViewport(0, 0, m_width, m_height));
-  GL(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+  GL(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
   GL(glScissor(0, 0, m_width, m_height));
   GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
   GL(glScissor(0, 0, 0, 0));
@@ -74,14 +74,6 @@ void Framebuffer::Release()
 {
   if (m_acquired)
   {
-    // Clear the alpha channel, other way OpenXR would not transfer the framebuffer fully
-#if XR_USE_GRAPHICS_API_OPENGL_ES
-    GL(glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE));
-    GL(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
-    GL(glClear(GL_COLOR_BUFFER_BIT));
-    GL(glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE));
-#endif
-
     XrSwapchainImageReleaseInfo release_info = {XR_TYPE_SWAPCHAIN_IMAGE_RELEASE_INFO, NULL};
     OXR(xrReleaseSwapchainImage(m_handle, &release_info));
     m_acquired = false;
