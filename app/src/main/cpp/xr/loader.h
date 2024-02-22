@@ -7,13 +7,6 @@
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 
-#if OPENXR
-// One of the Android-based headsets. We're linking with a static OpenXR loader.
-#else
-// In Android app, we don't have a loader so use our own dynamic loader, which won't load anything.
-#define XR_NO_PROTOTYPES 1
-#endif
-
 #elif defined(_WIN32)
 #include <Windows.h>
 #if defined(WINAPI_FAMILY) && defined(WINAPI_FAMILY_PARTITION)

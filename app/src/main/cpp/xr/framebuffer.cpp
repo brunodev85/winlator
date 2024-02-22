@@ -52,7 +52,7 @@ void Framebuffer::Acquire()
   {
     res = xrWaitSwapchainImage(m_handle, &wait_info);
     i++;
-    ALOGV("Retry xrWaitSwapchainImage %d times due XR_TIMEOUT_EXPIRED (duration %d ms",
+    ALOGV("Retry xrWaitSwapchainImage %d times due XR_TIMEOUT_EXPIRED (duration %lf ms",
                   i, wait_info.timeout * (1E-9));
   }
 

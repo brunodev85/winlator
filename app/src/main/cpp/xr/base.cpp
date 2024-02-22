@@ -18,6 +18,7 @@ void Base::Init(void* system, const char* name, int version)
 
   if (!XRLoad())
   {
+    ALOGE("Failed to load OpenXR")
     return;
   }
 
@@ -27,7 +28,7 @@ void Base::Init(void* system, const char* name, int version)
                         (PFN_xrVoidFunction*)&xrInitializeLoaderKHR);
   if (xrInitializeLoaderKHR != NULL)
   {
-    vrJava* java = (vrJava*)system;
+    xrJava* java = (xrJava*)system;
     XrLoaderInitInfoAndroidKHR loader_info;
     memset(&loader_info, 0, sizeof(loader_info));
     loader_info.type = XR_TYPE_LOADER_INIT_INFO_ANDROID_KHR;
@@ -79,7 +80,7 @@ void Base::Init(void* system, const char* name, int version)
   XrInstanceCreateInfoAndroidKHR instance_info_android = {XR_TYPE_INSTANCE_CREATE_INFO_ANDROID_KHR};
   if (GetPlatformFlag(PLATFORM_EXTENSION_INSTANCE))
   {
-    vrJava* java = (vrJava*)system;
+    xrJava* java = (xrJava*)system;
     instance_info_android.applicationVM = java->vm;
     instance_info_android.applicationActivity = java->activity;
     instance_info.next = (XrBaseInStructure*)&instance_info_android;
@@ -144,11 +145,11 @@ void Base::Destroy()
   }
 }
 
-void Base::EnterVR()
+void Base::EnterXR()
 {
   if (m_session)
   {
-    ALOGE("EnterVR called with existing session");
+    ALOGE("EnterXR called with existing session");
     return;
   }
 
@@ -190,7 +191,7 @@ void Base::EnterVR()
   OXR(xrCreateReferenceSpace(m_session, &space_info, &m_head_space));
 }
 
-void Base::LeaveVR()
+void Base::LeaveXR()
 {
   if (m_session)
   {

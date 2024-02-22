@@ -6,8 +6,18 @@
 #include <cassert>
 #include <cmath>
 
+//#define _DEBUG
+
+#if defined(_DEBUG)
+void GLCheckErrors(const char* file, int line);
+void OXRCheckErrors(XrResult result, const char* file, int line);
+
+#define GL(func) func; GLCheckErrors(__FILE__ , __LINE__);
+#define OXR(func) OXRCheckErrors(func, __FILE__ , __LINE__);
+#else
 #define GL(func) func;
 #define OXR(func) func;
+#endif
 
 #ifdef ANDROID
 #include <android/log.h>
@@ -50,7 +60,7 @@ typedef struct
   jobject activity;
   JNIEnv* env;
   JavaVM* vm;
-} vrJava;
+} xrJava;
 #endif
 
 class Base
@@ -58,8 +68,8 @@ class Base
 public:
   void Init(void* system, const char* name, int version);
   void Destroy();
-  void EnterVR();
-  void LeaveVR();
+  void EnterXR();
+  void LeaveXR();
   void UpdateFakeSpace(XrReferenceSpaceCreateInfo* space_info);
   void UpdateStageSpace(XrReferenceSpaceCreateInfo* space_info);
   void WaitForFrame();

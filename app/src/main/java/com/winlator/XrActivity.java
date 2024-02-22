@@ -9,14 +9,33 @@ import android.os.Build;
 import android.view.Display;
 
 public class XrActivity extends XServerDisplayActivity {
+
+    private static boolean isDeviceDetectionFinished = false;
+    private static boolean isDeviceSupported = false;
+
+    private static XrActivity instance;
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        instance = this;
+    }
+
+    public static XrActivity getInstance() {
+        return instance;
+    }
+
     public static boolean isSupported() {
-        if (Build.MANUFACTURER.compareToIgnoreCase("META") == 0) {
-            return true;
-        } else if (Build.MANUFACTURER.compareToIgnoreCase("OCULUS") == 0) {
-            return true;
-        } else {
-            return false;
+        if (!isDeviceDetectionFinished) {
+            if (Build.MANUFACTURER.compareToIgnoreCase("META") == 0) {
+                isDeviceSupported = true;
+            }
+            if (Build.MANUFACTURER.compareToIgnoreCase("OCULUS") == 0) {
+                isDeviceSupported = true;
+            }
+            isDeviceDetectionFinished = true;
         }
+        return isDeviceSupported;
     }
 
     public static void openIntent(Activity context, int containerId, String path) {
@@ -53,4 +72,11 @@ public class XrActivity extends XServerDisplayActivity {
         }
         return -1;
     }
+
+    public native void init();
+    public native void bindFramebuffer();
+    public native int getWidth();
+    public native int getHeight();
+    public native boolean beginFrame();
+    public native void endFrame();
 }

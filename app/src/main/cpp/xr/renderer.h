@@ -21,7 +21,6 @@ enum ConfigInt
   // viewport setup
   CONFIG_VIEWPORT_WIDTH,
   CONFIG_VIEWPORT_HEIGHT,
-  CONFIG_VIEWPORT_VALID,
   // render status
   CONFIG_CURRENT_FBO,
 
