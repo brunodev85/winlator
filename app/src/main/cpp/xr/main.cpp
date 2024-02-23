@@ -114,24 +114,33 @@ JNIEXPORT jfloatArray JNICALL Java_com_winlator_XrActivity_getAxes(JNIEnv *env, 
     auto rPose = s_module_input->GetPose(1);
     auto lThumbstick = s_module_input->GetJoystickState(0);
     auto rThumbstick = s_module_input->GetJoystickState(1);
+    auto lView = s_module_renderer->GetView(0).pose;
+    auto rView = s_module_renderer->GetView(1).pose;
 
     std::vector<float> data;
     data.push_back(EulerAngles(lPose.orientation).x); //L_PITCH
-    data.push_back(EulerAngles(lPose.orientation).y); //L_ROLL
-    data.push_back(EulerAngles(lPose.orientation).z); //L_YAW
+    data.push_back(EulerAngles(lPose.orientation).y); //L_YAW
+    data.push_back(EulerAngles(lPose.orientation).z); //L_ROLL
     data.push_back(lThumbstick.x); //L_THUMBSTICK_X
     data.push_back(lThumbstick.y); //L_THUMBSTICK_Y
     data.push_back(lPose.position.x); //L_X
     data.push_back(lPose.position.y); //L_Y
     data.push_back(lPose.position.z); //L_Z
     data.push_back(EulerAngles(rPose.orientation).x); //R_PITCH
-    data.push_back(EulerAngles(rPose.orientation).y); //R_ROLL
-    data.push_back(EulerAngles(rPose.orientation).z); //R_YAW
+    data.push_back(EulerAngles(rPose.orientation).y); //R_YAW
+    data.push_back(EulerAngles(rPose.orientation).z); //R_ROLL
     data.push_back(rThumbstick.x); //R_THUMBSTICK_X
     data.push_back(rThumbstick.y); //R_THUMBSTICK_Y
     data.push_back(rPose.position.x); //R_X
     data.push_back(rPose.position.y); //R_Y
     data.push_back(rPose.position.z); //R_Z
+    data.push_back(EulerAngles(lView.orientation).x); //HMD_PITCH
+    data.push_back(EulerAngles(lView.orientation).y); //HMD_YAW
+    data.push_back(EulerAngles(lView.orientation).z); //HMD_ROLL
+    data.push_back((lView.position.x + rView.position.x) * 0.5f); //HMD_X
+    data.push_back((lView.position.y + rView.position.y) * 0.5f); //HMD_Y
+    data.push_back((lView.position.z + rView.position.z) * 0.5f); //HMD_Z
+    data.push_back(Distance(lView.position, rView.position)); //HMD_IPD
 
     jfloat values[data.size()];
     std::copy(data.begin(), data.end(), values);

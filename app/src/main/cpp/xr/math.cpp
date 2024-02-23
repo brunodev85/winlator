@@ -127,10 +127,19 @@ XrVector3f, XrVector4f
 ================================================================================
 */
 
+
+float Distance(const XrVector3f a, const XrVector3f b)
+{
+  XrVector3f diff;
+  diff.x = a.x - b.x;
+  diff.y = a.y - b.y;
+  diff.z = a.z - b.z;
+  return sqrt(LengthSquared(diff));
+}
+
 float LengthSquared(const XrVector3f v)
 {
   return v.x * v.x + v.y * v.y + v.z * v.z;
-  ;
 }
 
 XrVector3f GetAnglesFromVectors(XrVector3f forward, XrVector3f right, XrVector3f up)

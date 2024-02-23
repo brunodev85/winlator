@@ -19,6 +19,7 @@ XrVector3f EulerAngles(const XrQuaternionf q);
 void ToMatrix4f(const XrQuaternionf* q, float* m);
 
 // XrVector3f, XrVector4f
+float Distance(const XrVector3f a, const XrVector3f b);
 float LengthSquared(const XrVector3f v);
 XrVector3f GetAnglesFromVectors(XrVector3f forward, XrVector3f right, XrVector3f up);
 XrVector3f Normalized(const XrVector3f v);
