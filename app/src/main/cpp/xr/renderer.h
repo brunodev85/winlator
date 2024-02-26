@@ -75,7 +75,8 @@ private:
   int m_layer_count = 0;
   CompositorLayer m_layers[MaxLayerCount] = {};
   XrPassthroughFB m_passthrough = XR_NULL_HANDLE;
-  XrPassthroughLayerFB m_passthroughLayer = XR_NULL_HANDLE;
+  XrPassthroughLayerFB m_passthrough_layer = XR_NULL_HANDLE;
+  bool m_passthrough_running = false;
   XrViewConfigurationProperties m_viewport_config = {};
   XrViewConfigurationView m_view_config[MaxNumEyes] = {};
   Framebuffer m_framebuffer[MaxNumEyes] = {};

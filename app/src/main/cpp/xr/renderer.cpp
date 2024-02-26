@@ -175,11 +175,11 @@ void Renderer::Init(Base* engine, bool multiview)
       XrPassthroughLayerCreateInfoFB plci = {XR_TYPE_PASSTHROUGH_LAYER_CREATE_INFO_FB};
       plci.passthrough = m_passthrough;
       plci.purpose = XR_PASSTHROUGH_LAYER_PURPOSE_RECONSTRUCTION_FB;
-      OXR(xrCreatePassthroughLayerFB(engine->GetSession(), &plci, &m_passthroughLayer));
+      OXR(xrCreatePassthroughLayerFB(engine->GetSession(), &plci, &m_passthrough_layer));
     }
 
     OXR(xrPassthroughStartFB(m_passthrough));
-    OXR(xrPassthroughLayerResumeFB(m_passthroughLayer));
+    OXR(xrPassthroughLayerResumeFB(m_passthrough_layer));
   }
   m_initialized = true;
 }
@@ -188,7 +188,10 @@ void Renderer::Destroy(Base* engine)
 {
   if (engine->GetPlatformFlag(PlatformFlag::PLATFORM_EXTENSION_PASSTHROUGH))
   {
-    OXR(xrPassthroughLayerPauseFB(m_passthroughLayer));
+    if (m_passthrough_running)
+    {
+      OXR(xrPassthroughLayerPauseFB(m_passthrough_layer));
+    }
     OXR(xrPassthroughPauseFB(m_passthrough));
     OXR(xrDestroyPassthroughFB(m_passthrough));
     m_passthrough = XR_NULL_HANDLE;
@@ -217,6 +220,20 @@ bool Renderer::InitFrame(Base* engine)
   }
 
   UpdateStageBounds(engine);
+
+  // Update passthrough
+  if (m_passthrough_running != GetConfigInt(CONFIG_PASSTHROUGH))
+  {
+    if (GetConfigInt(CONFIG_PASSTHROUGH))
+    {
+      OXR(xrPassthroughLayerResumeFB(m_passthrough_layer));
+    }
+    else
+    {
+      OXR(xrPassthroughLayerPauseFB(m_passthrough_layer));
+    }
+    m_passthrough_running = GetConfigInt(CONFIG_PASSTHROUGH);
+  }
 
   engine->WaitForFrame();
 
@@ -274,18 +291,6 @@ void Renderer::EndFrame()
 
 void Renderer::FinishFrame(Base* engine)
 {
-  if (engine->GetPlatformFlag(PlatformFlag::PLATFORM_EXTENSION_PASSTHROUGH) && GetConfigInt(CONFIG_PASSTHROUGH))
-  {
-    if (m_passthroughLayer != XR_NULL_HANDLE)
-    {
-      XrCompositionLayerPassthroughFB passthrough_layer = {XR_TYPE_COMPOSITION_LAYER_PASSTHROUGH_FB};
-      passthrough_layer.layerHandle = m_passthroughLayer;
-      passthrough_layer.flags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT;
-      passthrough_layer.space = XR_NULL_HANDLE;
-      m_layers[m_layer_count++].Passthrough = passthrough_layer;
-    }
-  }
-
   int mode = m_config_int[CONFIG_MODE];
   XrCompositionLayerProjectionView projection_layer_elements[2] = {};
   if ((mode == RENDER_MODE_MONO_6DOF) || (mode == RENDER_MODE_STEREO_6DOF))

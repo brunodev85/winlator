@@ -104,7 +104,7 @@ public class GLRenderer implements GLSurfaceView.Renderer, WindowManager.OnWindo
     private void drawFrame() {
         boolean xrFrame = false;
         if (XrActivity.isSupported()) {
-            xrFrame = XrActivity.getInstance().beginFrame();
+            xrFrame = XrActivity.getInstance().beginFrame(XrActivity.getImmersive());
         }
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
@@ -132,7 +132,6 @@ public class GLRenderer implements GLSurfaceView.Renderer, WindowManager.OnWindo
         if (xrFrame) {
             XrActivity.getInstance().endFrame();
             XrActivity.updateControllers();
-            xServerView.queueEvent(this::updateScene);
             xServerView.requestRender();
         }
     }

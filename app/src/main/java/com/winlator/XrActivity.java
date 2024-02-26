@@ -31,6 +31,7 @@ public class XrActivity extends XServerDisplayActivity {
 
     private static boolean isDeviceDetectionFinished = false;
     private static boolean isDeviceSupported = false;
+    private static boolean isImmersive = false;
     private static float[] lastAxes = new float[ControllerAxis.values().length];
     private static boolean[] lastButtons = new boolean[ControllerButton.values().length];
     private static float[] smoothedMouse = new float[2];
@@ -45,6 +46,10 @@ public class XrActivity extends XServerDisplayActivity {
 
     public static XrActivity getInstance() {
         return instance;
+    }
+
+    public static boolean getImmersive() {
+        return isImmersive;
     }
 
     public static boolean isSupported() {
@@ -106,6 +111,11 @@ public class XrActivity extends XServerDisplayActivity {
             mouse.setButton(Pointer.Button.BUTTON_SCROLL_UP, buttons[ControllerButton.R_THUMBSTICK_UP.ordinal()]);
             mouse.setButton(Pointer.Button.BUTTON_SCROLL_DOWN, buttons[ControllerButton.R_THUMBSTICK_DOWN.ordinal()]);
 
+            // Switch immersive mode
+            if (buttons[ControllerButton.L_THUMBSTICK_PRESS.ordinal()] && !lastButtons[ControllerButton.L_THUMBSTICK_PRESS.ordinal()]) {
+                isImmersive = !isImmersive;
+            }
+
             // Store the OpenXR data
             System.arraycopy(axes, 0, lastAxes, 0, axes.length);
             System.arraycopy(buttons, 0, lastButtons, 0, buttons.length);
@@ -124,7 +134,6 @@ public class XrActivity extends XServerDisplayActivity {
             mapKey(ControllerButton.L_THUMBSTICK_DOWN, XKeycode.KEY_DOWN.id);
             mapKey(ControllerButton.R_THUMBSTICK_LEFT, XKeycode.KEY_KP_SUBTRACT.id);
             mapKey(ControllerButton.R_THUMBSTICK_RIGHT, XKeycode.KEY_KP_ADD.id);
-            //L_THUMBSTICK_PRESS unused
         }
     }
 
@@ -153,7 +162,7 @@ public class XrActivity extends XServerDisplayActivity {
     public native void bindFramebuffer();
     public native int getWidth();
     public native int getHeight();
-    public native boolean beginFrame();
+    public native boolean beginFrame(boolean immersive);
     public native void endFrame();
 
     // Input
