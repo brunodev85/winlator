@@ -102,8 +102,16 @@ public class XrActivity extends XServerDisplayActivity {
             float dx = (axes[ControllerAxis.R_X.ordinal()] - lastAxes[ControllerAxis.R_X.ordinal()]) * meter2px;
             float dy = (axes[ControllerAxis.R_Y.ordinal()] - lastAxes[ControllerAxis.R_Y.ordinal()]) * meter2px;
             Pointer mouse = instance.getXServer().pointer;
-            smoothedMouse[0] = smoothedMouse[0] * f + (mouse.getClampedX() + dx) * (1 - f);
-            smoothedMouse[1] = smoothedMouse[1] * f + (mouse.getClampedY() - dy) * (1 - f);
+            if (isImmersive) {
+                float angle2px = instance.getXServer().screenInfo.width * 0.01f / f;
+                dx = getAngleDiff(lastAxes[ControllerAxis.HMD_YAW.ordinal()], axes[ControllerAxis.HMD_YAW.ordinal()]) * angle2px;
+                dy = getAngleDiff(lastAxes[ControllerAxis.HMD_PITCH.ordinal()], axes[ControllerAxis.HMD_PITCH.ordinal()]) * angle2px;
+                if (Float.isNaN(dy)) {
+                    dy = 0;
+                }
+            }
+            smoothedMouse[0] = smoothedMouse[0] * f + (mouse.getClampedX() + 0.5f + dx) * (1 - f);
+            smoothedMouse[1] = smoothedMouse[1] * f + (mouse.getClampedY() + 0.5f - dy) * (1 - f);
             mouse.moveTo((int) smoothedMouse[0], (int) smoothedMouse[1]);
             mouse.setButton(Pointer.Button.BUTTON_LEFT, buttons[ControllerButton.R_TRIGGER.ordinal()]);
             mouse.setButton(Pointer.Button.BUTTON_RIGHT, buttons[ControllerButton.R_GRIP.ordinal()]);
@@ -135,6 +143,17 @@ public class XrActivity extends XServerDisplayActivity {
             mapKey(ControllerButton.R_THUMBSTICK_LEFT, XKeycode.KEY_KP_SUBTRACT.id);
             mapKey(ControllerButton.R_THUMBSTICK_RIGHT, XKeycode.KEY_KP_ADD.id);
         }
+    }
+
+    private static float getAngleDiff(float oldAngle, float newAngle) {
+        float diff = oldAngle - newAngle;
+        while (diff > 180) {
+            diff -= 360;
+        }
+        while (diff < -180) {
+            diff += 360;
+        }
+        return diff;
     }
 
     private static int getMainDisplay(Context context) {

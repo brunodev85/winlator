@@ -44,7 +44,6 @@ JNIEXPORT void JNICALL Java_com_winlator_XrActivity_init(JNIEnv *env, jclass obj
     s_module_base = new Base();
     s_module_input = new Input();
     s_module_renderer = new Renderer();
-    s_module_renderer->SetConfigFloat(CONFIG_CANVAS_DISTANCE, 4.0f);
 
     // Set platform flags
     s_module_base->SetPlatformFlag(PLATFORM_CONTROLLER_QUEST, true);
@@ -89,9 +88,16 @@ JNIEXPORT jboolean JNICALL Java_com_winlator_XrActivity_beginFrame(JNIEnv*, jcla
     if (s_module_renderer->InitFrame(s_module_base))
     {
         // Set render canvas
+        float distance = immersive ? -2.0f : 4.0f;
+        s_module_renderer->SetConfigFloat(CONFIG_CANVAS_DISTANCE, distance);
         s_module_renderer->SetConfigFloat(CONFIG_CANVAS_ASPECT, 16.0f / 9.0f / 2.0f);
         s_module_renderer->SetConfigInt(CONFIG_MODE, RENDER_MODE_MONO_SCREEN);
         s_module_renderer->SetConfigInt(CONFIG_PASSTHROUGH, !immersive);
+
+        // Follow the view when immersive
+        if (immersive) {
+            s_module_renderer->Recenter(s_module_base);
+        }
 
         // Update controllers state
         s_module_input->Update(s_module_base);
@@ -114,8 +120,10 @@ JNIEXPORT jfloatArray JNICALL Java_com_winlator_XrActivity_getAxes(JNIEnv *env, 
     auto rPose = s_module_input->GetPose(1);
     auto lThumbstick = s_module_input->GetJoystickState(0);
     auto rThumbstick = s_module_input->GetJoystickState(1);
-    auto lView = s_module_renderer->GetView(0).pose;
-    auto rView = s_module_renderer->GetView(1).pose;
+    auto lPosition = s_module_renderer->GetView(0).pose.position;
+    auto rPosition = s_module_renderer->GetView(1).pose.position;
+    auto angles = s_module_renderer->GetHMDAngles();
+    float yaw = s_module_renderer->GetConfigFloat(CONFIG_RECENTER_YAW);
 
     std::vector<float> data;
     data.push_back(EulerAngles(lPose.orientation).x); //L_PITCH
@@ -134,13 +142,13 @@ JNIEXPORT jfloatArray JNICALL Java_com_winlator_XrActivity_getAxes(JNIEnv *env, 
     data.push_back(rPose.position.x); //R_X
     data.push_back(rPose.position.y); //R_Y
     data.push_back(rPose.position.z); //R_Z
-    data.push_back(EulerAngles(lView.orientation).x); //HMD_PITCH
-    data.push_back(EulerAngles(lView.orientation).y); //HMD_YAW
-    data.push_back(EulerAngles(lView.orientation).z); //HMD_ROLL
-    data.push_back((lView.position.x + rView.position.x) * 0.5f); //HMD_X
-    data.push_back((lView.position.y + rView.position.y) * 0.5f); //HMD_Y
-    data.push_back((lView.position.z + rView.position.z) * 0.5f); //HMD_Z
-    data.push_back(Distance(lView.position, rView.position)); //HMD_IPD
+    data.push_back(angles.x); //HMD_PITCH
+    data.push_back(yaw); //HMD_YAW
+    data.push_back(angles.z); //HMD_ROLL
+    data.push_back((lPosition.x + rPosition.x) * 0.5f); //HMD_X
+    data.push_back((lPosition.y + rPosition.y) * 0.5f); //HMD_Y
+    data.push_back((lPosition.z + rPosition.z) * 0.5f); //HMD_Z
+    data.push_back(Distance(lPosition, rPosition)); //HMD_IPD
 
     jfloat values[data.size()];
     std::copy(data.begin(), data.end(), values);

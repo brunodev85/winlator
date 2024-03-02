@@ -342,7 +342,7 @@ void Renderer::FinishFrame(Base* engine)
     float menu_pitch = ToRadians(GetConfigFloat(CONFIG_MENU_PITCH));
     float menu_yaw = ToRadians(GetConfigFloat(CONFIG_MENU_YAW));
     XrVector3f pos = {m_inverted_view_pose[0].position.x - sinf(menu_yaw) * distance,
-                      m_inverted_view_pose[0].position.y,
+                      m_inverted_view_pose[0].position.y - 1.0f,
                       m_inverted_view_pose[0].position.z - cosf(menu_yaw) * distance};
     XrQuaternionf pitch = CreateFromVectorAngle({1, 0, 0}, -menu_pitch);
     XrQuaternionf yaw = CreateFromVectorAngle({0, 1, 0}, menu_yaw);

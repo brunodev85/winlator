@@ -57,11 +57,11 @@ public:
   void BindFramebuffer(Base* engine);
   XrView GetView(int eye);
   XrVector3f GetHMDAngles();
+  void Recenter(Base* engine);
 
 private:
   void HandleSessionStateChanges(Base* engine, XrSessionState state);
   void HandleXrEvents(Base* engine);
-  void Recenter(Base* engine);
   void UpdateStageBounds(Base* engine);
 
 private:
