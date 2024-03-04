@@ -341,52 +341,51 @@ void Renderer::FinishFrame(Base* engine)
     float distance = GetConfigFloat(CONFIG_CANVAS_DISTANCE);
     float menu_pitch = ToRadians(GetConfigFloat(CONFIG_MENU_PITCH));
     float menu_yaw = ToRadians(GetConfigFloat(CONFIG_MENU_YAW));
-    XrVector3f pos = {m_inverted_view_pose[0].position.x - sinf(menu_yaw) * distance,
-                      m_inverted_view_pose[0].position.y - 1.0f,
-                      m_inverted_view_pose[0].position.z - cosf(menu_yaw) * distance};
+    XrVector3f pos = {m_inverted_view_pose[0].position.x - sinf(menu_yaw) * cosf(menu_pitch) * distance,
+                      m_inverted_view_pose[0].position.y - sinf(menu_pitch) * distance - 0.33f,
+                      m_inverted_view_pose[0].position.z - cosf(menu_yaw) * cosf(menu_pitch) * distance};
     XrQuaternionf pitch = CreateFromVectorAngle({1, 0, 0}, -menu_pitch);
     XrQuaternionf yaw = CreateFromVectorAngle({0, 1, 0}, menu_yaw);
 
-    // Setup the cylinder layer
+    // Setup quad layer
     Framebuffer* framebuffer = &m_framebuffer[0];
-    XrCompositionLayerCylinderKHR cylinder_layer = {};
-    cylinder_layer.type = XR_TYPE_COMPOSITION_LAYER_CYLINDER_KHR;
-    cylinder_layer.layerFlags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT;
-    cylinder_layer.space = engine->GetCurrentSpace();
-    memset(&cylinder_layer.subImage, 0, sizeof(XrSwapchainSubImage));
-    cylinder_layer.subImage.imageRect.offset.x = 0;
-    cylinder_layer.subImage.imageRect.offset.y = 0;
-    cylinder_layer.subImage.imageRect.extent.width = framebuffer->GetWidth();
-    cylinder_layer.subImage.imageRect.extent.height = framebuffer->GetHeight();
-    cylinder_layer.subImage.swapchain = framebuffer->GetHandle();
-    cylinder_layer.subImage.imageArrayIndex = 0;
-    cylinder_layer.pose.orientation = Multiply(pitch, yaw);
-    cylinder_layer.pose.position = pos;
-    cylinder_layer.radius = 6.0f;
-    cylinder_layer.centralAngle = (float)(M_PI * 0.5);
-    cylinder_layer.aspectRatio = GetConfigFloat(CONFIG_CANVAS_ASPECT);
+    XrCompositionLayerQuad quad_layer = {};
+    quad_layer.type = XR_TYPE_COMPOSITION_LAYER_QUAD;
+    quad_layer.layerFlags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT;
+    quad_layer.space = engine->GetCurrentSpace();
+    memset(&quad_layer.subImage, 0, sizeof(XrSwapchainSubImage));
+    quad_layer.subImage.imageRect.offset.x = 0;
+    quad_layer.subImage.imageRect.offset.y = 0;
+    quad_layer.subImage.imageRect.extent.width = framebuffer->GetWidth();
+    quad_layer.subImage.imageRect.extent.height = framebuffer->GetHeight();
+    quad_layer.subImage.swapchain = framebuffer->GetHandle();
+    quad_layer.subImage.imageArrayIndex = 0;
+    quad_layer.pose.orientation = Multiply(pitch, yaw);
+    quad_layer.pose.position = pos;
+    quad_layer.size.width = 4;
+    quad_layer.size.height = quad_layer.size.width / GetConfigFloat(CONFIG_CANVAS_ASPECT);
 
     // Build the cylinder layer
     if (mode == RENDER_MODE_MONO_SCREEN)
     {
-      cylinder_layer.eyeVisibility = XR_EYE_VISIBILITY_BOTH;
-      m_layers[m_layer_count++].cylinder = cylinder_layer;
+      quad_layer.eyeVisibility = XR_EYE_VISIBILITY_BOTH;
+      m_layers[m_layer_count++].quad = quad_layer;
     }
     else if (m_multiview)
     {
-      cylinder_layer.eyeVisibility = XR_EYE_VISIBILITY_LEFT;
-      m_layers[m_layer_count++].cylinder = cylinder_layer;
-      cylinder_layer.eyeVisibility = XR_EYE_VISIBILITY_RIGHT;
-      cylinder_layer.subImage.imageArrayIndex = 1;
-      m_layers[m_layer_count++].cylinder = cylinder_layer;
+      quad_layer.eyeVisibility = XR_EYE_VISIBILITY_LEFT;
+      m_layers[m_layer_count++].quad = quad_layer;
+      quad_layer.eyeVisibility = XR_EYE_VISIBILITY_RIGHT;
+      quad_layer.subImage.imageArrayIndex = 1;
+      m_layers[m_layer_count++].quad = quad_layer;
     }
     else
     {
-      cylinder_layer.eyeVisibility = XR_EYE_VISIBILITY_LEFT;
-      m_layers[m_layer_count++].cylinder = cylinder_layer;
-      cylinder_layer.eyeVisibility = XR_EYE_VISIBILITY_RIGHT;
-      cylinder_layer.subImage.swapchain = m_framebuffer[1].GetHandle();
-      m_layers[m_layer_count++].cylinder = cylinder_layer;
+      quad_layer.eyeVisibility = XR_EYE_VISIBILITY_LEFT;
+      m_layers[m_layer_count++].quad = quad_layer;
+      quad_layer.eyeVisibility = XR_EYE_VISIBILITY_RIGHT;
+      quad_layer.subImage.swapchain = m_framebuffer[1].GetHandle();
+      m_layers[m_layer_count++].quad = quad_layer;
     }
   }
   else

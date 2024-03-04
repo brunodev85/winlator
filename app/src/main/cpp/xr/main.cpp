@@ -88,7 +88,7 @@ JNIEXPORT jboolean JNICALL Java_com_winlator_XrActivity_beginFrame(JNIEnv*, jcla
     if (s_module_renderer->InitFrame(s_module_base))
     {
         // Set render canvas
-        float distance = immersive ? -2.0f : 4.0f;
+        float distance = immersive ? 2.0f : 5.0f;
         s_module_renderer->SetConfigFloat(CONFIG_CANVAS_DISTANCE, distance);
         s_module_renderer->SetConfigFloat(CONFIG_CANVAS_ASPECT, 16.0f / 9.0f / 2.0f);
         s_module_renderer->SetConfigInt(CONFIG_MODE, RENDER_MODE_MONO_SCREEN);

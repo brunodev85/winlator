@@ -37,7 +37,6 @@ void Base::Init(void* system, const char* name, int version)
 #ifdef XR_USE_GRAPHICS_API_OPENGL_ES
   extensions.push_back(XR_KHR_OPENGL_ES_ENABLE_EXTENSION_NAME);
 #endif
-  extensions.push_back(XR_KHR_COMPOSITION_LAYER_CYLINDER_EXTENSION_NAME);
 #ifdef ANDROID
   if (GetPlatformFlag(PLATFORM_EXTENSION_INSTANCE))
   {

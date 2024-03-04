@@ -8,6 +8,8 @@ import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.view.Display;
 
+import androidx.preference.PreferenceManager;
+
 import com.winlator.xserver.Keyboard;
 import com.winlator.xserver.Pointer;
 import com.winlator.xserver.XKeycode;
@@ -34,6 +36,7 @@ public class XrActivity extends XServerDisplayActivity {
     private static boolean isImmersive = false;
     private static float[] lastAxes = new float[ControllerAxis.values().length];
     private static boolean[] lastButtons = new boolean[ControllerButton.values().length];
+    private static float mouseSpeed = 1;
     private static float[] smoothedMouse = new float[2];
 
     private static XrActivity instance;
@@ -42,6 +45,7 @@ public class XrActivity extends XServerDisplayActivity {
     public void onResume() {
         super.onResume();
         instance = this;
+        mouseSpeed = PreferenceManager.getDefaultSharedPreferences(this).getFloat("cursor_speed", 1.0f);
     }
 
     public static XrActivity getInstance() {
@@ -96,12 +100,13 @@ public class XrActivity extends XServerDisplayActivity {
 
 
         try (XLock lock = instance.getXServer().lock(XServer.Lockable.WINDOW_MANAGER, XServer.Lockable.INPUT_DEVICE)) {
-            // Update mouse
+            // Mouse control with hand
             float f = 0.75f;
             float meter2px = instance.getXServer().screenInfo.width * 10.0f;
             float dx = (axes[ControllerAxis.R_X.ordinal()] - lastAxes[ControllerAxis.R_X.ordinal()]) * meter2px;
             float dy = (axes[ControllerAxis.R_Y.ordinal()] - lastAxes[ControllerAxis.R_Y.ordinal()]) * meter2px;
-            Pointer mouse = instance.getXServer().pointer;
+
+            // Mouse control with head
             if (isImmersive) {
                 float angle2px = instance.getXServer().screenInfo.width * 0.01f / f;
                 dx = getAngleDiff(lastAxes[ControllerAxis.HMD_YAW.ordinal()], axes[ControllerAxis.HMD_YAW.ordinal()]) * angle2px;
@@ -110,8 +115,23 @@ public class XrActivity extends XServerDisplayActivity {
                     dy = 0;
                 }
             }
+
+            // Mouse smoothing
+            dx *= mouseSpeed;
+            dy *= mouseSpeed;
+            Pointer mouse = instance.getXServer().pointer;
             smoothedMouse[0] = smoothedMouse[0] * f + (mouse.getClampedX() + 0.5f + dx) * (1 - f);
             smoothedMouse[1] = smoothedMouse[1] * f + (mouse.getClampedY() + 0.5f - dy) * (1 - f);
+
+            // Mouse "snap turn"
+            if (getButtonClicked(buttons, ControllerButton.R_THUMBSTICK_LEFT)) {
+                smoothedMouse[0] = mouse.getClampedX() - 50;
+            }
+            if (getButtonClicked(buttons, ControllerButton.R_THUMBSTICK_RIGHT)) {
+                smoothedMouse[0] = mouse.getClampedX() + 50;
+            }
+
+            // Set mouse status
             mouse.moveTo((int) smoothedMouse[0], (int) smoothedMouse[1]);
             mouse.setButton(Pointer.Button.BUTTON_LEFT, buttons[ControllerButton.R_TRIGGER.ordinal()]);
             mouse.setButton(Pointer.Button.BUTTON_RIGHT, buttons[ControllerButton.R_GRIP.ordinal()]);
@@ -120,7 +140,7 @@ public class XrActivity extends XServerDisplayActivity {
             mouse.setButton(Pointer.Button.BUTTON_SCROLL_DOWN, buttons[ControllerButton.R_THUMBSTICK_DOWN.ordinal()]);
 
             // Switch immersive mode
-            if (buttons[ControllerButton.L_THUMBSTICK_PRESS.ordinal()] && !lastButtons[ControllerButton.L_THUMBSTICK_PRESS.ordinal()]) {
+            if (getButtonClicked(buttons, ControllerButton.L_THUMBSTICK_PRESS)) {
                 isImmersive = !isImmersive;
             }
 
@@ -140,8 +160,6 @@ public class XrActivity extends XServerDisplayActivity {
             mapKey(ControllerButton.L_THUMBSTICK_RIGHT, XKeycode.KEY_RIGHT.id);
             mapKey(ControllerButton.L_THUMBSTICK_UP, XKeycode.KEY_UP.id);
             mapKey(ControllerButton.L_THUMBSTICK_DOWN, XKeycode.KEY_DOWN.id);
-            mapKey(ControllerButton.R_THUMBSTICK_LEFT, XKeycode.KEY_KP_SUBTRACT.id);
-            mapKey(ControllerButton.R_THUMBSTICK_RIGHT, XKeycode.KEY_KP_ADD.id);
         }
     }
 
@@ -154,6 +172,10 @@ public class XrActivity extends XServerDisplayActivity {
             diff += 360;
         }
         return diff;
+    }
+
+    private static boolean getButtonClicked(boolean[] buttons, ControllerButton button) {
+        return buttons[button.ordinal()] && !lastButtons[button.ordinal()];
     }
 
     private static int getMainDisplay(Context context) {

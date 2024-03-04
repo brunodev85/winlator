@@ -52,7 +52,7 @@ enum PlatformFlag
 typedef union
 {
   XrCompositionLayerProjection projection;
-  XrCompositionLayerCylinderKHR cylinder;
+  XrCompositionLayerQuad quad;
 } CompositorLayer;
 
 #ifdef ANDROID
