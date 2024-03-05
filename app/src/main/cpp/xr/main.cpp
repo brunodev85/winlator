@@ -175,7 +175,7 @@ JNIEXPORT jbooleanArray JNICALL Java_com_winlator_XrActivity_getButtons(JNIEnv *
     data.push_back(r & (int)Button::A); //R_A
     data.push_back(r & (int)Button::B); //R_B
     data.push_back(r & (int)Button::Grip); //R_GRIP
-    data.push_back(r & (int)Button::LThumb); //R_THUMBSTICK_PRESS
+    data.push_back(r & (int)Button::RThumb); //R_THUMBSTICK_PRESS
     data.push_back(r & (int)Button::Left); //R_THUMBSTICK_LEFT
     data.push_back(r & (int)Button::Right); //R_THUMBSTICK_RIGHT
     data.push_back(r & (int)Button::Up); //R_THUMBSTICK_UP
