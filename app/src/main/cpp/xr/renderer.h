@@ -9,7 +9,6 @@ enum ConfigFloat
   CONFIG_MENU_PITCH,
   CONFIG_MENU_YAW,
   CONFIG_RECENTER_YAW,
-  CONFIG_CANVAS_ASPECT,
 
   CONFIG_FLOAT_MAX
 };
@@ -41,7 +40,7 @@ class Renderer
 {
 public:
   void GetResolution(Base* engine, int* pWidth, int* pHeight);
-  void Init(Base* engine, bool multiview);
+  void Init(Base* engine);
   void Destroy(Base* engine);
 
   bool InitFrame(Base* engine);
@@ -80,7 +79,6 @@ private:
   XrViewConfigurationProperties m_viewport_config = {};
   XrViewConfigurationView m_view_config[MaxNumEyes] = {};
   Framebuffer m_framebuffer[MaxNumEyes] = {};
-  bool m_multiview = false;
 
   XrFovf m_fov;
   XrView* m_projections;

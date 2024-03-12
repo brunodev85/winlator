@@ -101,7 +101,7 @@ void Renderer::GetResolution(Base* engine, int* pWidth, int* pHeight)
   }
 }
 
-void Renderer::Init(Base* engine, bool multiview)
+void Renderer::Init(Base* engine)
 {
   if (m_initialized)
   {
@@ -155,13 +155,11 @@ void Renderer::Init(Base* engine, bool multiview)
   m_projections = (XrView*)(malloc(MaxNumEyes * sizeof(XrView)));
 
   // Create framebuffers.
-  m_multiview = multiview;
-  int instances = multiview ? 1 : MaxNumEyes;
   int width = m_view_config[0].recommendedImageRectWidth;
   int height = m_view_config[0].recommendedImageRectHeight;
-  for (int i = 0; i < instances; i++)
+  for (int i = 0; i < MaxNumEyes; i++)
   {
-    m_framebuffer[i].Create(engine->GetSession(), width, height, multiview);
+    m_framebuffer[i].Create(engine->GetSession(), width, height);
   }
 
   if (engine->GetPlatformFlag(PlatformFlag::PLATFORM_EXTENSION_PASSTHROUGH))
@@ -197,8 +195,7 @@ void Renderer::Destroy(Base* engine)
     m_passthrough = XR_NULL_HANDLE;
   }
 
-  int instances = m_multiview ? 1 : MaxNumEyes;
-  for (int i = 0; i < instances; i++)
+  for (int i = 0; i < MaxNumEyes; i++)
   {
     m_framebuffer[i].Destroy();
     m_framebuffer[i] = {};
@@ -299,15 +296,11 @@ void Renderer::FinishFrame(Base* engine)
 
     for (int eye = 0; eye < MaxNumEyes; eye++)
     {
-      int image_layer = m_multiview ? eye : 0;
       Framebuffer* framebuffer = &m_framebuffer[0];
       XrPosef pose = m_inverted_view_pose[0];
       if (mode != RENDER_MODE_MONO_6DOF)
       {
-        if (!m_multiview)
-        {
-          framebuffer = &m_framebuffer[eye];
-        }
+        framebuffer = &m_framebuffer[eye];
         pose = m_inverted_view_pose[eye];
       }
 
@@ -322,7 +315,7 @@ void Renderer::FinishFrame(Base* engine)
       projection_layer_elements[eye].subImage.imageRect.offset.y = 0;
       projection_layer_elements[eye].subImage.imageRect.extent.width = framebuffer->GetWidth();
       projection_layer_elements[eye].subImage.imageRect.extent.height = framebuffer->GetHeight();
-      projection_layer_elements[eye].subImage.imageArrayIndex = image_layer;
+      projection_layer_elements[eye].subImage.imageArrayIndex = 0;
     }
 
     XrCompositionLayerProjection projection_layer = {};
@@ -342,7 +335,7 @@ void Renderer::FinishFrame(Base* engine)
     float menu_pitch = ToRadians(GetConfigFloat(CONFIG_MENU_PITCH));
     float menu_yaw = ToRadians(GetConfigFloat(CONFIG_MENU_YAW));
     XrVector3f pos = {m_inverted_view_pose[0].position.x - sinf(menu_yaw) * cosf(menu_pitch) * distance,
-                      m_inverted_view_pose[0].position.y - sinf(menu_pitch) * distance - 0.33f,
+                      m_inverted_view_pose[0].position.y - sinf(menu_pitch) * distance,
                       m_inverted_view_pose[0].position.z - cosf(menu_yaw) * cosf(menu_pitch) * distance};
     XrQuaternionf pitch = CreateFromVectorAngle({1, 0, 0}, -menu_pitch);
     XrQuaternionf yaw = CreateFromVectorAngle({0, 1, 0}, menu_yaw);
@@ -363,20 +356,12 @@ void Renderer::FinishFrame(Base* engine)
     quad_layer.pose.orientation = Multiply(pitch, yaw);
     quad_layer.pose.position = pos;
     quad_layer.size.width = 4;
-    quad_layer.size.height = quad_layer.size.width / GetConfigFloat(CONFIG_CANVAS_ASPECT);
+    quad_layer.size.height = 4;
 
     // Build the cylinder layer
     if (mode == RENDER_MODE_MONO_SCREEN)
     {
       quad_layer.eyeVisibility = XR_EYE_VISIBILITY_BOTH;
-      m_layers[m_layer_count++].quad = quad_layer;
-    }
-    else if (m_multiview)
-    {
-      quad_layer.eyeVisibility = XR_EYE_VISIBILITY_LEFT;
-      m_layers[m_layer_count++].quad = quad_layer;
-      quad_layer.eyeVisibility = XR_EYE_VISIBILITY_RIGHT;
-      quad_layer.subImage.imageArrayIndex = 1;
       m_layers[m_layer_count++].quad = quad_layer;
     }
     else

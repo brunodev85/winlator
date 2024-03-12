@@ -201,28 +201,30 @@ public class XrActivity extends XServerDisplayActivity implements TextWatcher {
             float dy = (axes[ControllerAxis.R_Y.ordinal()] - lastAxes[ControllerAxis.R_Y.ordinal()]) * meter2px;
 
             // Mouse control with head
+            Pointer mouse = instance.getXServer().pointer;
             if (isImmersive) {
-                float angle2px = instance.getXServer().screenInfo.width * 0.01f / f;
+                float angle2px = instance.getXServer().screenInfo.width * 0.05f / f;
                 dx = getAngleDiff(lastAxes[ControllerAxis.HMD_YAW.ordinal()], axes[ControllerAxis.HMD_YAW.ordinal()]) * angle2px;
                 dy = getAngleDiff(lastAxes[ControllerAxis.HMD_PITCH.ordinal()], axes[ControllerAxis.HMD_PITCH.ordinal()]) * angle2px;
                 if (Float.isNaN(dy)) {
                     dy = 0;
                 }
+                smoothedMouse[0] = mouse.getClampedX() + 0.5f;
+                smoothedMouse[1] = mouse.getClampedY() + 0.5f;
             }
 
             // Mouse smoothing
             dx *= mouseSpeed;
             dy *= mouseSpeed;
-            Pointer mouse = instance.getXServer().pointer;
             smoothedMouse[0] = smoothedMouse[0] * f + (mouse.getClampedX() + 0.5f + dx) * (1 - f);
             smoothedMouse[1] = smoothedMouse[1] * f + (mouse.getClampedY() + 0.5f - dy) * (1 - f);
 
             // Mouse "snap turn"
             if (getButtonClicked(buttons, ControllerButton.R_THUMBSTICK_LEFT)) {
-                smoothedMouse[0] = mouse.getClampedX() - 50;
+                smoothedMouse[0] = mouse.getClampedX() - 125;
             }
             if (getButtonClicked(buttons, ControllerButton.R_THUMBSTICK_RIGHT)) {
-                smoothedMouse[0] = mouse.getClampedX() + 50;
+                smoothedMouse[0] = mouse.getClampedX() + 125;
             }
 
             // Set mouse status

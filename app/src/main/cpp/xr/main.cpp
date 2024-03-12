@@ -63,7 +63,7 @@ JNIEXPORT void JNICALL Java_com_winlator_XrActivity_init(JNIEnv *env, jclass obj
     // Enter XR
     s_module_base->EnterXR();
     s_module_input->Init(s_module_base);
-    s_module_renderer->Init(s_module_base, false);
+    s_module_renderer->Init(s_module_base);
     ALOGV("Init called");
 }
 
@@ -85,12 +85,11 @@ JNIEXPORT jint JNICALL Java_com_winlator_XrActivity_getHeight(JNIEnv*, jclass) {
 }
 
 JNIEXPORT jboolean JNICALL Java_com_winlator_XrActivity_beginFrame(JNIEnv*, jclass, jboolean immersive) {
-    if (s_module_renderer->InitFrame(s_module_base))
-    {
+    if (s_module_renderer->InitFrame(s_module_base)) {
+
         // Set render canvas
         float distance = immersive ? 2.0f : 5.0f;
         s_module_renderer->SetConfigFloat(CONFIG_CANVAS_DISTANCE, distance);
-        s_module_renderer->SetConfigFloat(CONFIG_CANVAS_ASPECT, 16.0f / 9.0f / 2.0f);
         s_module_renderer->SetConfigInt(CONFIG_MODE, RENDER_MODE_MONO_SCREEN);
         s_module_renderer->SetConfigInt(CONFIG_PASSTHROUGH, !immersive);
 
