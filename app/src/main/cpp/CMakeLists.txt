@@ -7,12 +7,12 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wno-unused-function")
 add_subdirectory(OpenXR-SDK)
 
 add_library(winlator SHARED
-            xr/base.cpp
-            xr/framebuffer.cpp
-            xr/input.cpp
-            xr/main.cpp
-            xr/math.cpp
-            xr/renderer.cpp
+            xr/engine.c
+            xr/framebuffer.c
+            xr/input.c
+            xr/main.c
+            xr/math.c
+            xr/renderer.c
             drawable.c
             gpu_image.c
             sysvshared_memory.c
