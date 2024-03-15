@@ -288,6 +288,15 @@ void XrRendererEndFrame(struct XrRenderer* renderer)
 
 void XrRendererFinishFrame(struct XrEngine* engine, struct XrRenderer* renderer)
 {
+    int x = 0;
+    int y = 0;
+    int w = renderer->Framebuffer[0].Width;
+    int h = renderer->Framebuffer[0].Height;
+    if (renderer->ConfigInt[CONFIG_SBS])
+    {
+        w /= 2;
+    }
+
     int mode = renderer->ConfigInt[CONFIG_MODE];
     XrCompositionLayerProjectionView projection_layer_elements[2] = {};
     if ((mode == RENDER_MODE_MONO_6DOF) || (mode == RENDER_MODE_STEREO_6DOF))
@@ -298,7 +307,11 @@ void XrRendererFinishFrame(struct XrEngine* engine, struct XrRenderer* renderer)
         {
             struct XrFramebuffer* framebuffer = &renderer->Framebuffer[0];
             XrPosef pose = renderer->InvertedViewPose[0];
-            if (mode != RENDER_MODE_MONO_6DOF)
+            if (renderer->ConfigInt[CONFIG_SBS] && (eye == 1))
+            {
+                x += w;
+            }
+            else if (mode != RENDER_MODE_MONO_6DOF)
             {
                 framebuffer = &renderer->Framebuffer[eye];
                 pose = renderer->InvertedViewPose[eye];
@@ -311,10 +324,10 @@ void XrRendererFinishFrame(struct XrEngine* engine, struct XrRenderer* renderer)
 
             memset(&projection_layer_elements[eye].subImage, 0, sizeof(XrSwapchainSubImage));
             projection_layer_elements[eye].subImage.swapchain = framebuffer->Handle;
-            projection_layer_elements[eye].subImage.imageRect.offset.x = 0;
-            projection_layer_elements[eye].subImage.imageRect.offset.y = 0;
-            projection_layer_elements[eye].subImage.imageRect.extent.width = framebuffer->Width;
-            projection_layer_elements[eye].subImage.imageRect.extent.height = framebuffer->Height;
+            projection_layer_elements[eye].subImage.imageRect.offset.x = x;
+            projection_layer_elements[eye].subImage.imageRect.offset.y = y;
+            projection_layer_elements[eye].subImage.imageRect.extent.width = w;
+            projection_layer_elements[eye].subImage.imageRect.extent.height = h;
             projection_layer_elements[eye].subImage.imageArrayIndex = 0;
         }
 
@@ -349,10 +362,10 @@ void XrRendererFinishFrame(struct XrEngine* engine, struct XrRenderer* renderer)
         quad_layer.layerFlags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT;
         quad_layer.space = engine->CurrentSpace;
         memset(&quad_layer.subImage, 0, sizeof(XrSwapchainSubImage));
-        quad_layer.subImage.imageRect.offset.x = 0;
-        quad_layer.subImage.imageRect.offset.y = 0;
-        quad_layer.subImage.imageRect.extent.width = framebuffer->Width;
-        quad_layer.subImage.imageRect.extent.height = framebuffer->Height;
+        quad_layer.subImage.imageRect.offset.x = x;
+        quad_layer.subImage.imageRect.offset.y = y;
+        quad_layer.subImage.imageRect.extent.width = w;
+        quad_layer.subImage.imageRect.extent.height = h;
         quad_layer.subImage.swapchain = framebuffer->Handle;
         quad_layer.subImage.imageArrayIndex = 0;
         quad_layer.pose.orientation = XrQuaternionfMultiply(pitch, yaw);
@@ -361,7 +374,15 @@ void XrRendererFinishFrame(struct XrEngine* engine, struct XrRenderer* renderer)
         quad_layer.size.height = 4;
 
         // Build the cylinder layer
-        if (mode == RENDER_MODE_MONO_SCREEN)
+        if (renderer->ConfigInt[CONFIG_SBS])
+        {
+            quad_layer.eyeVisibility = XR_EYE_VISIBILITY_LEFT;
+            renderer->Layers[renderer->LayerCount++].quad = quad_layer;
+            quad_layer.eyeVisibility = XR_EYE_VISIBILITY_RIGHT;
+            quad_layer.subImage.imageRect.offset.x = w;
+            renderer->Layers[renderer->LayerCount++].quad = quad_layer;
+        }
+        else if (mode == RENDER_MODE_MONO_SCREEN)
         {
             quad_layer.eyeVisibility = XR_EYE_VISIBILITY_BOTH;
             renderer->Layers[renderer->LayerCount++].quad = quad_layer;

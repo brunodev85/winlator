@@ -79,7 +79,7 @@ JNIEXPORT jint JNICALL Java_com_winlator_XrActivity_getHeight(JNIEnv *env, jobje
     return h;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_winlator_XrActivity_beginFrame(JNIEnv *env, jobject obj, jboolean immersive) {
+JNIEXPORT jboolean JNICALL Java_com_winlator_XrActivity_beginFrame(JNIEnv *env, jobject obj, jboolean immersive, jboolean sbs) {
     if (XrRendererInitFrame(&xr_module_engine, &xr_module_renderer)) {
 
         // Set render canvas
@@ -87,6 +87,7 @@ JNIEXPORT jboolean JNICALL Java_com_winlator_XrActivity_beginFrame(JNIEnv *env, 
         xr_module_renderer.ConfigFloat[CONFIG_CANVAS_DISTANCE] = distance;
         xr_module_renderer.ConfigInt[CONFIG_MODE] = RENDER_MODE_MONO_SCREEN;
         xr_module_renderer.ConfigInt[CONFIG_PASSTHROUGH] = !immersive;
+        xr_module_renderer.ConfigInt[CONFIG_SBS] = sbs;
 
         // Follow the view when immersive
         if (immersive) {

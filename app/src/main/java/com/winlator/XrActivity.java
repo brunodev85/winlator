@@ -38,6 +38,7 @@ public class XrActivity extends XServerDisplayActivity implements TextWatcher {
     private static boolean isDeviceDetectionFinished = false;
     private static boolean isDeviceSupported = false;
     private static boolean isImmersive = false;
+    private static boolean isSBS = false;
     private static float[] lastAxes = new float[ControllerAxis.values().length];
     private static boolean[] lastButtons = new boolean[ControllerButton.values().length];
     private static String lastText = "";
@@ -150,6 +151,10 @@ public class XrActivity extends XServerDisplayActivity implements TextWatcher {
         return isImmersive;
     }
 
+    public static boolean getSBS() {
+        return isSBS;
+    }
+
     public static boolean isSupported() {
         if (!isDeviceDetectionFinished) {
             if (Build.MANUFACTURER.compareToIgnoreCase("META") == 0) {
@@ -234,14 +239,19 @@ public class XrActivity extends XServerDisplayActivity implements TextWatcher {
             mouse.setButton(Pointer.Button.BUTTON_SCROLL_UP, buttons[ControllerButton.R_THUMBSTICK_UP.ordinal()]);
             mouse.setButton(Pointer.Button.BUTTON_SCROLL_DOWN, buttons[ControllerButton.R_THUMBSTICK_DOWN.ordinal()]);
 
-            // Switch immersive mode
+            // Switch immersive/SBS mode
             if (getButtonClicked(buttons, ControllerButton.L_THUMBSTICK_PRESS)) {
-                isImmersive = !isImmersive;
+                if (buttons[ControllerButton.R_GRIP.ordinal()]) {
+                    isSBS = !isSBS;
+                } else {
+                    isImmersive = !isImmersive;
+                }
             }
 
             // Show system keyboard
             if (getButtonClicked(buttons, ControllerButton.R_THUMBSTICK_PRESS)) {
                 instance.runOnUiThread(() -> {
+                    isSBS = false;
                     isImmersive = false;
                     instance.resetText();
                     AppUtils.showKeyboard(instance);
@@ -328,7 +338,7 @@ public class XrActivity extends XServerDisplayActivity implements TextWatcher {
     public native void bindFramebuffer();
     public native int getWidth();
     public native int getHeight();
-    public native boolean beginFrame(boolean immersive);
+    public native boolean beginFrame(boolean immersive, boolean sbs);
     public native void endFrame();
 
     // Input

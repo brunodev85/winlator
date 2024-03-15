@@ -19,6 +19,7 @@ enum XrConfigInt
     // switching between modes
     CONFIG_MODE,
     CONFIG_PASSTHROUGH,
+    CONFIG_SBS,
     // viewport setup
     CONFIG_VIEWPORT_WIDTH,
     CONFIG_VIEWPORT_HEIGHT,
