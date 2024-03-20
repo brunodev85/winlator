@@ -71,6 +71,10 @@ void XrRendererInit(struct XrEngine* engine, struct XrRenderer* renderer)
     }
 
     renderer->Projections = (XrView*)(malloc(XrMaxNumEyes * sizeof(XrView)));
+    for (int eye = 0; eye < XrMaxNumEyes; eye++) {
+        memset(&renderer->Projections[eye], 0, sizeof(XrView));
+        renderer->Projections[eye].type = XR_TYPE_VIEW;
+    }
 
     // Create framebuffers.
     int width = renderer->ViewConfig[0].recommendedImageRectWidth;
@@ -232,17 +236,9 @@ bool XrRendererInitFrame(struct XrEngine* engine, struct XrRenderer* renderer)
 
     XrEngineWaitForFrame(engine);
 
-    // Get the HMD pose, predicted for the middle of the time period during which
-    // the new eye images will be displayed. The number of frames predicted ahead
-    // depends on the pipeline depth of the engine and the synthesis rate.
-    // The better the prediction, the less black will be pulled in at the edges.
-    XrFrameBeginInfo begin_frame_info = {};
-    begin_frame_info.type = XR_TYPE_FRAME_BEGIN_INFO;
-    begin_frame_info.next = NULL;
-    OXR(xrBeginFrame(engine->Session, &begin_frame_info));
-
     XrViewLocateInfo projection_info = {};
     projection_info.type = XR_TYPE_VIEW_LOCATE_INFO;
+    projection_info.next = NULL;
     projection_info.viewConfigurationType = renderer->ViewportConfig.viewConfigurationType;
     projection_info.displayTime = engine->PredictedDisplayTime;
     projection_info.space = engine->CurrentSpace;
@@ -254,6 +250,15 @@ bool XrRendererInitFrame(struct XrEngine* engine, struct XrRenderer* renderer)
 
     OXR(xrLocateViews(engine->Session, &projection_info, &view_state, projection_capacity,
                       &projection_count, renderer->Projections));
+
+    // Get the HMD pose, predicted for the middle of the time period during which
+    // the new eye images will be displayed. The number of frames predicted ahead
+    // depends on the pipeline depth of the engine and the synthesis rate.
+    // The better the prediction, the less black will be pulled in at the edges.
+    XrFrameBeginInfo begin_frame_info = {};
+    begin_frame_info.type = XR_TYPE_FRAME_BEGIN_INFO;
+    begin_frame_info.next = NULL;
+    OXR(xrBeginFrame(engine->Session, &begin_frame_info));
 
     renderer->Fov.angleLeft = 0;
     renderer->Fov.angleRight = 0;

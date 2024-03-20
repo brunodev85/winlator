@@ -225,11 +225,12 @@ public class XrActivity extends XServerDisplayActivity implements TextWatcher {
             smoothedMouse[1] = smoothedMouse[1] * f + (mouse.getClampedY() + 0.5f - dy) * (1 - f);
 
             // Mouse "snap turn"
+            int snapturn = isImmersive ? 125 : 25;
             if (getButtonClicked(buttons, ControllerButton.R_THUMBSTICK_LEFT)) {
-                smoothedMouse[0] = mouse.getClampedX() - 125;
+                smoothedMouse[0] = mouse.getClampedX() - snapturn;
             }
             if (getButtonClicked(buttons, ControllerButton.R_THUMBSTICK_RIGHT)) {
-                smoothedMouse[0] = mouse.getClampedX() + 125;
+                smoothedMouse[0] = mouse.getClampedX() + snapturn;
             }
 
             // Set mouse status

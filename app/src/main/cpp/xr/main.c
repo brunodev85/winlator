@@ -83,15 +83,17 @@ JNIEXPORT jboolean JNICALL Java_com_winlator_XrActivity_beginFrame(JNIEnv *env, 
     if (XrRendererInitFrame(&xr_module_engine, &xr_module_renderer)) {
 
         // Set render canvas
-        float distance = immersive ? 2.0f : 5.0f;
-        xr_module_renderer.ConfigFloat[CONFIG_CANVAS_DISTANCE] = distance;
-        xr_module_renderer.ConfigInt[CONFIG_MODE] = RENDER_MODE_MONO_SCREEN;
+        int mode = immersive ? RENDER_MODE_MONO_6DOF : RENDER_MODE_MONO_SCREEN;
+        xr_module_renderer.ConfigFloat[CONFIG_CANVAS_DISTANCE] = 5.0f;
         xr_module_renderer.ConfigInt[CONFIG_PASSTHROUGH] = !immersive;
+        xr_module_renderer.ConfigInt[CONFIG_MODE] = mode;
         xr_module_renderer.ConfigInt[CONFIG_SBS] = sbs;
 
-        // Follow the view when immersive
-        if (immersive) {
+        // Recenter if mode switched
+        static bool last_immersive = false;
+        if (last_immersive != immersive) {
             XrRendererRecenter(&xr_module_engine, &xr_module_renderer);
+            last_immersive = immersive;
         }
 
         // Update controllers state
@@ -118,7 +120,6 @@ JNIEXPORT jfloatArray JNICALL Java_com_winlator_XrActivity_getAxes(JNIEnv *env, 
     XrVector3f lPosition = xr_module_renderer.Projections[0].pose.position;
     XrVector3f rPosition = xr_module_renderer.Projections[1].pose.position;
     XrVector3f angles = xr_module_renderer.HmdOrientation;
-    float yaw = xr_module_renderer.ConfigFloat[CONFIG_RECENTER_YAW];
 
     int count = 0;
     float data[32];
@@ -139,7 +140,7 @@ JNIEXPORT jfloatArray JNICALL Java_com_winlator_XrActivity_getAxes(JNIEnv *env, 
     data[count++] = rPose.position.y; //R_Y
     data[count++] = rPose.position.z; //R_Z
     data[count++] = angles.x; //HMD_PITCH
-    data[count++] = yaw; //HMD_YAW
+    data[count++] = angles.y; //HMD_YAW
     data[count++] = angles.z; //HMD_ROLL
     data[count++] = (lPosition.x + rPosition.x) * 0.5f; //HMD_X
     data[count++] = (lPosition.y + rPosition.y) * 0.5f; //HMD_Y
