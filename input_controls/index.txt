@@ -9,7 +9,9 @@ Driver Parallel Lines.icp
 Fallout 3.icp
 Final Fantasy 8.icp
 Final Fantasy Type-0.icp
+FlatOut 2.icp
 Front Mission Evolved.icp
+Gravity Circuit.icp
 GTA 5.icp
 Hitman 2.icp
 IGI 2.icp
@@ -20,6 +22,7 @@ Metro 2033.icp
 Oblivion.icp
 Prey.icp
 Quake 4.icp
+RAGE.icp
 Rayman 3.icp
 Second Sight.icp
 Shovel Knight.icp
@@ -30,5 +33,7 @@ Stalker CS.icp
 Star Wars Jedi Knight 2.icp
 SteamWorld Dig 2.icp
 The Saboteur.icp
+Ultima Underworld.icp
+Unepic.icp
 Wolfenstein.icp
 Xanadu Next.icp
