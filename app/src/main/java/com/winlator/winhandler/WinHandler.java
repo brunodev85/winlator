@@ -138,6 +138,22 @@ public class WinHandler {
         });
     }
 
+    public void bringToFront(final String processName) {
+        bringToFront(processName, false);
+    }
+
+    public void bringToFront(final String processName, final boolean reverse) {
+        addAction(() -> {
+            sendData.rewind();
+            sendData.put(RequestCodes.BRING_TO_FRONT);
+            byte[] bytes = processName.getBytes();
+            sendData.putInt(bytes.length);
+            sendData.put(bytes);
+            sendData.put((byte)(reverse ? 1 : 0));
+            sendPacket(CLIENT_PORT);
+        });
+    }
+
     private void addAction(Runnable action) {
         synchronized (actions) {
             actions.add(action);
@@ -186,6 +202,10 @@ public class WinHandler {
         switch (requestCode) {
             case RequestCodes.INIT: {
                 initReceived = true;
+
+                synchronized (actions) {
+                    actions.notify();
+                }
                 break;
             }
             case RequestCodes.GET_PROCESS: {
@@ -343,5 +363,9 @@ public class WinHandler {
 
     public void setDInputMapperType(byte dinputMapperType) {
         this.dinputMapperType = dinputMapperType;
+    }
+
+    public ExternalController getCurrentController() {
+        return currentController;
     }
 }

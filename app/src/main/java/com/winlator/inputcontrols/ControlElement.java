@@ -43,7 +43,7 @@ public class ControlElement {
         }
     }
     public enum Range {
-        FROM_A_TO_Z(26), FROM_0_TO_9(10), FROM_F1_TO_F12(12);
+        FROM_A_TO_Z(26), FROM_0_TO_9(10), FROM_F1_TO_F12(12), FROM_NP0_TO_NP9(10);
         public final byte max;
 
         Range(int max) {
@@ -310,6 +310,9 @@ public class ControlElement {
             case FROM_F1_TO_F12:
                 text = "F"+(index + 1);
                 break;
+            case FROM_NP0_TO_NP9:
+                text = "NP"+((index + 1) % 10);
+                break;
         }
         return text;
     }
@@ -560,6 +563,9 @@ public class ControlElement {
                             break;
                         case FROM_F1_TO_F12:
                             binding = Binding.valueOf("KEY_F"+(index + 1));
+                            break;
+                        case FROM_NP0_TO_NP9:
+                            binding = Binding.valueOf("KEY_KP_"+((index + 1) % 10));
                             break;
                     }
 

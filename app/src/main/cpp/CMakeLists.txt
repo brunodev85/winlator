@@ -1,6 +1,9 @@
-cmake_minimum_required(VERSION 3.10.2)
+cmake_minimum_required(VERSION 3.22.1)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wno-unused-function")
+set(CMAKE_C_FLAGS "-O2 -Wno-unused-function -Wimplicit-function-declaration")
+
+add_subdirectory(proot)
+add_subdirectory(virglrenderer)
 
 add_library(winlator SHARED
             drawable.c

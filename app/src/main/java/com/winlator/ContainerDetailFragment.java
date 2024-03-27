@@ -31,6 +31,7 @@ import com.winlator.box86_64.Box86_64PresetManager;
 import com.winlator.container.Container;
 import com.winlator.container.ContainerManager;
 import com.winlator.contentdialog.AddEnvVarDialog;
+import com.winlator.contentdialog.DXVKConfigDialog;
 import com.winlator.core.AppUtils;
 import com.winlator.core.Callback;
 import com.winlator.core.EnvVars;
@@ -43,6 +44,7 @@ import com.winlator.core.WineThemeManager;
 import com.winlator.core.WineUtils;
 import com.winlator.widget.CPUListView;
 import com.winlator.widget.ColorPickerView;
+import com.winlator.widget.ImagePickerView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -129,7 +131,13 @@ public class ContainerDetailFragment extends Fragment {
 
         final Spinner sGraphicsDriver = view.findViewById(R.id.SGraphicsDriver);
         final Spinner sDXWrapper = view.findViewById(R.id.SDXWrapper);
-        loadGraphicsDriverSpinner(sGraphicsDriver, sDXWrapper);
+
+        final View vDXWrapperConfig = view.findViewById(R.id.BTDXWrapperConfig);
+        vDXWrapperConfig.setTag(editContainer ? container.getDXWrapperConfig() : "");
+
+        setupDXWrapperSpinner(sDXWrapper, vDXWrapperConfig);
+        loadGraphicsDriverSpinner(sGraphicsDriver, sDXWrapper,
+            editContainer ? container.getGraphicsDriver() : Container.DEFAULT_GRAPHICS_DRIVER, editContainer ? container.getDXWrapper() : Container.DEFAULT_DXWRAPPER);
 
         view.findViewById(R.id.BTHelpDXWrapper).setOnClickListener((v) -> AppUtils.showHelpBox(context, v, R.string.dxwrapper_help_content));
 
@@ -140,7 +148,7 @@ public class ContainerDetailFragment extends Fragment {
         cbShowFPS.setChecked(editContainer && container.isShowFPS());
 
         final CheckBox cbStopServicesOnStartup = view.findViewById(R.id.CBStopServicesOnStartup);
-        cbStopServicesOnStartup.setChecked(editContainer && container.isStopServicesOnStartup());
+        cbStopServicesOnStartup.setChecked(!editContainer || container.isStopServicesOnStartup());
 
         final Spinner sBox86Preset = view.findViewById(R.id.SBox86Preset);
         Box86_64PresetManager.loadSpinner("box86", sBox86Preset, editContainer ? container.getBox86Preset() : preferences.getString("box86_preset", Box86_64Preset.COMPATIBILITY));
@@ -152,12 +160,12 @@ public class ContainerDetailFragment extends Fragment {
         if (editContainer) cpuListView.setCheckedCPUList(container.getCPUList());
 
         createWineConfigurationTab(view);
-        createDXComponentsTab(view);
+        createWinComponentsTab(view);
         createEnvVarsTab(view);
         createDrivesTab(view);
 
         view.findViewById(R.id.BTAddEnvVar).setOnClickListener((v) -> (new AddEnvVarDialog(context, view)).show());
-        AppUtils.setupTabLayout(view, R.id.TabLayout, R.id.LLTabWineConfiguration, R.id.LLTabDXComponents, R.id.LLTabEnvVars, R.id.LLTabDrives, R.id.LLTabAdvanced);
+        AppUtils.setupTabLayout(view, R.id.TabLayout, R.id.LLTabWineConfiguration, R.id.LLTabWinComponents, R.id.LLTabEnvVars, R.id.LLTabDrives, R.id.LLTabAdvanced);
 
         view.findViewById(R.id.BTConfirm).setOnClickListener((v) -> {
             try {
@@ -166,8 +174,9 @@ public class ContainerDetailFragment extends Fragment {
                 String envVars = getEnvVars(view);
                 String graphicsDriver = StringUtils.parseIdentifier(sGraphicsDriver.getSelectedItem());
                 String dxwrapper = StringUtils.parseIdentifier(sDXWrapper.getSelectedItem());
+                String dxwrapperConfig = vDXWrapperConfig.getTag().toString();
                 String audioDriver = StringUtils.parseIdentifier(sAudioDriver.getSelectedItem());
-                String dxcomponents = getDXComponents(view);
+                String wincomponents = getWinComponents(view);
                 String drives = getDrives(view);
                 boolean showFPS = cbShowFPS.isChecked();
                 String cpuList = cpuListView.getCheckedCPUListAsString();
@@ -183,8 +192,9 @@ public class ContainerDetailFragment extends Fragment {
                     container.setCPUList(cpuList);
                     container.setGraphicsDriver(graphicsDriver);
                     container.setDXWrapper(dxwrapper);
+                    container.setDXWrapperConfig(dxwrapperConfig);
                     container.setAudioDriver(audioDriver);
-                    container.setDXComponents(dxcomponents);
+                    container.setWinComponents(wincomponents);
                     container.setDrives(drives);
                     container.setShowFPS(showFPS);
                     container.setStopServicesOnStartup(stopServicesOnStartup);
@@ -203,8 +213,9 @@ public class ContainerDetailFragment extends Fragment {
                     data.put("cpuList", cpuList);
                     data.put("graphicsDriver", graphicsDriver);
                     data.put("dxwrapper", dxwrapper);
+                    data.put("dxwrapperConfig", dxwrapperConfig);
                     data.put("audioDriver", audioDriver);
-                    data.put("dxcomponents", dxcomponents);
+                    data.put("wincomponents", wincomponents);
                     data.put("drives", drives);
                     data.put("showFPS", showFPS);
                     data.put("stopServicesOnStartup", stopServicesOnStartup);
@@ -274,7 +285,7 @@ public class ContainerDetailFragment extends Fragment {
             registryEditor.setDwordValue("Software\\Wine\\Direct3D", "strict_shader_math", sStrictShaderMath.getSelectedItemPosition());
 
             Spinner sVideoMemorySize = view.findViewById(R.id.SVideoMemorySize);
-            registryEditor.setStringValue("Software\\Wine\\Direct3D", "VideoMemorySize", sVideoMemorySize.getSelectedItem().toString());
+            registryEditor.setStringValue("Software\\Wine\\Direct3D", "VideoMemorySize", StringUtils.parseNumber(sVideoMemorySize.getSelectedItem()));
 
             Spinner sMouseWarpOverride = view.findViewById(R.id.SMouseWarpOverride);
             registryEditor.setStringValue("Software\\Wine\\DirectInput", "MouseWarpOverride", sMouseWarpOverride.getSelectedItem().toString().toLowerCase(Locale.ENGLISH));
@@ -287,11 +298,33 @@ public class ContainerDetailFragment extends Fragment {
     private void createWineConfigurationTab(View view) {
         Context context = getContext();
 
-        String[] desktopTheme = (container != null ? container.getDesktopTheme() : WineThemeManager.DEFAULT_THEME+","+WineThemeManager.DEFAULT_BACKGROUND).split(",");
+        WineThemeManager.ThemeInfo desktopTheme = new WineThemeManager.ThemeInfo(container != null ? container.getDesktopTheme() : WineThemeManager.DEFAULT_DESKTOP_THEME);
         Spinner sDesktopTheme = view.findViewById(R.id.SDesktopTheme);
-        sDesktopTheme.setSelection(WineThemeManager.Theme.valueOf(desktopTheme[0]).ordinal());
-        ColorPickerView cpvDesktopBackground = view.findViewById(R.id.CPVDesktopBackground);
-        cpvDesktopBackground.setColor(Color.parseColor(desktopTheme[1]));
+        sDesktopTheme.setSelection(desktopTheme.theme.ordinal());
+        final ImagePickerView ipvDesktopBackgroundImage = view.findViewById(R.id.IPVDesktopBackgroundImage);
+        final ColorPickerView cpvDesktopBackgroundColor = view.findViewById(R.id.CPVDesktopBackgroundColor);
+        cpvDesktopBackgroundColor.setColor(desktopTheme.backgroundColor);
+
+        Spinner sDesktopBackgroundType = view.findViewById(R.id.SDesktopBackgroundType);
+        sDesktopBackgroundType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                WineThemeManager.BackgroundType type = WineThemeManager.BackgroundType.values()[position];
+                ipvDesktopBackgroundImage.setVisibility(View.GONE);
+                cpvDesktopBackgroundColor.setVisibility(View.GONE);
+
+                if (type == WineThemeManager.BackgroundType.IMAGE) {
+                    ipvDesktopBackgroundImage.setVisibility(View.VISIBLE);
+                }
+                else if (type == WineThemeManager.BackgroundType.COLOR) {
+                    cpvDesktopBackgroundColor.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+        sDesktopBackgroundType.setSelection(desktopTheme.backgroundType.ordinal());
 
         File containerDir = container != null ? container.getRootDir() : null;
         File userRegFile = new File(containerDir, ".wine/user.reg");
@@ -316,7 +349,7 @@ public class ContainerDetailFragment extends Fragment {
 
             Spinner sVideoMemorySize = view.findViewById(R.id.SVideoMemorySize);
             String videoMemorySize = registryEditor.getStringValue("Software\\Wine\\Direct3D", "VideoMemorySize", "2048");
-            loadVideoMemorySizeSpinner(sVideoMemorySize, videoMemorySize);
+            AppUtils.setSpinnerSelectionFromNumber(sVideoMemorySize, videoMemorySize);
 
             List<String> mouseWarpOverrideList = Arrays.asList(context.getString(R.string.disable), context.getString(R.string.enable), context.getString(R.string.force));
             Spinner sMouseWarpOverride = view.findViewById(R.id.SMouseWarpOverride);
@@ -337,20 +370,6 @@ public class ContainerDetailFragment extends Fragment {
             }
         }
         catch (JSONException e) {}
-
-        spinner.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, values));
-        spinner.setSelection(selectedPosition);
-    }
-
-    private void loadVideoMemorySizeSpinner(Spinner spinner, String selectedValue) {
-        List<String> values = new ArrayList<>();
-        int selectedPosition = 0;
-
-        for (int i = 5, j = 0; i <= 12; i++, j++) {
-            String value = String.valueOf((int)Math.pow(2, i));
-            if (value.equals(selectedValue)) selectedPosition = j;
-            values.add(value);
-        }
 
         spinner.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, values));
         spinner.setSelection(selectedPosition);
@@ -385,13 +404,21 @@ public class ContainerDetailFragment extends Fragment {
     }
 
     private String getDesktopTheme(View view) {
+        Spinner sDesktopBackgroundType = view.findViewById(R.id.SDesktopBackgroundType);
+        WineThemeManager.BackgroundType type = WineThemeManager.BackgroundType.values()[sDesktopBackgroundType.getSelectedItemPosition()];
         Spinner sDesktopTheme = view.findViewById(R.id.SDesktopTheme);
-        ColorPickerView cpvDesktopBackground = view.findViewById(R.id.CPVDesktopBackground);
+        ColorPickerView cpvDesktopBackground = view.findViewById(R.id.CPVDesktopBackgroundColor);
         WineThemeManager.Theme theme = WineThemeManager.Theme.values()[sDesktopTheme.getSelectedItemPosition()];
-        return theme+","+cpvDesktopBackground.getColorAsString();
+
+       String desktopTheme = theme+","+type+","+cpvDesktopBackground.getColorAsString();
+        if (type == WineThemeManager.BackgroundType.IMAGE) {
+            File userWallpaperFile = WineThemeManager.getUserWallpaperFile(getContext());
+            desktopTheme += ","+(userWallpaperFile.isFile() ? userWallpaperFile.lastModified() : "0");
+        }
+        return desktopTheme;
     }
 
-    private void loadScreenSizeSpinner(View view, String selectedValue) {
+    public static void loadScreenSizeSpinner(View view, String selectedValue) {
         final Spinner sScreenSize = view.findViewById(R.id.SScreenSize);
 
         final LinearLayout llCustomScreenSize = view.findViewById(R.id.LLCustomScreenSize);
@@ -415,19 +442,18 @@ public class ContainerDetailFragment extends Fragment {
         }
     }
 
-    private void loadGraphicsDriverSpinner(Spinner sGraphicsDriver, Spinner sDXWrapper) {
-        final Context context = getContext();
+    public static void loadGraphicsDriverSpinner(final Spinner sGraphicsDriver, final Spinner sDXWrapper, String selectedGraphicsDriver, String selectedDXWrapper) {
+        final Context context = sGraphicsDriver.getContext();
         final String[] dxwrapperEntries = context.getResources().getStringArray(R.array.dxwrapper_entries);
 
         Runnable update = () -> {
             String graphicsDriver = StringUtils.parseIdentifier(sGraphicsDriver.getSelectedItem());
-            boolean useDXVK = graphicsDriver.equals("turnip-zink");
+            boolean useDXVK = graphicsDriver.equals("turnip");
 
             ArrayList<String> items = new ArrayList<>();
             for (String value : dxwrapperEntries) if (useDXVK || (!value.startsWith("DXVK") && !value.startsWith("D8VK"))) items.add(value);
             sDXWrapper.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, items.toArray(new String[0])));
-
-            AppUtils.setSpinnerSelectionFromIdentifier(sDXWrapper, container != null ? container.getDXWrapper() : Container.DEFAULT_DXWRAPPER);
+            AppUtils.setSpinnerSelectionFromIdentifier(sDXWrapper, selectedDXWrapper);
         };
 
         sGraphicsDriver.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -440,35 +466,51 @@ public class ContainerDetailFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        String selectedGraphicsDriver = container != null ? container.getGraphicsDriver() : Container.DEFAULT_GRAPHICS_DRIVER;
         AppUtils.setSpinnerSelectionFromIdentifier(sGraphicsDriver, selectedGraphicsDriver);
 
         update.run();
     }
 
-    private String getDXComponents(View view) {
-        ViewGroup parent = view.findViewById(R.id.LLTabDXComponents);
+    public static void setupDXWrapperSpinner(Spinner sDXWrapper, View vDXWrapperConfig) {
+        sDXWrapper.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String dxwrapper = StringUtils.parseIdentifier(sDXWrapper.getSelectedItem());
+                if (dxwrapper.equals("dxvk")) {
+                    vDXWrapperConfig.setOnClickListener((v) -> (new DXVKConfigDialog(vDXWrapperConfig)).show());
+                    vDXWrapperConfig.setVisibility(View.VISIBLE);
+                }
+                else vDXWrapperConfig.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+    }
+
+    private String getWinComponents(View view) {
+        ViewGroup parent = view.findViewById(R.id.LLTabWinComponents);
         int childCount = parent.getChildCount();
-        String[] dxcomponents = new String[childCount];
+        String[] wincomponents = new String[childCount];
 
         for (int i = 0; i < childCount; i++) {
             View child = parent.getChildAt(i);
             Spinner spinner = child.findViewById(R.id.Spinner);
-            dxcomponents[i] = child.getTag().toString()+"="+spinner.getSelectedItemPosition();
+            wincomponents[i] = child.getTag().toString()+"="+spinner.getSelectedItemPosition();
         }
-        return String.join(",", dxcomponents);
+        return String.join(",", wincomponents);
     }
 
-    private void createDXComponentsTab(View view) {
-        final String[] dxcomponents = (container != null ? container.getDXComponents() : Container.DEFAULT_DXCOMPONENTS).split(",");
+    private void createWinComponentsTab(View view) {
+        final String[] wincomponents = (container != null ? container.getWinComponents() : Container.DEFAULT_WINCOMPONENTS).split(",");
 
         Context context = getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        ViewGroup parent = view.findViewById(R.id.LLTabDXComponents);
+        ViewGroup parent = view.findViewById(R.id.LLTabWinComponents);
 
-        for (String dxcomponent : dxcomponents) {
-            String[] parts = dxcomponent.split("=");
-            View itemView = inflater.inflate(R.layout.dxcomponent_list_item, parent, false);
+        for (String wincomponent : wincomponents) {
+            String[] parts = wincomponent.split("=");
+            View itemView = inflater.inflate(R.layout.wincomponent_list_item, parent, false);
             ((TextView)itemView.findViewById(R.id.TextView)).setText(StringUtils.getString(context, parts[0]));
             ((Spinner)itemView.findViewById(R.id.Spinner)).setSelection(Integer.parseInt(parts[1]), false);
             itemView.setTag(parts[0]);
@@ -491,7 +533,7 @@ public class ContainerDetailFragment extends Fragment {
     }
 
     private void createDrivesTab(View view) {
-        Context context = getContext();
+        final Context context = getContext();
 
         final LinearLayout parent = view.findViewById(R.id.LLDrives);
         final View emptyTextView = view.findViewById(R.id.TVDrivesEmptyText);

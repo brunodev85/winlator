@@ -1,6 +1,7 @@
 package com.winlator.core;
 
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.StatFs;
@@ -93,14 +94,14 @@ public abstract class FileUtils {
         return false;
     }
 
-    public static void symlink(File oldFile, File newFile) {
-        symlink(oldFile.getAbsolutePath(), newFile.getAbsolutePath());
+    public static void symlink(File linkTarget, File linkFile) {
+        symlink(linkTarget.getAbsolutePath(), linkFile.getAbsolutePath());
     }
 
-    public static void symlink(String oldPath, String newPath) {
+    public static void symlink(String linkTarget, String linkFile) {
         try {
-            (new File(newPath)).delete();
-            Os.symlink(oldPath, newPath);
+            (new File(linkFile)).delete();
+            Os.symlink(linkTarget, linkFile);
         }
         catch (ErrnoException e) {}
     }
@@ -206,8 +207,8 @@ public abstract class FileUtils {
         }
     }
 
-    public static List<String> readLines(File file) {
-        List<String> lines = new ArrayList<>();
+    public static ArrayList<String> readLines(File file) {
+        ArrayList<String> lines = new ArrayList<>();
         try (FileInputStream fis = new FileInputStream(file)) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
             String line;
@@ -264,7 +265,19 @@ public abstract class FileUtils {
     }
 
     public static boolean contentEquals(File origin, File target) {
-        return Arrays.equals(read(origin), read(target));
+        if (origin.length() != target.length()) return false;
+
+        try (InputStream inStream1 = new BufferedInputStream(new FileInputStream(origin));
+             InputStream inStream2 = new BufferedInputStream(new FileInputStream(target))) {
+            int data;
+            while ((data = inStream1.read()) != -1) {
+                if (data != inStream2.read()) return false;
+            }
+            return true;
+        }
+        catch (IOException e) {
+            return false;
+        }
     }
 
     public static void getSizeAsync(File file, Callback<Long> callback) {
@@ -294,6 +307,15 @@ public abstract class FileUtils {
                     if (length > 0) callback.call(length);
                 }
             }
+        }
+    }
+
+    public static long getSize(Context context, String assetFile) {
+        try (InputStream inStream = context.getAssets().open(assetFile)) {
+            return inStream.available();
+        }
+        catch (IOException e) {
+            return 0;
         }
     }
 
@@ -329,5 +351,14 @@ public abstract class FileUtils {
         }
         catch (Exception e) {}
         return result;
+    }
+
+    public static String readSymlink(File file) {
+        try {
+            return Files.readSymbolicLink(file.toPath()).toString();
+        }
+        catch (IOException e) {
+            return "";
+        }
     }
 }

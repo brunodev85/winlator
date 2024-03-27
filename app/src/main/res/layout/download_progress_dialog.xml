@@ -49,6 +49,7 @@
             </FrameLayout>
 
             <TextView
+                android:id="@+id/TextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20dp"
@@ -56,11 +57,18 @@
                 android:text="@string/downloading_file" />
         </LinearLayout>
 
-        <View style="@style/HorizontalLine" />
+        <LinearLayout
+            android:id="@+id/LLBottomBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
 
-        <Button
-            style="@style/ButtonNeutral"
-            android:text="@string/cancel"
-            android:id="@+id/BTCancel" />
+            <View style="@style/HorizontalLine" />
+
+            <Button
+                style="@style/ButtonNeutral"
+                android:text="@string/cancel"
+                android:id="@+id/BTCancel" />
+        </LinearLayout>
     </LinearLayout>
 </FrameLayout>

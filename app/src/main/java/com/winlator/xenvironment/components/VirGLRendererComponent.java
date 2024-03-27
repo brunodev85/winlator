@@ -83,13 +83,6 @@ public class VirGLRendererComponent extends EnvironmentComponent implements Conn
     @Override
     public void handleNewConnection(Client client) {
         getSharedEGLContext();
-
-        ArrayList<Client> clients = connector.getConnectedClients();
-        if (!clients.isEmpty()) {
-            long clientPtr = (long)clients.get(clients.size()-1).getTag();
-            destroyRenderer(clientPtr);
-        }
-
         long clientPtr = handleNewConnection(client.clientSocket.fd);
         client.setTag(clientPtr);
     }

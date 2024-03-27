@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Winlator</string>
-    <string name="app_version">App Version</string>
-    <string name="obb_image_version">OBB Image Version</string>
-    <string name="obb_image">OBB Image</string>
     <string name="run">Run</string>
     <string name="edit">Edit</string>
     <string name="remove">Remove</string>
@@ -17,9 +14,9 @@
     <string name="creating_container">Creating Container...</string>
     <string name="removing_container">Removing Container...</string>
     <string name="duplicating_container">Duplicating Container...</string>
-    <string name="installing_obb_image">Installing obb image...</string>
+    <string name="installing_system_files">Installing System Files...</string>
     <string name="starting_up">Starting up...</string>
-    <string name="unable_to_install_obb_image">Unable to install the obb image</string>
+    <string name="unable_to_install_system_files">Unable to install system files</string>
     <string name="keyboard">Keyboard</string>
     <string name="toggle_fullscreen">Toggle Fullscreen</string>
     <string name="exit">Exit</string>
@@ -105,10 +102,10 @@
     <string name="directmusic">DirectMusic</string>
     <string name="directplay">DirectPlay</string>
     <string name="directshow">DirectShow</string>
+    <string name="vcrun2010">Visual C++ 2010</string>
     <string name="settings">Settings</string>
     <string name="exec_arguments">Exec Arguments</string>
-    <string name="_default">Default</string>
-    <string name="dxcomponents">DX Components</string>
+    <string name="win_components">Win Components</string>
     <string name="drives">Drives</string>
     <string name="force_fullscreen">Force Fullscreen</string>
     <string name="range">Range</string>
@@ -121,7 +118,6 @@
     <string name="version">Version</string>
     <string name="unable_to_install_wine">Unable to install Wine</string>
     <string name="unable_to_remove_this_wine_version">Unable to remove this wine version</string>
-    <string name="unable_to_find_the_obb_image_do_you_want_to_download_file_and_install">Unable to find the obb image. Do you want to download the file and install?</string>
     <string name="wine_version">Wine Version</string>
     <string name="removing_wine">Removing Wine...</string>
     <string name="preparing_installation">Preparing installation...</string>
@@ -155,7 +151,6 @@
     <string name="end_process">End Process</string>
     <string name="new_task">New Task</string>
     <string name="processes">Processes</string>
-    <string name="turnip_version">Turnip Version</string>
     <string name="orientation">Orientation</string>
     <string name="horizontal">Horizontal</string>
     <string name="vertical">Vertical</string>
@@ -165,12 +160,12 @@
     <string name="downloading_file">Downloading File...</string>
     <string name="unable_to_load_profile_list">Unable to load profile list</string>
     <string name="copy">Copy</string>
-    <string name="install_obb_image">Install OBB Image</string>
     <string name="installed_version">Installed Version</string>
     <string name="unable_to_download_file">Unable to download file</string>
+    <string name="stability">Stability</string>
     <string name="compatibility">Compatibility</string>
     <string name="intermediate">Intermediate</string>
-    <string name="performance_unstable">Performance (Unstable)</string>
+    <string name="performance">Performance</string>
     <string name="preset">Preset</string>
     <string name="you_cannot_remove_this_preset">You cannot remove this preset</string>
     <string name="dxwrapper_help_content"><![CDATA[
@@ -210,4 +205,10 @@
     <string name="desktop">Desktop</string>
     <string name="theme">Theme</string>
     <string name="background">Background</string>
+    <string name="max_device_memory">Max Device Memory</string>
+    <string name="frame_rate">Frame Rate</string>
+    <string name="configuration">Configuration</string>
+    <string name="browse">Browse</string>
+    <string name="magnifier">Magnifier</string>
+    <string name="bring_to_front">Bring to Front</string>
 </resources>
