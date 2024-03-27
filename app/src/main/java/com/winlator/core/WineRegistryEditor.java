@@ -276,7 +276,6 @@ public class WineRegistryEditor implements Closeable {
         try (BufferedReader reader = new BufferedReader(new FileReader(cloneFile), StreamUtils.BUFFER_SIZE)) {
             key = "["+escape(key)+(!keyAsPrefix ? "]" : "");
             int totalLength = 0;
-            int index;
             int start = -1;
             int end = -1;
             int emptyLines = 0;
@@ -285,15 +284,13 @@ public class WineRegistryEditor implements Closeable {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (start == -1) {
-                    index = line.indexOf(key);
-                    if (index != -1) {
-                        offset = totalLength + index - 1;
+                    if (line.startsWith(key)) {
+                        offset = totalLength - 1;
                         start = totalLength + line.length() + 1;
                     }
                 }
                 else {
-                    index = line.indexOf('[');
-                    if (index != -1) {
+                    if (line.startsWith("[")) {
                         end = Math.max(-1, totalLength - emptyLines - 1);
                         break;
                     }
@@ -330,7 +327,6 @@ public class WineRegistryEditor implements Closeable {
             reader.skip(keyLocation.start);
             name = name != null ? "\""+escape(name)+"\"=" : "@=";
             int totalLength = 0;
-            int index;
             int start = -1;
             int end = -1;
             int offset = 0;
@@ -338,10 +334,9 @@ public class WineRegistryEditor implements Closeable {
             String line;
             while ((line = reader.readLine()) != null && totalLength < keyLocation.length()) {
                 if (start == -1) {
-                    index = line.indexOf(name);
-                    if (index != -1) {
-                        offset = totalLength + index - 1;
-                        start = totalLength + name.length() + index;
+                    if (line.startsWith(name)) {
+                        offset = totalLength - 1;
+                        start = totalLength + name.length();
                     }
                 }
                 else {

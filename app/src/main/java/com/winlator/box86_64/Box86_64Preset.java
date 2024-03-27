@@ -3,6 +3,7 @@ package com.winlator.box86_64;
 import androidx.annotation.NonNull;
 
 public class Box86_64Preset {
+    public static final String STABILITY = "STABILITY";
     public static final String COMPATIBILITY = "COMPATIBILITY";
     public static final String INTERMEDIATE = "INTERMEDIATE";
     public static final String PERFORMANCE = "PERFORMANCE";

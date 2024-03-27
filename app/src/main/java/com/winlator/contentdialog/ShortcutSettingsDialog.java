@@ -14,6 +14,7 @@ import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.winlator.ContainerDetailFragment;
 import com.winlator.R;
 import com.winlator.ShortcutsFragment;
 import com.winlator.box86_64.Box86_64PresetManager;
@@ -23,13 +24,17 @@ import com.winlator.core.AppUtils;
 import com.winlator.core.ArrayUtils;
 import com.winlator.core.EnvVars;
 import com.winlator.core.StringUtils;
+import com.winlator.inputcontrols.ControlsProfile;
+import com.winlator.inputcontrols.InputControlsManager;
 import com.winlator.winhandler.WinHandler;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class ShortcutSettingsDialog extends ContentDialog {
     private final ShortcutsFragment fragment;
     private final Shortcut shortcut;
+    private InputControlsManager inputControlsManager;
 
     public ShortcutSettingsDialog(ShortcutsFragment fragment, Shortcut shortcut) {
         super(fragment.getContext(), R.layout.shortcut_settings_dialog);
@@ -43,11 +48,9 @@ public class ShortcutSettingsDialog extends ContentDialog {
 
     private void createContentView() {
         final Context context = fragment.getContext();
-        Resources resources = context.getResources();
+        inputControlsManager = new InputControlsManager(context);
         LinearLayout llContent = findViewById(R.id.LLContent);
         llContent.getLayoutParams().width = AppUtils.getPreferredDialogWidth(context);
-
-        String[] defaultItem = new String[]{"-- "+context.getString(R.string._default)+" --"};
 
         final EditText etName = findViewById(R.id.ETName);
         etName.setText(shortcut.name);
@@ -55,24 +58,21 @@ public class ShortcutSettingsDialog extends ContentDialog {
         final EditText etExecArgs = findViewById(R.id.ETExecArgs);
         etExecArgs.setText(shortcut.getExtra("execArgs"));
 
-        String[] screenSizeEntries = ArrayUtils.concat(defaultItem, resources.getStringArray(R.array.screen_size_entries));
-        loadScreenSizeSpinner(shortcut.getExtra("screenSize"), screenSizeEntries);
+        ContainerDetailFragment.loadScreenSizeSpinner(getContentView(), shortcut.getExtra("screenSize", shortcut.container.getScreenSize()));
 
-        String[] graphicsDriverEntries = ArrayUtils.concat(defaultItem, resources.getStringArray(R.array.graphics_driver_entries));
         final Spinner sGraphicsDriver = findViewById(R.id.SGraphicsDriver);
-        sGraphicsDriver.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, graphicsDriverEntries));
-        AppUtils.setSpinnerSelectionFromIdentifier(sGraphicsDriver, shortcut.getExtra("graphicsDriver"));
-
-        String[] dxwrapperEntries = ArrayUtils.concat(defaultItem, resources.getStringArray(R.array.dxwrapper_entries));
         final Spinner sDXWrapper = findViewById(R.id.SDXWrapper);
-        sDXWrapper.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, dxwrapperEntries));
-        AppUtils.setSpinnerSelectionFromIdentifier(sDXWrapper, shortcut.getExtra("dxwrapper"));
+
+        final View vDXWrapperConfig = findViewById(R.id.BTDXWrapperConfig);
+        vDXWrapperConfig.setTag(shortcut.getExtra("dxwrapperConfig", shortcut.container.getDXWrapperConfig()));
+
+        ContainerDetailFragment.setupDXWrapperSpinner(sDXWrapper, vDXWrapperConfig);
+        ContainerDetailFragment.loadGraphicsDriverSpinner(sGraphicsDriver, sDXWrapper,
+            shortcut.getExtra("graphicsDriver", shortcut.container.getGraphicsDriver()), shortcut.getExtra("dxwrapper", shortcut.container.getDXWrapper()));
 
         findViewById(R.id.BTHelpDXWrapper).setOnClickListener((v) -> AppUtils.showHelpBox(context, v, R.string.dxwrapper_help_content));
 
-        String[] audioDriverEntries = ArrayUtils.concat(defaultItem, resources.getStringArray(R.array.audio_driver_entries));
         final Spinner sAudioDriver = findViewById(R.id.SAudioDriver);
-        sAudioDriver.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, audioDriverEntries));
         AppUtils.setSpinnerSelectionFromIdentifier(sAudioDriver, shortcut.getExtra("audioDriver"));
 
         final CheckBox cbForceFullscreen = findViewById(R.id.CBForceFullscreen);
@@ -84,14 +84,17 @@ public class ShortcutSettingsDialog extends ContentDialog {
         final Spinner sBox64Preset = findViewById(R.id.SBox64Preset);
         Box86_64PresetManager.loadSpinner("box64", sBox64Preset, shortcut.getExtra("box64Preset", shortcut.container.getBox64Preset()));
 
+        final Spinner sControlsProfile = findViewById(R.id.SControlsProfile);
+        loadControlsProfileSpinner(sControlsProfile, shortcut.getExtra("controlsProfile", "0"));
+
         final Spinner sDInputMapperType = findViewById(R.id.SDInputMapperType);
         sDInputMapperType.setSelection(Byte.parseByte(shortcut.getExtra("dinputMapperType", String.valueOf(WinHandler.DINPUT_MAPPER_TYPE_XINPUT))));
 
-        createDXComponentsTab();
+        createWinComponentsTab();
         createEnvVarsTab();
 
         findViewById(R.id.BTAddEnvVar).setOnClickListener((v) -> (new AddEnvVarDialog(context, getContentView())).show());
-        AppUtils.setupTabLayout(getContentView(), R.id.TabLayout, R.id.LLTabDXComponents, R.id.LLTabEnvVars, R.id.LLTabAdvanced);
+        AppUtils.setupTabLayout(getContentView(), R.id.TabLayout, R.id.LLTabWinComponents, R.id.LLTabEnvVars, R.id.LLTabAdvanced);
 
         findViewById(R.id.BTExtraArgsMenu).setOnClickListener((v) -> {
             PopupMenu popupMenu = new PopupMenu(context, v);
@@ -111,14 +114,20 @@ public class ShortcutSettingsDialog extends ContentDialog {
                 renameShortcut(name);
             }
             else {
+                String graphicsDriver = StringUtils.parseIdentifier(sGraphicsDriver.getSelectedItem());
+                String dxwrapper = StringUtils.parseIdentifier(sDXWrapper.getSelectedItem());
+                String dxwrapperConfig = vDXWrapperConfig.getTag().toString();
+                String audioDriver = StringUtils.parseIdentifier(sAudioDriver.getSelectedItem());
+
                 String execArgs = etExecArgs.getText().toString();
                 shortcut.putExtra("execArgs", !execArgs.isEmpty() ? execArgs : null);
                 shortcut.putExtra("screenSize", getScreenSize());
-                shortcut.putExtra("graphicsDriver", sGraphicsDriver.getSelectedItemPosition() > 0 ? StringUtils.parseIdentifier(sGraphicsDriver.getSelectedItem()) : null);
-                shortcut.putExtra("dxwrapper", sDXWrapper.getSelectedItemPosition() > 0 ? StringUtils.parseIdentifier(sDXWrapper.getSelectedItem()) : null);
-                shortcut.putExtra("audioDriver", sAudioDriver.getSelectedItemPosition() > 0 ? StringUtils.parseIdentifier(sAudioDriver.getSelectedItem()) : null);
+                shortcut.putExtra("graphicsDriver", !graphicsDriver.equals(shortcut.container.getGraphicsDriver()) ? graphicsDriver : null);
+                shortcut.putExtra("dxwrapper", !dxwrapper.equals(shortcut.container.getDXWrapper()) ? dxwrapper : null);
+                shortcut.putExtra("dxwrapperConfig", !dxwrapperConfig.equals(shortcut.container.getDXWrapperConfig()) ? dxwrapperConfig : null);
+                shortcut.putExtra("audioDriver", !audioDriver.equals(shortcut.container.getAudioDriver())? audioDriver : null);
                 shortcut.putExtra("forceFullscreen", cbForceFullscreen.isChecked() ? "1" : null);
-                shortcut.putExtra("dxcomponents", getDXComponents());
+                shortcut.putExtra("wincomponents", getWinComponents());
                 shortcut.putExtra("envVars", getEnvVars());
 
                 String box86Preset = Box86_64PresetManager.getSpinnerSelectedId(sBox86Preset);
@@ -127,6 +136,9 @@ public class ShortcutSettingsDialog extends ContentDialog {
                 shortcut.putExtra("box64Preset", !box64Preset.equals(shortcut.container.getBox64Preset()) ? box64Preset : null);
 
                 int dinputMapperType = sDInputMapperType.getSelectedItemPosition();
+                ArrayList<ControlsProfile> profiles = inputControlsManager.getProfiles();
+                int controlsProfile = sControlsProfile.getSelectedItemPosition() > 0 ? profiles.get(sControlsProfile.getSelectedItemPosition()-1).id : 0;
+                shortcut.putExtra("controlsProfile", controlsProfile > 0 ? String.valueOf(controlsProfile) : null);
                 shortcut.putExtra("dinputMapperType", dinputMapperType != WinHandler.DINPUT_MAPPER_TYPE_XINPUT ? String.valueOf(dinputMapperType) : null);
                 shortcut.saveData();
             }
@@ -162,31 +174,6 @@ public class ShortcutSettingsDialog extends ContentDialog {
         return !envVars.isEmpty() ? envVars.toString() : null;
     }
 
-    private void loadScreenSizeSpinner(String selectedValue, String[] entries) {
-        final Spinner sScreenSize = findViewById(R.id.SScreenSize);
-        sScreenSize.setAdapter(new ArrayAdapter<>(fragment.getContext(), android.R.layout.simple_spinner_dropdown_item, entries));
-
-        final LinearLayout llCustomScreenSize = findViewById(R.id.LLCustomScreenSize);
-        sScreenSize.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String value = sScreenSize.getItemAtPosition(position).toString();
-                llCustomScreenSize.setVisibility(value.equalsIgnoreCase("custom") ? View.VISIBLE : View.GONE);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
-        boolean found = AppUtils.setSpinnerSelectionFromIdentifier(sScreenSize, selectedValue);
-        if (!found && !selectedValue.isEmpty()) {
-            AppUtils.setSpinnerSelectionFromValue(sScreenSize, "custom");
-            String[] screenSize = selectedValue.split("x");
-            ((EditText)findViewById(R.id.ETScreenWidth)).setText(screenSize[0]);
-            ((EditText)findViewById(R.id.ETScreenHeight)).setText(screenSize[1]);
-        }
-    }
-
     private void renameShortcut(String newName) {
         File parent = shortcut.file.getParentFile();
         File newFile = new File(parent, newName+".desktop");
@@ -200,31 +187,31 @@ public class ShortcutSettingsDialog extends ContentDialog {
         fragment.loadShortcutsList();
     }
 
-    private String getDXComponents() {
-        ViewGroup parent = findViewById(R.id.LLTabDXComponents);
+    private String getWinComponents() {
+        ViewGroup parent = findViewById(R.id.LLTabWinComponents);
         int childCount = parent.getChildCount();
-        String[] dxcomponents = new String[childCount];
+        String[] wincomponents = new String[childCount];
 
         for (int i = 0; i < childCount; i++) {
             View child = parent.getChildAt(i);
             Spinner spinner = child.findViewById(R.id.Spinner);
-            dxcomponents[i] = child.getTag().toString()+"="+spinner.getSelectedItemPosition();
+            wincomponents[i] = child.getTag().toString()+"="+spinner.getSelectedItemPosition();
         }
 
-        String result = String.join(",", dxcomponents);
-        return !result.equals(shortcut.container.getDXComponents()) ? result : null;
+        String result = String.join(",", wincomponents);
+        return !result.equals(shortcut.container.getWinComponents()) ? result : null;
     }
 
-    private void createDXComponentsTab() {
-        final String[] dxcomponents = shortcut.getExtra("dxcomponents", shortcut.container.getDXComponents()).split(",");
+    private void createWinComponentsTab() {
+        final String[] wincomponents = shortcut.getExtra("wincomponents", shortcut.container.getWinComponents()).split(",");
 
         Context context = fragment.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        ViewGroup parent = findViewById(R.id.LLTabDXComponents);
+        ViewGroup parent = findViewById(R.id.LLTabWinComponents);
 
-        for (String dxcomponent : dxcomponents) {
-            String[] parts = dxcomponent.split("=");
-            View itemView = inflater.inflate(R.layout.dxcomponent_list_item, parent, false);
+        for (String wincomponent : wincomponents) {
+            String[] parts = wincomponent.split("=");
+            View itemView = inflater.inflate(R.layout.wincomponent_list_item, parent, false);
             ((TextView)itemView.findViewById(R.id.TextView)).setText(StringUtils.getString(context, parts[0]));
             ((Spinner)itemView.findViewById(R.id.Spinner)).setSelection(Integer.parseInt(parts[1]), false);
             itemView.setTag(parts[0]);
@@ -251,5 +238,23 @@ public class ShortcutSettingsDialog extends ContentDialog {
         }
 
         if (envVars.isEmpty()) emptyTextView.setVisibility(View.VISIBLE);
+    }
+
+    private void loadControlsProfileSpinner(Spinner spinner, String selectedValue) {
+        final Context context = fragment.getContext();
+        final ArrayList<ControlsProfile> profiles = inputControlsManager.getProfiles(true);
+        ArrayList<String> values = new ArrayList<>();
+        values.add(context.getString(R.string.none));
+
+        int selectedPosition = 0;
+        int selectedId = Integer.parseInt(selectedValue);
+        for (int i = 0; i < profiles.size(); i++) {
+            ControlsProfile profile = profiles.get(i);
+            if (profile.id == selectedId) selectedPosition = i + 1;
+            values.add(profile.getName());
+        }
+
+        spinner.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, values));
+        spinner.setSelection(selectedPosition, false);
     }
 }

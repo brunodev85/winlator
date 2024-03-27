@@ -14,6 +14,7 @@ public class ImageFs {
     public static final String USER = "xuser";
     public static final String HOME_PATH = "/home/"+USER;
     public static final String CACHE_PATH = "/home/"+USER+"/.cache";
+    public static final String CONFIG_PATH = "/home/"+USER+"/.config";
     public static final String WINEPREFIX = "/home/"+USER+"/.wine";
     private final File rootDir;
     private String winePath = "/opt/wine";

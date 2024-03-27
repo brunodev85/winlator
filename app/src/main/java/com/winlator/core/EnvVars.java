@@ -34,7 +34,7 @@ public class EnvVars implements Iterable<String> {
     }
 
     public String get(String name) {
-        return data.get(name);
+        return data.getOrDefault(name, "");
     }
 
     public void remove(String name) {

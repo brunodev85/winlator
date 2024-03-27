@@ -7,13 +7,13 @@ import android.os.Process;
 import androidx.preference.PreferenceManager;
 
 import com.winlator.MainActivity;
-import com.winlator.SettingsFragment;
 import com.winlator.box86_64.Box86_64Preset;
 import com.winlator.box86_64.Box86_64PresetManager;
 import com.winlator.core.Callback;
 import com.winlator.core.EnvVars;
 import com.winlator.core.ProcessHelper;
-import com.winlator.core.TarZstdUtils;
+import com.winlator.core.TarCompressorUtils;
+import com.winlator.core.DefaultVersion;
 import com.winlator.xconnector.UnixSocketConfig;
 import com.winlator.xenvironment.EnvironmentComponent;
 import com.winlator.xenvironment.ImageFs;
@@ -25,7 +25,6 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
     private static int pid = -1;
     private String[] bindingPaths;
     private EnvVars envVars;
-    private String cpuList;
     private String box86Preset = Box86_64Preset.COMPATIBILITY;
     private String box64Preset = Box86_64Preset.COMPATIBILITY;
     private Callback<Integer> terminationCallback;
@@ -82,14 +81,6 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
         this.envVars = envVars;
     }
 
-    public String getCpuList() {
-        return cpuList;
-    }
-
-    public void setCpuList(String cpuList) {
-        this.cpuList = cpuList;
-    }
-
     public String getBox86Preset() {
         return box86Preset;
     }
@@ -127,15 +118,20 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
         envVars.put("ANDROID_SYSVSHM_SERVER", UnixSocketConfig.SYSVSHM_SERVER_PATH);
         if (this.envVars != null) envVars.putAll(this.envVars);
 
-        File shmDir = new File(rootDir, "/tmp/shm");
-        shmDir.mkdirs();
+        boolean bindSHM = envVars.get("WINEESYNC").equals("1");
 
         String command = nativeLibraryDir+"/libproot.so";
         command += " --kill-on-exit";
         command += " --rootfs="+rootDir;
         command += " --cwd="+ImageFs.HOME_PATH;
         command += " --bind=/dev";
-        command += " --bind="+shmDir.getAbsolutePath()+":/dev/shm";
+
+        if (bindSHM) {
+            File shmDir = new File(rootDir, "/tmp/shm");
+            shmDir.mkdirs();
+            command += " --bind="+shmDir.getAbsolutePath()+":/dev/shm";
+        }
+
         command += " --bind=/proc";
         command += " --bind=/sys";
 
@@ -143,7 +139,7 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
             for (String path : bindingPaths) command += " --bind="+(new File(path)).getAbsolutePath();
         }
 
-        command += " /bin/env "+envVars.toEscapedString()+(cpuList != null ? " taskset -c "+cpuList : "")+" box64 "+guestExecutable;
+        command += " /usr/bin/env "+envVars.toEscapedString()+" box64 "+guestExecutable;
 
         envVars.clear();
         envVars.put("PROOT_TMP_DIR", tmpDir);
@@ -163,19 +159,19 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
         ImageFs imageFs = environment.getImageFs();
         Context context = environment.getContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String box86Version = preferences.getString("box86_version", SettingsFragment.DEFAULT_BOX86_VERSION);
-        String box64Version = preferences.getString("box64_version", SettingsFragment.DEFAULT_BOX64_VERSION);
+        String box86Version = preferences.getString("box86_version", DefaultVersion.BOX86);
+        String box64Version = preferences.getString("box64_version", DefaultVersion.BOX64);
         String currentBox86Version = preferences.getString("current_box86_version", "");
         String currentBox64Version = preferences.getString("current_box64_version", "");
         File rootDir = imageFs.getRootDir();
 
         if (!box86Version.equals(currentBox86Version)) {
-            TarZstdUtils.extract(context, "box86_64/box86-"+box86Version+".tzst", rootDir);
+            TarCompressorUtils.extract(TarCompressorUtils.Type.ZSTD, context, "box86_64/box86-"+box86Version+".tzst", rootDir);
             preferences.edit().putString("current_box86_version", box86Version).apply();
         }
 
         if (!box64Version.equals(currentBox64Version)) {
-            TarZstdUtils.extract(context, "box86_64/box64-"+box64Version+".tzst", rootDir);
+            TarCompressorUtils.extract(TarCompressorUtils.Type.ZSTD, context, "box86_64/box64-"+box64Version+".tzst", rootDir);
             preferences.edit().putString("current_box64_version", box64Version).apply();
         }
     }
@@ -183,6 +179,9 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
     private void addBox86EnvVars(EnvVars envVars) {
         envVars.put("BOX86_NOBANNER", "1");
         envVars.put("BOX86_DYNAREC", "1");
+
+        if (MainActivity.DEBUG_LEVEL >= 3) envVars.put("BOX86_LOG", MainActivity.DEBUG_LEVEL == 3 ? "1" : "2");
+
         envVars.putAll(Box86_64PresetManager.getEnvVars("box86", environment.getContext(), box86Preset));
         envVars.put("BOX86_X11GLX", "1");
         envVars.put("BOX86_NORCFILES", "1");
@@ -191,6 +190,9 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
     private void addBox64EnvVars(EnvVars envVars) {
         envVars.put("BOX64_NOBANNER", "1");
         envVars.put("BOX64_DYNAREC", "1");
+
+        if (MainActivity.DEBUG_LEVEL >= 3) envVars.put("BOX64_LOG", MainActivity.DEBUG_LEVEL == 3 ? "1" : "2");
+
         envVars.putAll(Box86_64PresetManager.getEnvVars("box64", environment.getContext(), box64Preset));
         envVars.put("BOX64_X11GLX", "1");
         envVars.put("BOX64_NORCFILES", "1");

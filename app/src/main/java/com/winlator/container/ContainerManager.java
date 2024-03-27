@@ -6,10 +6,12 @@ import android.os.Handler;
 import com.winlator.R;
 import com.winlator.core.Callback;
 import com.winlator.core.FileUtils;
-import com.winlator.core.TarZstdUtils;
+import com.winlator.core.OnExtractFileListener;
+import com.winlator.core.TarCompressorUtils;
 import com.winlator.core.WineInfo;
 import com.winlator.xenvironment.ImageFs;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,26 +49,8 @@ public class ContainerManager {
                         if (file.getName().startsWith(ImageFs.USER+"-")) {
                             Container container = new Container(Integer.parseInt(file.getName().replace(ImageFs.USER+"-", "")));
                             container.setRootDir(new File(homeDir, ImageFs.USER+"-"+container.id));
-
                             JSONObject data = new JSONObject(FileUtils.readString(container.getConfigFile()));
-                            container.setName(data.getString("name"));
-                            container.setScreenSize(data.getString("screenSize"));
-                            container.setEnvVars(data.getString("envVars"));
-                            container.setCPUList(data.getString("cpuList"));
-                            container.setGraphicsDriver(data.getString("graphicsDriver"));
-                            container.setDXWrapper(data.getString("dxwrapper"));
-                            container.setDXComponents(data.getString("dxcomponents"));
-                            container.setDrives(data.getString("drives"));
-                            container.setShowFPS(data.getBoolean("showFPS"));
-                            container.setStopServicesOnStartup(data.optBoolean("stopServicesOnStartup"));
-
-                            if (data.has("extraData")) container.setExtraData(data.getJSONObject("extraData"));
-                            if (data.has("wineVersion")) container.setWineVersion(data.getString("wineVersion"));
-                            if (data.has("box86Preset")) container.setBox86Preset(data.getString("box86Preset"));
-                            if (data.has("box64Preset")) container.setBox64Preset(data.getString("box64Preset"));
-                            if (data.has("audioDriver")) container.setAudioDriver(data.getString("audioDriver"));
-                            if (data.has("desktopTheme")) container.setDesktopTheme(data.getString("desktopTheme"));
-
+                            container.loadData(data);
                             containers.add(container);
                             maxContainerId = Math.max(maxContainerId, container.id);
                         }
@@ -118,25 +102,12 @@ public class ContainerManager {
 
             Container container = new Container(id);
             container.setRootDir(containerDir);
-            container.setName(data.getString("name"));
-            container.setScreenSize(data.getString("screenSize"));
-            container.setEnvVars(data.getString("envVars"));
-            container.setCPUList(data.getString("cpuList"));
-            container.setGraphicsDriver(data.getString("graphicsDriver"));
-            container.setDXWrapper(data.getString("dxwrapper"));
-            container.setAudioDriver(data.getString("audioDriver"));
-            container.setDXComponents(data.getString("dxcomponents"));
-            container.setDrives(data.getString("drives"));
-            container.setShowFPS(data.getBoolean("showFPS"));
-            container.setStopServicesOnStartup(data.getBoolean("stopServicesOnStartup"));
-            container.setBox86Preset(data.getString("box86Preset"));
-            container.setBox64Preset(data.getString("box64Preset"));
-            container.setDesktopTheme(data.getString("desktopTheme"));
+            container.loadData(data);
 
             boolean isMainWineVersion = !data.has("wineVersion") || data.getString("wineVersion").equals(WineInfo.MAIN_WINE_VERSION.identifier());
             if (!isMainWineVersion) container.setWineVersion(data.getString("wineVersion"));
 
-            if (!TarZstdUtils.extract(getContainerPatternFile(container.getWineVersion()), containerDir)) {
+            if (!extractContainerPatternFile(container.getWineVersion(), containerDir, null)) {
                 FileUtils.delete(containerDir);
                 return null;
             }
@@ -169,8 +140,9 @@ public class ContainerManager {
         dstContainer.setCPUList(srcContainer.getCPUList());
         dstContainer.setGraphicsDriver(srcContainer.getGraphicsDriver());
         dstContainer.setDXWrapper(srcContainer.getDXWrapper());
+        dstContainer.setDXWrapperConfig(srcContainer.getDXWrapperConfig());
         dstContainer.setAudioDriver(srcContainer.getAudioDriver());
-        dstContainer.setDXComponents(srcContainer.getDXComponents());
+        dstContainer.setWinComponents(srcContainer.getWinComponents());
         dstContainer.setDrives(srcContainer.getDrives());
         dstContainer.setShowFPS(srcContainer.isShowFPS());
         dstContainer.setStopServicesOnStartup(srcContainer.isStopServicesOnStartup());
@@ -212,16 +184,44 @@ public class ContainerManager {
         return null;
     }
 
-    public File getContainerPatternFile(String wineVersion) {
+    private void extractCommonDlls(String srcName, String dstName, JSONObject commonDlls, File containerDir, OnExtractFileListener onExtractFileListener) throws JSONException {
+        File srcDir = new File(ImageFs.find(context).getRootDir(), "/opt/wine/lib/wine/"+srcName);
+        JSONArray dlnames = commonDlls.getJSONArray(dstName);
+
+        for (int i = 0; i < dlnames.length(); i++) {
+            String dlname = dlnames.getString(i);
+            File dstFile = new File(containerDir, ".wine/drive_c/windows/"+dstName+"/"+dlname);
+            if (onExtractFileListener != null) {
+                dstFile = onExtractFileListener.onExtractFile(dstFile, 0);
+                if (dstFile == null) continue;
+            }
+            FileUtils.copy(new File(srcDir, dlname), dstFile);
+        }
+    }
+
+    public boolean extractContainerPatternFile(String wineVersion, File containerDir, OnExtractFileListener onExtractFileListener) {
         if (wineVersion == null || wineVersion.equals(WineInfo.MAIN_WINE_VERSION.identifier())) {
-            File rootDir = ImageFs.find(context).getRootDir();
-            return new File(rootDir, "/opt/container-pattern.tzst");
+            boolean result = TarCompressorUtils.extract(TarCompressorUtils.Type.ZSTD, context, "container_pattern.tzst", containerDir, onExtractFileListener);
+
+            if (result) {
+                try {
+                    JSONObject commonDlls = new JSONObject(FileUtils.readString(context, "common_dlls.json"));
+                    extractCommonDlls("x86_64-windows", "system32", commonDlls, containerDir, onExtractFileListener);
+                    extractCommonDlls("i386-windows", "syswow64", commonDlls, containerDir, onExtractFileListener);
+                }
+                catch (JSONException e) {
+                    return false;
+                }
+            }
+
+            return result;
         }
         else {
             File installedWineDir = ImageFs.find(context).getInstalledWineDir();
             WineInfo wineInfo = WineInfo.fromIdentifier(context, wineVersion);
             String suffix = wineInfo.fullVersion()+"-"+wineInfo.getArch();
-            return new File(installedWineDir, "container-pattern-"+suffix+".tzst");
+            File file = new File(installedWineDir, "container-pattern-"+suffix+".tzst");
+            return TarCompressorUtils.extract(TarCompressorUtils.Type.ZSTD, file, containerDir, onExtractFileListener);
         }
     }
 }

@@ -2,6 +2,7 @@ package com.winlator.inputcontrols;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 
 public class GamepadState {
     public float thumbLX = 0;
@@ -57,5 +58,14 @@ public class GamepadState {
 
     public byte getDPadY() {
         return (byte)(dpad[0] ? -1 : (dpad[2] ? 1 : 0));
+    }
+
+    public void copy(GamepadState other) {
+        this.thumbLX = other.thumbLX;
+        this.thumbLY = other.thumbLY;
+        this.thumbRX = other.thumbRX;
+        this.thumbRY = other.thumbRY;
+        this.buttons = other.buttons;
+        System.arraycopy(other.dpad, 0, this.dpad, 0, 4);
     }
 }

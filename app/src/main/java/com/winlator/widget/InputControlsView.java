@@ -12,6 +12,7 @@ import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,6 +26,8 @@ import com.winlator.inputcontrols.ExternalController;
 import com.winlator.inputcontrols.ExternalControllerBinding;
 import com.winlator.inputcontrols.GamepadState;
 import com.winlator.math.Mathf;
+import com.winlator.math.XForm;
+import com.winlator.winhandler.WinHandler;
 import com.winlator.xserver.Pointer;
 import com.winlator.xserver.XServer;
 
@@ -417,12 +420,13 @@ public class InputControlsView extends View {
 
     public void handleInputEvent(Binding binding, boolean isActionDown, float offset) {
         if (binding.isGamepad()) {
+            WinHandler winHandler = xServer != null ? xServer.getWinHandler() : null;
             GamepadState state = profile.getGamepadState();
 
             int buttonIdx = binding.ordinal() - Binding.GAMEPAD_BUTTON_A.ordinal();
             if (buttonIdx <= 11) {
                 state.setPressed(buttonIdx, isActionDown);
-                if (xServer != null) xServer.getWinHandler().saveGamepadState(state);
+                if (winHandler != null) winHandler.saveGamepadState(state);
             }
             else if (binding == Binding.GAMEPAD_LEFT_THUMB_UP || binding == Binding.GAMEPAD_LEFT_THUMB_DOWN) {
                 state.thumbLY = isActionDown ? offset : 0;
@@ -439,6 +443,11 @@ public class InputControlsView extends View {
             else if (binding == Binding.GAMEPAD_DPAD_UP || binding == Binding.GAMEPAD_DPAD_RIGHT ||
                      binding == Binding.GAMEPAD_DPAD_DOWN || binding == Binding.GAMEPAD_DPAD_LEFT) {
                 state.dpad[binding.ordinal() - Binding.GAMEPAD_DPAD_UP.ordinal()] = isActionDown;
+            }
+
+            if (winHandler != null) {
+                ExternalController controller = winHandler.getCurrentController();
+                if (controller != null) controller.state.copy(state);
             }
         }
         else {

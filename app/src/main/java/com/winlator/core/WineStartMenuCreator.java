@@ -11,6 +11,16 @@ import org.json.JSONObject;
 import java.io.File;
 
 public abstract class WineStartMenuCreator {
+    private static int parseShowCommand(String value) {
+        if (value.equals("SW_SHOWMAXIMIZED")) {
+            return MSLink.SW_SHOWMAXIMIZED;
+        }
+        else if (value.equals("SW_SHOWMINNOACTIVE")) {
+            return MSLink.SW_SHOWMINNOACTIVE;
+        }
+        else return MSLink.SW_SHOWNORMAL;
+    }
+
     private static void createMenuEntry(JSONObject item, File currentDir) throws JSONException {
         if (item.has("children")) {
             currentDir = new File(currentDir, item.getString("name"));
@@ -21,7 +31,13 @@ public abstract class WineStartMenuCreator {
         }
         else {
             File outputFile = new File(currentDir, item.getString("name")+".lnk");
-            MSLink.createFile(item.getString("path"), outputFile);
+            MSLink.Options options = new MSLink.Options();
+            options.targetPath = item.getString("path");
+            options.cmdArgs = item.optString("cmdArgs");
+            options.iconLocation = item.optString("iconLocation", options.targetPath);
+            options.iconIndex = item.optInt("iconIndex", 0);
+            if (item.has("showCommand")) options.showCommand = parseShowCommand(item.getString("showCommand"));
+            MSLink.createFile(options, outputFile);
         }
     }
 
