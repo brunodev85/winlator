@@ -1,5 +1,6 @@
 package com.winlator;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -133,11 +134,15 @@ public class ShortcutsFragment extends Fragment {
         }
 
         private void runFromShortcut(Shortcut shortcut) {
-            Context context = getContext();
-            Intent intent = new Intent(context, XServerDisplayActivity.class);
-            intent.putExtra("container_id", shortcut.container.id);
-            intent.putExtra("shortcut_path", shortcut.file.getPath());
-            context.startActivity(intent);
+            Activity activity = getActivity();
+
+            if (!XrActivity.isSupported()) {
+                Intent intent = new Intent(activity, XServerDisplayActivity.class);
+                intent.putExtra("container_id", shortcut.container.id);
+                intent.putExtra("shortcut_path", shortcut.file.getPath());
+                activity.startActivity(intent);
+            }
+            else XrActivity.openIntent(activity, shortcut.container.id, shortcut.file.getPath());
         }
     }
 }

@@ -7,6 +7,7 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 
 import com.winlator.R;
+import com.winlator.XrActivity;
 import com.winlator.math.Mathf;
 import com.winlator.math.XForm;
 import com.winlator.renderer.material.CursorMaterial;
@@ -83,6 +84,13 @@ public class GLRenderer implements GLSurfaceView.Renderer, WindowManager.OnWindo
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
+        if (XrActivity.isSupported()) {
+            XrActivity activity = XrActivity.getInstance();
+            activity.init();
+            width = activity.getWidth();
+            height = activity.getHeight();
+        }
+
         surfaceWidth = width;
         surfaceHeight = height;
         viewport.update(width, height, xServer.screenInfo.width, xServer.screenInfo.height);
@@ -100,6 +108,11 @@ public class GLRenderer implements GLSurfaceView.Renderer, WindowManager.OnWindo
     }
 
     private void drawFrame() {
+        boolean xrFrame = false;
+        if (XrActivity.isSupported()) {
+            xrFrame = XrActivity.getInstance().beginFrame(XrActivity.getImmersive(), XrActivity.getSBS());
+        }
+
         if (viewportNeedsUpdate) {
             if (fullscreen) {
                 GLES20.glViewport(0, 0, surfaceWidth, surfaceHeight);
@@ -128,6 +141,12 @@ public class GLRenderer implements GLSurfaceView.Renderer, WindowManager.OnWindo
 
         renderWindows();
         if (cursorVisible) renderCursor();
+
+        if (xrFrame) {
+            XrActivity.getInstance().endFrame();
+            XrActivity.updateControllers();
+            xServerView.requestRender();
+        }
     }
 
     @Override
