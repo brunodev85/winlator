@@ -261,6 +261,17 @@ public abstract class AppUtils {
         return false;
     }
 
+    public static boolean setSpinnerSelectionFromNumber(Spinner spinner, String number) {
+        spinner.setSelection(0, false);
+        for (int i = 0; i < spinner.getCount(); i++) {
+            if (StringUtils.parseNumber(spinner.getItemAtPosition(i)).equals(number)) {
+                spinner.setSelection(i, false);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void setupTabLayout(final View view, int tabLayoutResId, final int... tabResIds) {
         final Callback<Integer> tabSelectedCallback = (position) -> {
             for (int i = 0; i < tabResIds.length; i++) {

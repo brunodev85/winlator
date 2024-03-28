@@ -145,11 +145,25 @@
                     style="@style/HelpButton" />
             </LinearLayout>
 
-            <Spinner
-                style="@style/ComboBox"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:id="@+id/SDXWrapper"
-                android:entries="@array/dxwrapper_entries" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <Spinner
+                    style="@style/ComboBox"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:id="@+id/SDXWrapper"
+                    android:entries="@array/dxwrapper_entries" />
+
+                <ImageButton
+                    style="@style/ListMenuButton"
+                    android:id="@+id/BTDXWrapperConfig"
+                    android:src="@drawable/icon_settings"
+                    android:visibility="gone" />
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -200,7 +214,7 @@
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/dxcomponents" />
+                    android:text="@string/win_components" />
 
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="match_parent"
@@ -231,44 +245,45 @@
                     android:layout_marginTop="8dp">
 
                     <LinearLayout style="@style/FieldSet">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/theme" />
+
+                        <Spinner
+                            style="@style/ComboBox"
+                            android:id="@+id/SDesktopTheme"
+                            android:layout_width="match_parent"
+                            android:entries="@array/desktop_theme_entries" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/background" />
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
 
-                            <LinearLayout
+                            <Spinner
+                                android:id="@+id/SDesktopBackgroundType"
+                                style="@style/ComboBox"
                                 android:layout_width="0dp"
-                                android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:orientation="vertical">
+                                android:entries="@array/desktop_background_type_entries" />
 
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/theme" />
-
-                                <Spinner
-                                    style="@style/ComboBox"
-                                    android:id="@+id/SDesktopTheme"
-                                    android:layout_width="match_parent"
-                                    android:entries="@array/desktop_theme_entries" />
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
+                            <com.winlator.widget.ColorPickerView
+                                android:id="@+id/CPVDesktopBackgroundColor"
+                                android:layout_width="84dp"
                                 android:layout_height="wrap_content"
-                                android:orientation="vertical">
+                                android:visibility="gone" />
 
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/background" />
-
-                                <com.winlator.widget.ColorPickerView
-                                    android:id="@+id/CPVDesktopBackground"
-                                    android:layout_width="84dp"
-                                    android:layout_height="wrap_content" />
-                            </LinearLayout>
+                            <com.winlator.widget.ImagePickerView
+                                android:id="@+id/IPVDesktopBackgroundImage"
+                                android:layout_width="84dp"
+                                android:layout_height="wrap_content"
+                                android:visibility="gone" />
                         </LinearLayout>
                     </LinearLayout>
 
@@ -330,7 +345,8 @@
                         <Spinner
                             style="@style/ComboBox"
                             android:id="@+id/SVideoMemorySize"
-                            android:layout_width="match_parent" />
+                            android:layout_width="match_parent"
+                            android:entries="@array/video_memory_size_entries" />
 
                         <View style="@style/FieldSeparator" />
 
@@ -352,7 +368,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/LLTabDXComponents"
+                android:id="@+id/LLTabWinComponents"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"

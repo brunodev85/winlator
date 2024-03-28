@@ -2,12 +2,14 @@ package com.winlator.core;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.winlator.R;
+import com.winlator.math.Mathf;
 
 public class DownloadProgressDialog {
     private final Activity activity;
@@ -32,17 +34,36 @@ public class DownloadProgressDialog {
         }
     }
 
-    public void show(final Runnable onCancelCallback) {
+    public void show() {
+        show(null);
+    }
+
+    public void show(int textResId) {
+        show(textResId, null);
+    }
+
+    public void show(Runnable onCancelCallback) {
+        show(0, onCancelCallback);
+    }
+
+    public void show(int textResId, final Runnable onCancelCallback) {
         if (isShowing()) return;
         close();
         if (dialog == null) create();
+
+        if (textResId > 0) ((TextView)dialog.findViewById(R.id.TextView)).setText(textResId);
+
         setProgress(0);
-        dialog.findViewById(R.id.BTCancel).setOnClickListener((v) -> onCancelCallback.run());
+        if (onCancelCallback != null) {
+            dialog.findViewById(R.id.BTCancel).setOnClickListener((v) -> onCancelCallback.run());
+            dialog.findViewById(R.id.LLBottomBar).setVisibility(View.VISIBLE);
+        }
         dialog.show();
     }
 
     public void setProgress(int progress) {
         if (dialog == null) return;
+        progress = Mathf.clamp(progress, 0, 100);
         ((CircularProgressIndicator)dialog.findViewById(R.id.CircularProgressIndicator)).setProgress(progress);
         ((TextView)dialog.findViewById(R.id.TVProgress)).setText(progress+"%");
     }
@@ -54,6 +75,10 @@ public class DownloadProgressDialog {
             }
         }
         catch (Exception e) {}
+    }
+
+    public void closeOnUiThread() {
+        activity.runOnUiThread(this::close);
     }
 
     public boolean isShowing() {

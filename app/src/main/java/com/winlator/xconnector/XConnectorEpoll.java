@@ -126,12 +126,6 @@ public class XConnectorEpoll implements Runnable {
         return connectedClients.get(fd);
     }
 
-    public ArrayList<Client> getConnectedClients() {
-        ArrayList<Client> clients = new ArrayList<>();
-        for (int i = 0; i < connectedClients.size(); i++) clients.add(connectedClients.valueAt(i));
-        return clients;
-    }
-
     public void killConnection(Client client) {
         client.connected = false;
         connectionHandler.handleConnectionShutdown(client);

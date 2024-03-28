@@ -218,7 +218,17 @@ public class ExternalControllerBindingsActivity extends AppCompatActivity {
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {}
             });
-            holder.bindingType.setSelection(item.getBinding().isKeyboard() ? 0 : 1, false);
+
+            Binding selectedBinding = item.getBinding();
+            if (selectedBinding.isKeyboard()) {
+                holder.bindingType.setSelection(0, false);
+            }
+            else if (selectedBinding.isMouse()) {
+                holder.bindingType.setSelection(1, false);
+            }
+            else if (selectedBinding.isGamepad()) {
+                holder.bindingType.setSelection(2, false);
+            }
 
             holder.binding.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override

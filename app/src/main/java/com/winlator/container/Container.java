@@ -3,7 +3,10 @@ package com.winlator.container;
 import android.os.Environment;
 
 import com.winlator.box86_64.Box86_64Preset;
+import com.winlator.core.AppUtils;
+import com.winlator.core.EnvVars;
 import com.winlator.core.FileUtils;
+import com.winlator.core.KeyValueSet;
 import com.winlator.core.WineInfo;
 import com.winlator.core.WineThemeManager;
 import com.winlator.xenvironment.ImageFs;
@@ -15,12 +18,13 @@ import java.io.File;
 import java.util.Iterator;
 
 public class Container {
-    public static final String DEFAULT_ENV_VARS = "ZINK_DESCRIPTORS=lazy ZINK_CONTEXT_THREADED=false ZINK_DEBUG=compact MESA_SHADER_CACHE_DISABLE=false MESA_SHADER_CACHE_MAX_SIZE=512MB mesa_glthread=true";
+    public static final String DEFAULT_ENV_VARS = "ZINK_DESCRIPTORS=lazy ZINK_CONTEXT_THREADED=true ZINK_DEBUG=compact MESA_SHADER_CACHE_DISABLE=false MESA_SHADER_CACHE_MAX_SIZE=512MB mesa_glthread=true WINEESYNC=1";
     public static final String DEFAULT_SCREEN_SIZE = "800x600";
-    public static final String DEFAULT_GRAPHICS_DRIVER = "turnip-zink";
+    public static final String DEFAULT_GRAPHICS_DRIVER = "turnip";
     public static final String DEFAULT_AUDIO_DRIVER = "alsa";
-    public static final String DEFAULT_DXWRAPPER = "original-wined3d";
-    public static final String DEFAULT_DXCOMPONENTS = "direct3d=1,directsound=1,directmusic=0,directshow=0,directplay=0";
+    public static final String DEFAULT_DXWRAPPER = "wined3d";
+    public static final String DEFAULT_WINCOMPONENTS = "direct3d=1,directsound=1,directmusic=0,directshow=0,directplay=0,vcrun2010=1";
+    public static final String FALLBACK_WINCOMPONENTS = "direct3d=0,directsound=0,directmusic=0,directshow=0,directplay=0,vcrun2010=0";
     public static final String DEFAULT_DRIVES = "D:"+Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
     public static final byte MAX_DRIVE_LETTERS = 8;
     public final int id;
@@ -29,14 +33,15 @@ public class Container {
     private String envVars = DEFAULT_ENV_VARS;
     private String graphicsDriver = DEFAULT_GRAPHICS_DRIVER;
     private String dxwrapper = DEFAULT_DXWRAPPER;
-    private String dxcomponents = DEFAULT_DXCOMPONENTS;
+    private String dxwrapperConfig = "";
+    private String wincomponents = DEFAULT_WINCOMPONENTS;
     private String audioDriver = DEFAULT_AUDIO_DRIVER;
     private String drives = DEFAULT_DRIVES;
     private String wineVersion = WineInfo.MAIN_WINE_VERSION.identifier();
     private boolean showFPS;
-    private boolean stopServicesOnStartup;
+    private boolean stopServicesOnStartup = true;
     private String cpuList;
-    private String desktopTheme = WineThemeManager.DEFAULT_THEME+","+WineThemeManager.DEFAULT_BACKGROUND;
+    private String desktopTheme = WineThemeManager.DEFAULT_DESKTOP_THEME;
     private String box86Preset = Box86_64Preset.COMPATIBILITY;
     private String box64Preset = Box86_64Preset.COMPATIBILITY;
     private File rootDir;
@@ -87,6 +92,14 @@ public class Container {
         this.dxwrapper = dxwrapper;
     }
 
+    public String getDXWrapperConfig() {
+        return dxwrapperConfig;
+    }
+
+    public void setDXWrapperConfig(String dxwrapperConfig) {
+        this.dxwrapperConfig = dxwrapperConfig != null ? dxwrapperConfig : "";
+    }
+
     public String getAudioDriver() {
         return audioDriver;
     }
@@ -95,12 +108,12 @@ public class Container {
         this.audioDriver = audioDriver;
     }
 
-    public String getDXComponents() {
-        return dxcomponents;
+    public String getWinComponents() {
+        return wincomponents;
     }
 
-    public void setDXComponents(String dxcomponents) {
-        this.dxcomponents = dxcomponents;
+    public void setWinComponents(String wincomponents) {
+        this.wincomponents = wincomponents;
     }
 
     public String getDrives() {
@@ -243,33 +256,6 @@ public class Container {
         };
     }
 
-    public Iterable<String[]> dxcomponentsIterator() {
-        return dxcomponentsIterator(dxcomponents);
-    }
-
-    public static Iterable<String[]> dxcomponentsIterator(final String dxcomponents) {
-        final int[] start = {0};
-        final int[] end = {dxcomponents.indexOf(",")};
-        final String[] item = new String[2];
-        return () -> new Iterator<String[]>() {
-            @Override
-            public boolean hasNext() {
-                return start[0] < end[0];
-            }
-
-            @Override
-            public String[] next() {
-                int index = dxcomponents.indexOf("=", start[0]);
-                item[0] = dxcomponents.substring(start[0], index);
-                item[1] = dxcomponents.substring(index+1, end[0]);
-                start[0] = end[0]+1;
-                end[0] = dxcomponents.indexOf(",", start[0]);
-                if (end[0] == -1) end[0] = dxcomponents.length();
-                return item;
-            }
-        };
-    }
-
     public void saveData() {
         try {
             JSONObject data = new JSONObject();
@@ -280,8 +266,9 @@ public class Container {
             data.put("cpuList", cpuList);
             data.put("graphicsDriver", graphicsDriver);
             data.put("dxwrapper", dxwrapper);
+            if (!dxwrapperConfig.isEmpty()) data.put("dxwrapperConfig", dxwrapperConfig);
             data.put("audioDriver", audioDriver);
-            data.put("dxcomponents", dxcomponents);
+            data.put("wincomponents", wincomponents);
             data.put("drives", drives);
             data.put("showFPS", showFPS);
             data.put("stopServicesOnStartup", stopServicesOnStartup);
@@ -295,6 +282,132 @@ public class Container {
             }
 
             FileUtils.writeString(getConfigFile(), data.toString());
+        }
+        catch (JSONException e) {}
+    }
+
+    public void loadData(JSONObject data) throws JSONException {
+        wineVersion = WineInfo.MAIN_WINE_VERSION.identifier();
+        dxwrapperConfig = "";
+        checkObsoleteOrMissingProperties(data);
+
+        for (Iterator<String> it = data.keys(); it.hasNext(); ) {
+            String key = it.next();
+            switch (key) {
+                case "name" :
+                    setName(data.getString(key));
+                    break;
+                case "screenSize" :
+                    setScreenSize(data.getString(key));
+                    break;
+                case "envVars" :
+                    setEnvVars(data.getString(key));
+                    break;
+                case "cpuList" :
+                    setCPUList(data.getString(key));
+                    break;
+                case "graphicsDriver" :
+                    setGraphicsDriver(data.getString(key));
+                    break;
+                case "wincomponents" :
+                    setWinComponents(data.getString(key));
+                    break;
+                case "dxwrapper" :
+                    setDXWrapper(data.getString(key));
+                    break;
+                case "dxwrapperConfig" :
+                    setDXWrapperConfig(data.getString(key));
+                    break;
+                case "drives" :
+                    setDrives(data.getString(key));
+                    break;
+                case "showFPS" :
+                    setShowFPS(data.getBoolean(key));
+                    break;
+                case "stopServicesOnStartup" :
+                    setStopServicesOnStartup(data.getBoolean(key));
+                    break;
+                case "extraData" : {
+                    JSONObject extraData = data.getJSONObject(key);
+                    checkObsoleteOrMissingProperties(extraData);
+                    setExtraData(extraData);
+                    break;
+                }
+                case "wineVersion" :
+                    setWineVersion(data.getString(key));
+                    break;
+                case "box86Preset" :
+                    setBox86Preset(data.getString(key));
+                    break;
+                case "box64Preset" :
+                    setBox64Preset(data.getString(key));
+                    break;
+                case "audioDriver" :
+                    setAudioDriver(data.getString(key));
+                    break;
+                case "desktopTheme" :
+                    setDesktopTheme(data.getString(key));
+                    break;
+            }
+        }
+    }
+
+    public static void checkObsoleteOrMissingProperties(JSONObject data) {
+        try {
+            if (data.has("dxcomponents")) {
+                data.put("wincomponents", data.getString("dxcomponents"));
+                data.remove("dxcomponents");
+            }
+
+            if (data.has("dxwrapper")) {
+                String dxwrapper = data.getString("dxwrapper");
+                if (dxwrapper.equals("original-wined3d")) {
+                    data.put("dxwrapper", DEFAULT_DXWRAPPER);
+                }
+                else if (dxwrapper.startsWith("d8vk-") || dxwrapper.startsWith("dxvk-")) {
+                    data.put("dxwrapper", dxwrapper.substring(0, dxwrapper.indexOf("-")));
+                }
+            }
+
+            if (data.has("graphicsDriver")) {
+                String graphicsDriver = data.getString("graphicsDriver");
+                if (graphicsDriver.equals("turnip-zink")) {
+                    data.put("graphicsDriver", "turnip");
+                }
+                else if (graphicsDriver.equals("llvmpipe")) {
+                    data.put("graphicsDriver", "virgl");
+                }
+            }
+
+            if (data.has("envVars") && data.has("extraData")) {
+                JSONObject extraData = data.getJSONObject("extraData");
+                int appVersion = Integer.parseInt(extraData.optString("appVersion", "0"));
+                if (appVersion < 12) {
+                    EnvVars defaultEnvVars = new EnvVars(DEFAULT_ENV_VARS);
+                    EnvVars envVars = new EnvVars(data.getString("envVars"));
+                    for (String name : defaultEnvVars) if (!envVars.has(name)) envVars.put(name, defaultEnvVars.get(name));
+                    data.put("envVars", envVars.toString());
+                }
+            }
+
+            KeyValueSet wincomponents1 = new KeyValueSet(DEFAULT_WINCOMPONENTS);
+            KeyValueSet wincomponents2 = new KeyValueSet(data.getString("wincomponents"));
+            String result = "";
+
+            for (String[] wincomponent1 : wincomponents1) {
+                String value = wincomponent1[1];
+
+                for (String[] wincomponent2 : wincomponents2) {
+                    if (wincomponent1[0].equals(wincomponent2[0])) {
+                        value = wincomponent2[1];
+                        break;
+                    }
+                }
+
+                result += (!result.isEmpty() ? "," : "")+wincomponent1[0]+"="+value;
+            }
+
+            data.put("wincomponents", result);
         }
         catch (JSONException e) {}
     }

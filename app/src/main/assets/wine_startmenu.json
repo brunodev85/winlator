@@ -3,6 +3,10 @@
         "name" : "Programs",
         "children" : [
             {
+                "name" : "7-Zip",
+                "path" : "Z:/opt/apps/7-Zip/7zFM.exe"
+            },
+            {
                 "name" : "Internet Explorer",
                 "path" : "C:/windows/system32/iexplore.exe"
             },
@@ -12,7 +16,8 @@
             },
             {
                 "name" : "Wordpad",
-                "path" : "C:/windows/system32/write.exe"
+                "path" : "C:/windows/system32/write.exe",
+                "iconLocation" : "Z:/opt/wine/lib/wine/i386-windows/wordpad.exe"
             },
             {
                 "name" : "Games",
@@ -46,7 +51,10 @@
             },
             {
                 "name" : "Wine Mono Installer",
-                "path" : "Z:/opt/resources/winemono.bat"
+                "path" : "C:/windows/system32/wineboot.exe",
+                "cmdArgs" : "-u",
+                "iconLocation" : "shell32.dll",
+                "iconIndex" : -25
             },
             {
                 "name" : "Wine Configuration",

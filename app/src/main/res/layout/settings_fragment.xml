@@ -158,28 +158,6 @@
                 android:layout_height="wrap_content">
 
                 <LinearLayout style="@style/FieldSet">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/turnip_version" />
-
-                    <Spinner
-                        style="@style/ComboBox"
-                        android:layout_width="match_parent"
-                        android:id="@+id/STurnipVersion"
-                        android:entries="@array/turnip_version_entries" />
-                </LinearLayout>
-
-                <TextView
-                    style="@style/FieldSetLabel"
-                    android:text="@string/graphics_driver" />
-            </FrameLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout style="@style/FieldSet">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -216,31 +194,6 @@
                 <TextView
                     style="@style/FieldSetLabel"
                     android:text="@string/xserver" />
-            </FrameLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout style="@style/FieldSet">
-                    <TextView
-                        android:id="@+id/TVOBBImageVersion"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp" />
-
-                    <Button
-                        style="@style/ButtonPositive"
-                        android:id="@+id/BTInstallOBBImage"
-                        android:layout_width="240dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:text="@string/install_obb_image" />
-                </LinearLayout>
-
-                <TextView
-                    style="@style/FieldSetLabel"
-                    android:text="@string/obb_image" />
             </FrameLayout>
         </LinearLayout>
     </ScrollView>

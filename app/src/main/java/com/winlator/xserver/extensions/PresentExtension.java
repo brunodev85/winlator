@@ -28,6 +28,7 @@ import java.io.IOException;
 
 public class PresentExtension implements Extension {
     public static final byte MAJOR_OPCODE = -103;
+    private static final int FAKE_INTERVAL = 1000000 / 60;
     public enum Kind {PIXMAP, MSC_NOTIFY}
     public enum Mode {COPY, FLIP, SKIP}
     private final SparseArray<Event> events = new SparseArray<>();
@@ -124,9 +125,8 @@ public class PresentExtension implements Extension {
         Drawable content = window.getContent();
         if (content.visual.depth != pixmap.drawable.visual.depth) throw new BadMatch();
 
-        final int fakeInterval = 1000000 / 60;
         long ust = System.nanoTime() / 1000;
-        long msc = ust / fakeInterval;
+        long msc = ust / FAKE_INTERVAL;
 
         synchronized (content.renderLock) {
             content.copyArea((short)0, (short)0, xOff, yOff, pixmap.drawable.width, pixmap.drawable.height, pixmap.drawable);

@@ -28,14 +28,13 @@ import androidx.fragment.app.FragmentManager;
 import com.google.android.material.navigation.NavigationView;
 import com.winlator.contentdialog.ContentDialog;
 import com.winlator.core.Callback;
-import com.winlator.core.OBBImageInstaller;
+import com.winlator.xenvironment.ImageFsInstaller;
 import com.winlator.core.PreloaderDialog;
-import com.winlator.xenvironment.ImageFs;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    public static final byte DEBUG_LEVEL = 0; // FIXME set 0 to disable
+    public static final byte DEBUG_LEVEL = 0; // FIXME [0=disable, 2=wine, 3=box86_64, 4=box86_64+]
     public static final @IntRange(from = 1, to = 19) byte CONTAINER_PATTERN_COMPRESSION_LEVEL = 9;
     public static final byte PERMISSION_WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 1;
     public static final byte OPEN_FILE_REQUEST_CODE = 2;
@@ -75,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             actionBar.setHomeAsUpIndicator(R.drawable.icon_action_bar_menu);
             onNavigationItemSelected(navigationView.getMenu().findItem(menuItemId));
             navigationView.setCheckedItem(menuItemId);
-            if (!requestAppPermissions()) OBBImageInstaller.installIfNeeded(this);
+            if (!requestAppPermissions()) ImageFsInstaller.installIfNeeded(this);
         }
     }
 
@@ -84,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_WRITE_EXTERNAL_STORAGE_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                OBBImageInstaller.installIfNeeded(this);
+                ImageFsInstaller.installIfNeeded(this);
             }
             else finish();
         }
@@ -190,8 +189,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             tvDeveloper.setText(Html.fromHtml("by BrunoSX (<a href=\"https://www.winlator.org\">winlator.org</a>)", Html.FROM_HTML_MODE_LEGACY));
             tvDeveloper.setMovementMethod(LinkMovementMethod.getInstance());
 
-            ((TextView)dialog.findViewById(R.id.TVAppVersion)).setText(getString(R.string.app_version)+" "+pInfo.versionName);
-            ((TextView)dialog.findViewById(R.id.TVOBBImageVersion)).setText(getString(R.string.obb_image_version)+" "+ImageFs.find(this).getFormattedVersion());
+            ((TextView)dialog.findViewById(R.id.TVAppVersion)).setText(getString(R.string.version)+" "+pInfo.versionName);
 
             String creditsAndThirdPartyAppsHTML = String.join("<br />",
                 "Ubuntu RootFs (<a href=\"https://releases.ubuntu.com/focal\">Focal Fossa</a>)",

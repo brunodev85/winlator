@@ -108,10 +108,10 @@ Java_com_winlator_xserver_Drawable_copyArea(JNIEnv *env, jclass obj, jshort srcX
 
 JNIEXPORT void JNICALL
 Java_com_winlator_xserver_Drawable_copyAreaOp(JNIEnv *env, jclass obj, jshort srcX,
-                                            jshort srcY, jshort dstX, jshort dstY,
-                                            jshort width, jshort height, jshort srcStride,
-                                            jshort dstStride, jobject srcData,
-                                            jobject dstData, int gcFunction) {
+                                              jshort srcY, jshort dstX, jshort dstY,
+                                              jshort width, jshort height, jshort srcStride,
+                                              jshort dstStride, jobject srcData,
+                                              jobject dstData, int gcFunction) {
     uint8_t *srcDataAddr = (*env)->GetDirectBufferAddress(env, srcData);
     uint8_t *dstDataAddr = (*env)->GetDirectBufferAddress(env, dstData);
 

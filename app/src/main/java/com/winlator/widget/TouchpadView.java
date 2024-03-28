@@ -1,22 +1,24 @@
 package com.winlator.widget;
 
 import android.content.Context;
+import android.view.InputDevice;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.winlator.core.AppUtils;
 import com.winlator.core.CursorLocker;
-import com.winlator.core.UnitUtils;
+import com.winlator.math.XForm;
+import com.winlator.renderer.Viewport;
 import com.winlator.winhandler.MouseEventFlags;
 import com.winlator.winhandler.WinHandler;
 import com.winlator.xserver.Pointer;
 import com.winlator.xserver.XServer;
 
 public class TouchpadView extends View {
-    private static final float DEFAULT_SENSITIVITY = 2.5f;
     private static final byte MAX_FINGERS = 4;
-    private static final short MAX_TWO_FINGERS_SCROLL_DISTANCE = 150;
+    private static final short MAX_TWO_FINGERS_SCROLL_DISTANCE = 350;
     private static final byte MAX_TAP_TRAVEL_DISTANCE = 10;
     private final Finger[] fingers = new Finger[MAX_FINGERS];
     private byte numFingers = 0;
@@ -29,6 +31,7 @@ public class TouchpadView extends View {
     private boolean scrolling = false;
     private final XServer xServer;
     private Runnable fourFingersTapCallback;
+    private final float[] xform = XForm.getInstance();
 
     public TouchpadView(Context context, XServer xServer) {
         super(context);
@@ -37,6 +40,25 @@ public class TouchpadView extends View {
         setClickable(true);
         setFocusable(false);
         setFocusableInTouchMode(false);
+        updateXform(AppUtils.getScreenWidth(), AppUtils.getScreenHeight(), xServer.screenInfo.width, xServer.screenInfo.height);
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        updateXform(w, h, xServer.screenInfo.width, xServer.screenInfo.height);
+    }
+
+    private void updateXform(int outerWidth, int outerHeight, int innerWidth, int innerHeight) {
+        Viewport viewport = new Viewport();
+        viewport.update(outerWidth, outerHeight, innerWidth, innerHeight);
+
+        float invAspect = 1.0f / viewport.aspect;
+        if (!xServer.getRenderer().isFullscreen()) {
+            XForm.makeTranslation(xform, -viewport.x, -viewport.y);
+            XForm.scale(xform, invAspect, invAspect);
+        }
+        else XForm.makeScale(xform, invAspect, invAspect);
     }
 
     private class Finger {
@@ -49,25 +71,27 @@ public class TouchpadView extends View {
         private final long touchTime;
 
         public Finger(float x, float y) {
-            this.x = this.startX = this.lastX = UnitUtils.pxToDp(x);
-            this.y = this.startY = this.lastY = UnitUtils.pxToDp(y);
+            float[] transformedPoint = XForm.transformPoint(xform, x, y);
+            this.x = this.startX = this.lastX = transformedPoint[0];
+            this.y = this.startY = this.lastY = transformedPoint[1];
             touchTime = System.currentTimeMillis();
         }
 
         public void update(float x, float y) {
             lastX = this.x;
             lastY = this.y;
-            this.x = UnitUtils.pxToDp(x);
-            this.y = UnitUtils.pxToDp(y);
+            float[] transformedPoint = XForm.transformPoint(xform, x, y);
+            this.x = transformedPoint[0];
+            this.y = transformedPoint[1];
         }
 
         private int deltaX() {
-            float dx = (x - lastX) * DEFAULT_SENSITIVITY * sensitivity;
+            float dx = (x - lastX) * sensitivity;
             return (int)(x <= lastX ? Math.floor(dx) : Math.ceil(dx));
         }
 
         private int deltaY() {
-            float dy = (y - lastY) * DEFAULT_SENSITIVITY * sensitivity;
+            float dy = (y - lastY) * sensitivity;
             return (int)(y <= lastY ? Math.floor(dy) : Math.ceil(dy));
         }
 
@@ -90,23 +114,30 @@ public class TouchpadView extends View {
         switch (actionMasked) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_POINTER_DOWN:
+                if (event.isFromSource(InputDevice.SOURCE_MOUSE)) return true;
                 scrollAccumY = 0;
                 scrolling = false;
                 fingers[pointerId] = new Finger(event.getX(actionIndex), event.getY(actionIndex));
                 numFingers++;
                 break;
             case MotionEvent.ACTION_MOVE:
-                for (byte i = 0; i < MAX_FINGERS; i++) {
-                    if (fingers[i] != null) {
-                        int pointerIndex = event.findPointerIndex(i);
-                        if (pointerIndex >= 0) {
-                            fingers[i].update(event.getX(pointerIndex), event.getY(pointerIndex));
-                            handleFingerMove(fingers[i]);
-                        }
-                        else {
-                            handleFingerUp(fingers[i]);
-                            fingers[i] = null;
-                            numFingers--;
+                if (event.isFromSource(InputDevice.SOURCE_MOUSE)) {
+                    float[] transformedPoint = XForm.transformPoint(xform, event.getX(), event.getY());
+                    xServer.injectPointerMove((int)transformedPoint[0], (int)transformedPoint[1]);
+                }
+                else {
+                    for (byte i = 0; i < MAX_FINGERS; i++) {
+                        if (fingers[i] != null) {
+                            int pointerIndex = event.findPointerIndex(i);
+                            if (pointerIndex >= 0) {
+                                fingers[i].update(event.getX(pointerIndex), event.getY(pointerIndex));
+                                handleFingerMove(fingers[i]);
+                            }
+                            else {
+                                handleFingerUp(fingers[i]);
+                                fingers[i] = null;
+                                numFingers--;
+                            }
                         }
                     }
                 }
@@ -121,6 +152,7 @@ public class TouchpadView extends View {
                 }
                 break;
             case MotionEvent.ACTION_CANCEL:
+                for (byte i = 0; i < MAX_FINGERS; i++) fingers[i] = null;
                 numFingers = 0;
                 break;
         }
@@ -156,10 +188,10 @@ public class TouchpadView extends View {
 
         Finger finger2 = numFingers == 2 ? findSecondFinger(finger1) : null;
         if (finger2 != null) {
-            float lastDistance = (float)Math.hypot(finger1.lastX - finger2.lastX, finger1.lastY - finger2.lastY);
-            float currDistance = (float)Math.hypot(finger1.x - finger2.x, finger1.y - finger2.y);
+            final float resolutionScale = 1000.0f / Math.min(xServer.screenInfo.width, xServer.screenInfo.height);
+            float currDistance = (float)Math.hypot(finger1.x - finger2.x, finger1.y - finger2.y) * resolutionScale;
 
-            if (currDistance < MAX_TWO_FINGERS_SCROLL_DISTANCE && Math.abs(currDistance - lastDistance) < 20) {
+            if (currDistance < MAX_TWO_FINGERS_SCROLL_DISTANCE) {
                 scrollAccumY += ((finger1.y + finger2.y) * 0.5f) - (finger1.lastY + finger2.lastY) * 0.5f;
 
                 if (scrollAccumY < -100) {
@@ -254,5 +286,50 @@ public class TouchpadView extends View {
 
     public void setFourFingersTapCallback(Runnable fourFingersTapCallback) {
         this.fourFingersTapCallback = fourFingersTapCallback;
+    }
+
+    public boolean onExternalMouseEvent(MotionEvent event) {
+        boolean handled = false;
+        if (event.isFromSource(InputDevice.SOURCE_MOUSE)) {
+            int actionButton = event.getActionButton();
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_BUTTON_PRESS:
+                    if (actionButton == MotionEvent.BUTTON_PRIMARY) {
+                        xServer.injectPointerButtonPress(Pointer.Button.BUTTON_LEFT);
+                    }
+                    else if (actionButton == MotionEvent.BUTTON_SECONDARY) {
+                        xServer.injectPointerButtonPress(Pointer.Button.BUTTON_RIGHT);
+                    }
+                    handled = true;
+                    break;
+                case MotionEvent.ACTION_BUTTON_RELEASE:
+                    if (actionButton == MotionEvent.BUTTON_PRIMARY) {
+                        xServer.injectPointerButtonRelease(Pointer.Button.BUTTON_LEFT);
+                    }
+                    else if (actionButton == MotionEvent.BUTTON_SECONDARY) {
+                        xServer.injectPointerButtonRelease(Pointer.Button.BUTTON_RIGHT);
+                    }
+                    handled = true;
+                    break;
+                case MotionEvent.ACTION_HOVER_MOVE:
+                    float[] transformedPoint = XForm.transformPoint(xform, event.getX(), event.getY());
+                    xServer.injectPointerMove((int)transformedPoint[0], (int)transformedPoint[1]);
+                    handled = true;
+                    break;
+                case MotionEvent.ACTION_SCROLL:
+                    float scrollY = event.getAxisValue(MotionEvent.AXIS_VSCROLL);
+                    if (scrollY <= -1.0f) {
+                        xServer.injectPointerButtonPress(Pointer.Button.BUTTON_SCROLL_DOWN);
+                        xServer.injectPointerButtonRelease(Pointer.Button.BUTTON_SCROLL_DOWN);
+                    }
+                    else if (scrollY >= 1.0f) {
+                        xServer.injectPointerButtonPress(Pointer.Button.BUTTON_SCROLL_UP);
+                        xServer.injectPointerButtonRelease(Pointer.Button.BUTTON_SCROLL_UP);
+                    }
+                    handled = true;
+                    break;
+            }
+        }
+        return handled;
     }
 }

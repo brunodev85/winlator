@@ -40,7 +40,7 @@ public abstract class WineUtils {
             File destination = new File(ImageFs.find(context).getInstalledWineDir(), "/preinstall/wine");
             FileUtils.delete(destination);
             destination.mkdirs();
-            boolean success = TarXZUtils.extract(context, uri, destination);
+            boolean success = TarCompressorUtils.extract(TarCompressorUtils.Type.XZ, context, uri, destination);
             if (!success) FileUtils.delete(destination);
             if (callback != null) callback.call(success ? destination : null);
         });
@@ -143,48 +143,75 @@ public abstract class WineUtils {
         return wineInfos;
     }
 
-    public static void applyRegistryTweaks(Context context) {
+    public static void applySystemTweaks(Context context, WineInfo wineInfo, boolean firstTimeBoot) {
         File rootDir = ImageFs.find(context).getRootDir();
         File systemRegFile = new File(rootDir, ImageFs.WINEPREFIX+"/system.reg");
         File userRegFile = new File(rootDir, ImageFs.WINEPREFIX+"/user.reg");
 
         try (WineRegistryEditor registryEditor = new WineRegistryEditor(systemRegFile)) {
-            registryEditor.setStringValue("Software\\Classes\\.reg", null, "REGfile");
-            registryEditor.setStringValue("Software\\Classes\\.reg", "Content Type", "application/reg");
-            registryEditor.setStringValue("Software\\Classes\\REGfile\\Shell\\Open\\command", null, "C:\\windows\\regedit.exe /C \"%1\"");
+            if (firstTimeBoot) {
+                registryEditor.setStringValue("Software\\Classes\\.reg", null, "REGfile");
+                registryEditor.setStringValue("Software\\Classes\\.reg", "Content Type", "application/reg");
+                registryEditor.setStringValue("Software\\Classes\\REGfile\\Shell\\Open\\command", null, "C:\\windows\\regedit.exe /C \"%1\"");
 
-            registryEditor.setDwordValue("System\\CurrentControlSet\\Services\\winebus", "DisableHidraw", 1);
-            registryEditor.setDwordValue("System\\CurrentControlSet\\Services\\winebus", "DisableInput", 1);
-            registryEditor.setDwordValue("System\\CurrentControlSet\\Services\\winebus", "Enable SDL", 0);
+                registryEditor.setDwordValue("System\\CurrentControlSet\\Services\\winebus", "DisableHidraw", 1);
+                registryEditor.setDwordValue("System\\CurrentControlSet\\Services\\winebus", "DisableInput", 1);
+                registryEditor.setDwordValue("System\\CurrentControlSet\\Services\\winebus", "Enable SDL", 0);
+            }
+
+            registryEditor.setStringValue("Software\\Classes\\dllfile\\DefaultIcon", null, "shell32.dll,-154");
+            registryEditor.setStringValue("Software\\Classes\\lnkfile\\DefaultIcon", null, "shell32.dll,-30");
+            registryEditor.setStringValue("Software\\Classes\\inifile\\DefaultIcon", null, "shell32.dll,-151");
         }
 
-        final String[] dllOverrides = {"d3d8", "d3d9", "d3d10", "d3d10_1", "d3d10core", "d3d11", "d3d12", "d3d12core", "ddraw", "dxgi", "wined3d", "dinput", "dinput8", "xinput1_1", "xinput1_2", "xinput1_3", "xinput1_4", "xinput9_1_0", "xinputuap"};
+        final String[] direct3dLibs = {"d3d8", "d3d9", "d3d10", "d3d10_1", "d3d10core", "d3d11", "d3d12", "d3d12core", "ddraw", "dxgi", "wined3d"};
+        final String[] xinputLibs = {"dinput", "dinput8", "xinput1_1", "xinput1_2", "xinput1_3", "xinput1_4", "xinput9_1_0", "xinputuap"};
         final String dllOverridesKey = "Software\\Wine\\DllOverrides";
 
         try (WineRegistryEditor registryEditor = new WineRegistryEditor(userRegFile)) {
-            for (String name : dllOverrides) registryEditor.setStringValue(dllOverridesKey, name, "native,builtin");
+            for (String name : direct3dLibs) registryEditor.setStringValue(dllOverridesKey, name, "native,builtin");
+
+            boolean isMainWineVersion = wineInfo.identifier().equals(WineInfo.MAIN_WINE_VERSION.identifier());
+            for (String name : xinputLibs) registryEditor.setStringValue(dllOverridesKey, name, isMainWineVersion ? "builtin,native" : "native,builtin");
+
+            registryEditor.removeKey("Software\\Winlator\\WFM\\ContextMenu\\7-Zip");
+            registryEditor.setStringValue("Software\\Winlator\\WFM\\ContextMenu\\7-Zip", "Open Archive", "Z:\\opt\\apps\\7-Zip\\7zFM.exe \"%FILE%\"");
+            registryEditor.setStringValue("Software\\Winlator\\WFM\\ContextMenu\\7-Zip", "Extract Here", "Z:\\opt\\apps\\7-Zip\\7zG.exe x \"%FILE%\" -r -o\"%DIR%\" -y");
+            registryEditor.setStringValue("Software\\Winlator\\WFM\\ContextMenu\\7-Zip", "Extract to Folder", "Z:\\opt\\apps\\7-Zip\\7zG.exe x \"%FILE%\" -r -o\"%DIR%\\%BASENAME%\" -y");
+        }
+
+        File wineSystem32Dir = new File(rootDir, "/opt/wine/lib/wine/x86_64-windows");
+        File wineSysWoW64Dir = new File(rootDir, "/opt/wine/lib/wine/i386-windows");
+        File containerSystem32Dir = new File(rootDir, ImageFs.WINEPREFIX+"/drive_c/windows/system32");
+        File containerSysWoW64Dir = new File(rootDir, ImageFs.WINEPREFIX+"/drive_c/windows/syswow64");
+
+        final String[] dlnames = {"user32.dll", "shell32.dll", "dinput.dll", "dinput8.dll", "xinput1_1.dll", "xinput1_2.dll", "xinput1_3.dll", "xinput1_4.dll", "xinput9_1_0.dll", "xinputuap.dll", "winemenubuilder.exe", "explorer.exe"};
+        boolean win64 = wineInfo.isWin64();
+        for (String dlname : dlnames) {
+            FileUtils.copy(new File(wineSysWoW64Dir, dlname), new File(win64 ? containerSysWoW64Dir : containerSystem32Dir, dlname));
+            if (win64) FileUtils.copy(new File(wineSystem32Dir, dlname), new File(containerSystem32Dir, dlname));
         }
     }
 
-    public static void overrideDXComponentDlls(Context context, Container container, String dxcomponents) {
+    public static void overrideWinComponentDlls(Context context, Container container, String wincomponents) {
         final String dllOverridesKey = "Software\\Wine\\DllOverrides";
         File userRegFile = new File(container.getRootDir(), ".wine/user.reg");
-        Iterator<String[]> oldDXComponentsIter = Container.dxcomponentsIterator(container.getExtra("dxcomponents", dxcomponents)).iterator();
+        Iterator<String[]> oldWinComponentsIter = new KeyValueSet(container.getExtra("wincomponents", Container.FALLBACK_WINCOMPONENTS)).iterator();
 
         try (WineRegistryEditor registryEditor = new WineRegistryEditor(userRegFile)) {
-            JSONObject dxcomponentsJSONObject = new JSONObject(FileUtils.readString(context, "dxcomponents.json"));
+            JSONObject wincomponentsJSONObject = new JSONObject(FileUtils.readString(context, "wincomponents/wincomponents.json"));
 
-            for (String[] dxcomponent : Container.dxcomponentsIterator(dxcomponents)) {
-                if (dxcomponent[1].equals(oldDXComponentsIter.next()[1])) continue;
-                boolean useNative = dxcomponent[1].equals("1");
+            for (String[] wincomponent : new KeyValueSet(wincomponents)) {
+                if (wincomponent[1].equals(oldWinComponentsIter.next()[1])) continue;
+                boolean useNative = wincomponent[1].equals("1");
 
-                JSONArray libNames = dxcomponentsJSONObject.getJSONArray(dxcomponent[0]);
-                for (int i = 0; i < libNames.length(); i++) {
-                    String libName = libNames.getString(i);
+                JSONArray dlnames = wincomponentsJSONObject.getJSONArray(wincomponent[0]);
+                for (int i = 0; i < dlnames.length(); i++) {
+                    String dlname = dlnames.getString(i);
                     if (useNative) {
-                        registryEditor.setStringValue(dllOverridesKey, libName, "native,builtin");
+                        registryEditor.setStringValue(dllOverridesKey, dlname, "native,builtin");
                     }
-                    else registryEditor.removeValue(dllOverridesKey, libName);
+                    else registryEditor.removeValue(dllOverridesKey, dlname);
                 }
             }
         }

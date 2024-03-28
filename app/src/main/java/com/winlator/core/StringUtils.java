@@ -31,6 +31,10 @@ public class StringUtils {
         return text.toString().toLowerCase(Locale.ENGLISH).replaceAll(" *\\(([^\\)]+)\\)$", "").replaceAll("( \\+ )+| +", "-");
     }
 
+    public static String parseNumber(Object text) {
+        return text.toString().replaceAll("[^0-9\\.]+", "");
+    }
+
     public static String getString(Context context, String resName) {
         String string = null;
         try {

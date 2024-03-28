@@ -1,9 +1,12 @@
 package com.winlator.core;
 
+import android.os.Environment;
 import android.os.Process;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,6 +17,7 @@ import java.util.concurrent.Executors;
 public abstract class ProcessHelper {
     public static boolean debugMode = false;
     public static Callback<String> debugCallback;
+    public static boolean generateDebugFile = false;
     private static final byte SIGCONT = 18;
     private static final byte SIGSTOP = 19;
 
@@ -48,8 +52,8 @@ public abstract class ProcessHelper {
 
             Callback<String> debugCallback = ProcessHelper.debugCallback;
             if (debugMode || debugCallback != null) {
-                createDebugThread(process.getInputStream(), debugCallback);
-                createDebugThread(process.getErrorStream(), debugCallback);
+                createDebugThread(false, process.getInputStream(), debugCallback);
+                createDebugThread(true, process.getErrorStream(), debugCallback);
             }
 
             if (terminationCallback != null) createWaitForThread(process, terminationCallback);
@@ -58,15 +62,26 @@ public abstract class ProcessHelper {
         return pid;
     }
 
-    private static void createDebugThread(final InputStream inputStream, final Callback<String> debugCallback) {
+    private static void createDebugThread(boolean isError, final InputStream inputStream, final Callback<String> debugCallback) {
         Executors.newSingleThreadExecutor().execute(() -> {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
                 String line;
-                while ((line = reader.readLine()) != null) {
-                    if (debugCallback != null) {
-                        debugCallback.call(line);
+                if (debugMode && generateDebugFile) {
+                    File winlatorDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "Winlator");
+                    winlatorDir.mkdirs();
+                    final File debugFile = new File(winlatorDir, isError ? "debug-err.txt" : "debug-out.txt");
+                    if (debugFile.isFile()) debugFile.delete();
+                    try (BufferedWriter writer = new BufferedWriter(new FileWriter(debugFile))) {
+                        while ((line = reader.readLine()) != null) writer.write(line+"\n");
                     }
-                    else System.out.println(line);
+                }
+                else {
+                    while ((line = reader.readLine()) != null) {
+                        if (debugCallback != null) {
+                            debugCallback.call(line);
+                        }
+                        else System.out.println(line);
+                    }
                 }
             }
             catch (IOException e) {}

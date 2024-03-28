@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -36,9 +34,8 @@ import com.winlator.box86_64.Box86_64EditPresetDialog;
 import com.winlator.core.AppUtils;
 import com.winlator.core.Callback;
 import com.winlator.core.FileUtils;
-import com.winlator.core.GPUInformation;
-import com.winlator.core.OBBImageInstaller;
 import com.winlator.core.PreloaderDialog;
+import com.winlator.core.DefaultVersion;
 import com.winlator.core.StringUtils;
 import com.winlator.core.WineInfo;
 import com.winlator.core.WineUtils;
@@ -52,15 +49,9 @@ import java.util.List;
 import java.util.concurrent.Executors;
 
 public class SettingsFragment extends Fragment {
-    public static final String DEFAULT_BOX86_VERSION = "0.3.0";
-    public static final String DEFAULT_BOX64_VERSION = "0.2.6";
     private Callback<Uri> selectWineFileCallback;
     private PreloaderDialog preloaderDialog;
     private SharedPreferences preferences;
-
-    public static String getDefaultTurnipVersion(Context context) {
-        return GPUInformation.isAdreno6xx(context) ? "23.1.6" : "23.3.0";
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -96,27 +87,20 @@ public class SettingsFragment extends Fragment {
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
         final Spinner sBox86Version = view.findViewById(R.id.SBox86Version);
-        String box86Version = preferences.getString("box86_version", DEFAULT_BOX86_VERSION);
+        String box86Version = preferences.getString("box86_version", DefaultVersion.BOX86);
         if (!AppUtils.setSpinnerSelectionFromIdentifier(sBox86Version, box86Version)) {
-            AppUtils.setSpinnerSelectionFromIdentifier(sBox86Version, DEFAULT_BOX86_VERSION);
+            AppUtils.setSpinnerSelectionFromIdentifier(sBox86Version, DefaultVersion.BOX86);
         }
 
         final Spinner sBox64Version = view.findViewById(R.id.SBox64Version);
-        String box64Version = preferences.getString("box64_version", DEFAULT_BOX64_VERSION);
+        String box64Version = preferences.getString("box64_version", DefaultVersion.BOX64);
         if (!AppUtils.setSpinnerSelectionFromIdentifier(sBox64Version, box64Version)) {
-            AppUtils.setSpinnerSelectionFromIdentifier(sBox64Version, DEFAULT_BOX64_VERSION);
+            AppUtils.setSpinnerSelectionFromIdentifier(sBox64Version, DefaultVersion.BOX64);
         }
 
         final Spinner sBox86Preset = view.findViewById(R.id.SBox86Preset);
         final Spinner sBox64Preset = view.findViewById(R.id.SBox64Preset);
         loadBox86_64PresetSpinners(view, sBox86Preset, sBox64Preset);
-
-        final Spinner sTurnipVersion = view.findViewById(R.id.STurnipVersion);
-        String defaultTurnipVersion = getDefaultTurnipVersion(context);
-        String turnipVersion = preferences.getString("turnip_version", defaultTurnipVersion);
-        if (!AppUtils.setSpinnerSelectionFromIdentifier(sTurnipVersion, turnipVersion)) {
-            AppUtils.setSpinnerSelectionFromIdentifier(sTurnipVersion, defaultTurnipVersion);
-        }
 
         final CheckBox cbUseDRI3 = view.findViewById(R.id.CBUseDRI3);
         cbUseDRI3.setChecked(preferences.getBoolean("use_dri3", true));
@@ -166,39 +150,16 @@ public class SettingsFragment extends Fragment {
             getActivity().startActivityFromFragment(this, intent, MainActivity.OPEN_FILE_REQUEST_CODE);
         });
 
-        final Runnable updateUI = () -> {
-            String obbImageVersion = ImageFs.find(context).getFormattedVersion();
-            ((TextView)view.findViewById(R.id.TVOBBImageVersion)).setText(context.getString(R.string.installed_version)+" "+obbImageVersion);
-        };
-        updateUI.run();
-
-        view.findViewById(R.id.BTInstallOBBImage).setOnClickListener((v) -> {
-            final MainActivity activity = (MainActivity)getActivity();
-            PopupMenu popupMenu = new PopupMenu(context, v);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) popupMenu.setForceShowIcon(true);
-            popupMenu.inflate(R.menu.open_file_popup_menu);
-            popupMenu.setOnMenuItemClickListener((menuItem) -> {
-                int itemId = menuItem.getItemId();
-                if (itemId == R.id.open_file) {
-                    OBBImageInstaller.openFileForInstall(activity, updateUI);
-                }
-                else if (itemId == R.id.download_file) {
-                    OBBImageInstaller.downloadFileForInstall(activity, updateUI);
-                }
-                return true;
-            });
-            popupMenu.show();
-        });
-
         view.findViewById(R.id.BTConfirm).setOnClickListener((v) -> {
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString("box86_version", StringUtils.parseIdentifier(sBox86Version.getSelectedItem()));
             editor.putString("box64_version", StringUtils.parseIdentifier(sBox64Version.getSelectedItem()));
             editor.putString("box86_preset", Box86_64PresetManager.getSpinnerSelectedId(sBox86Preset));
             editor.putString("box64_preset", Box86_64PresetManager.getSpinnerSelectedId(sBox64Preset));
-            editor.putString("turnip_version", StringUtils.parseIdentifier(sTurnipVersion.getSelectedItem()));
             editor.putBoolean("use_dri3", cbUseDRI3.isChecked());
             editor.putFloat("cursor_speed", sbCursorSpeed.getProgress() / 100.0f);
+
+            if (preferences.contains("turnip_version")) editor.remove("turnip_version");
 
             if (editor.commit()) {
                 NavigationView navigationView = getActivity().findViewById(R.id.NavigationView);
@@ -365,8 +326,8 @@ public class SettingsFragment extends Fragment {
     public static void resetBox86_64Version(AppCompatActivity activity) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("box86_version", DEFAULT_BOX86_VERSION);
-        editor.putString("box64_version", DEFAULT_BOX64_VERSION);
+        editor.putString("box86_version", DefaultVersion.BOX86);
+        editor.putString("box64_version", DefaultVersion.BOX64);
         editor.remove("current_box86_version");
         editor.remove("current_box64_version");
         editor.apply();

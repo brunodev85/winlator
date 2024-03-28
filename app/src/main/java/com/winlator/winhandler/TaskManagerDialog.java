@@ -13,11 +13,11 @@ import android.widget.TextView;
 
 import com.winlator.R;
 import com.winlator.XServerDisplayActivity;
+import com.winlator.contentdialog.ContentDialog;
 import com.winlator.core.CPUStatus;
 import com.winlator.core.ProcessHelper;
 import com.winlator.core.StringUtils;
 import com.winlator.widget.CPUListView;
-import com.winlator.contentdialog.ContentDialog;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -73,12 +73,17 @@ public class TaskManagerDialog extends ContentDialog implements OnGetProcessInfo
         listItemMenu.inflate(R.menu.process_popup_menu);
         listItemMenu.setOnMenuItemClickListener((menuItem) -> {
             int itemId = menuItem.getItemId();
+            final WinHandler winHandler = activity.getWinHandler();
             if (itemId == R.id.process_affinity) {
                 showProcessorAffinityDialog(processInfo);
             }
+            else if (itemId == R.id.bring_to_front) {
+                winHandler.bringToFront(processInfo.name);
+                dismiss();
+            }
             else if (itemId == R.id.process_end) {
                 ContentDialog.confirm(activity, R.string.do_you_want_to_end_this_process, () -> {
-                    activity.getWinHandler().killProcess(processInfo.name);
+                    winHandler.killProcess(processInfo.name);
                 });
             }
             return true;
