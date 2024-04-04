@@ -141,6 +141,7 @@ public class ContainerManager {
         dstContainer.setGraphicsDriver(srcContainer.getGraphicsDriver());
         dstContainer.setDXWrapper(srcContainer.getDXWrapper());
         dstContainer.setDXWrapperConfig(srcContainer.getDXWrapperConfig());
+        dstContainer.setGraphicsDriverConfig(srcContainer.getGraphicsDriverConfig());
         dstContainer.setAudioDriver(srcContainer.getAudioDriver());
         dstContainer.setWinComponents(srcContainer.getWinComponents());
         dstContainer.setDrives(srcContainer.getDrives());

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -32,6 +31,7 @@ import com.winlator.container.Container;
 import com.winlator.container.ContainerManager;
 import com.winlator.contentdialog.AddEnvVarDialog;
 import com.winlator.contentdialog.DXVKConfigDialog;
+import com.winlator.contentdialog.TurnipConfigDialog;
 import com.winlator.core.AppUtils;
 import com.winlator.core.Callback;
 import com.winlator.core.EnvVars;
@@ -135,8 +135,11 @@ public class ContainerDetailFragment extends Fragment {
         final View vDXWrapperConfig = view.findViewById(R.id.BTDXWrapperConfig);
         vDXWrapperConfig.setTag(editContainer ? container.getDXWrapperConfig() : "");
 
+        final View vGraphicsDriverConfig = view.findViewById(R.id.BTGraphicsDriverConfig);
+        vGraphicsDriverConfig.setTag(editContainer ? container.getGraphicsDriverConfig() : "");
+
         setupDXWrapperSpinner(sDXWrapper, vDXWrapperConfig);
-        loadGraphicsDriverSpinner(sGraphicsDriver, sDXWrapper,
+        loadGraphicsDriverSpinner(sGraphicsDriver, sDXWrapper, vGraphicsDriverConfig,
             editContainer ? container.getGraphicsDriver() : Container.DEFAULT_GRAPHICS_DRIVER, editContainer ? container.getDXWrapper() : Container.DEFAULT_DXWRAPPER);
 
         view.findViewById(R.id.BTHelpDXWrapper).setOnClickListener((v) -> AppUtils.showHelpBox(context, v, R.string.dxwrapper_help_content));
@@ -175,6 +178,7 @@ public class ContainerDetailFragment extends Fragment {
                 String graphicsDriver = StringUtils.parseIdentifier(sGraphicsDriver.getSelectedItem());
                 String dxwrapper = StringUtils.parseIdentifier(sDXWrapper.getSelectedItem());
                 String dxwrapperConfig = vDXWrapperConfig.getTag().toString();
+                String graphicsDriverConfig = vGraphicsDriverConfig.getTag().toString();
                 String audioDriver = StringUtils.parseIdentifier(sAudioDriver.getSelectedItem());
                 String wincomponents = getWinComponents(view);
                 String drives = getDrives(view);
@@ -193,6 +197,7 @@ public class ContainerDetailFragment extends Fragment {
                     container.setGraphicsDriver(graphicsDriver);
                     container.setDXWrapper(dxwrapper);
                     container.setDXWrapperConfig(dxwrapperConfig);
+                    container.setGraphicsDriverConfig(graphicsDriverConfig);
                     container.setAudioDriver(audioDriver);
                     container.setWinComponents(wincomponents);
                     container.setDrives(drives);
@@ -214,6 +219,7 @@ public class ContainerDetailFragment extends Fragment {
                     data.put("graphicsDriver", graphicsDriver);
                     data.put("dxwrapper", dxwrapper);
                     data.put("dxwrapperConfig", dxwrapperConfig);
+                    data.put("graphicsDriverConfig", graphicsDriverConfig);
                     data.put("audioDriver", audioDriver);
                     data.put("wincomponents", wincomponents);
                     data.put("drives", drives);
@@ -442,7 +448,7 @@ public class ContainerDetailFragment extends Fragment {
         }
     }
 
-    public static void loadGraphicsDriverSpinner(final Spinner sGraphicsDriver, final Spinner sDXWrapper, String selectedGraphicsDriver, String selectedDXWrapper) {
+    public static void loadGraphicsDriverSpinner(final Spinner sGraphicsDriver, final Spinner sDXWrapper, final View vGraphicsDriverConfig, String selectedGraphicsDriver, String selectedDXWrapper) {
         final Context context = sGraphicsDriver.getContext();
         final String[] dxwrapperEntries = context.getResources().getStringArray(R.array.dxwrapper_entries);
 
@@ -459,6 +465,12 @@ public class ContainerDetailFragment extends Fragment {
         sGraphicsDriver.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String graphicsDriver = StringUtils.parseIdentifier(sGraphicsDriver.getSelectedItem());
+                if (graphicsDriver.equals("turnip")) {
+                    vGraphicsDriverConfig.setOnClickListener((v) -> (new TurnipConfigDialog(vGraphicsDriverConfig)).show());
+                    vGraphicsDriverConfig.setVisibility(View.VISIBLE);
+                }
+                else vGraphicsDriverConfig.setVisibility(View.GONE);
                 update.run();
             }
 
@@ -467,11 +479,10 @@ public class ContainerDetailFragment extends Fragment {
         });
 
         AppUtils.setSpinnerSelectionFromIdentifier(sGraphicsDriver, selectedGraphicsDriver);
-
         update.run();
     }
 
-    public static void setupDXWrapperSpinner(Spinner sDXWrapper, View vDXWrapperConfig) {
+    public static void setupDXWrapperSpinner(final Spinner sDXWrapper, final View vDXWrapperConfig) {
         sDXWrapper.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

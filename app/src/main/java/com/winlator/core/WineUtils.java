@@ -31,7 +31,13 @@ public abstract class WineUtils {
         FileUtils.symlink("/", dosdevicesPath+"/z:");
 
         for (String[] drive : container.drivesIterator()) {
-            FileUtils.symlink((new File(drive[1])).getAbsolutePath(), dosdevicesPath+"/"+drive[0].toLowerCase(Locale.ENGLISH)+":");
+            File linkTarget = new File(drive[1]);
+            String path = linkTarget.getAbsolutePath();
+            if (!linkTarget.isDirectory() && path.endsWith("/com.winlator/storage")) {
+                linkTarget.mkdirs();
+                FileUtils.chmod(linkTarget, 0771);
+            }
+            FileUtils.symlink(path, dosdevicesPath+"/"+drive[0].toLowerCase(Locale.ENGLISH)+":");
         }
     }
 

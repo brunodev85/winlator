@@ -8,8 +8,8 @@ android {
         applicationId 'com.winlator'
         minSdkVersion 26
         targetSdkVersion 28
-        versionCode 12
-        versionName "6.0"
+        versionCode 13
+        versionName "6.1"
     }
 
     buildTypes {
@@ -26,6 +26,8 @@ android {
     lintOptions {
         checkReleaseBuilds false
     }
+
+    ndkVersion '22.1.7171670'
 
     externalNativeBuild {
         cmake {

@@ -26,6 +26,7 @@ import com.winlator.container.ContainerManager;
 import com.winlator.container.Shortcut;
 import com.winlator.contentdialog.ContentDialog;
 import com.winlator.contentdialog.DXVKConfigDialog;
+import com.winlator.contentdialog.TurnipConfigDialog;
 import com.winlator.core.AppUtils;
 import com.winlator.core.CursorLocker;
 import com.winlator.core.EnvVars;
@@ -96,6 +97,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
     private String audioDriver = Container.DEFAULT_AUDIO_DRIVER;
     private String dxwrapper = Container.DEFAULT_DXWRAPPER;
     private KeyValueSet dxwrapperConfig;
+    private KeyValueSet graphicsDriverConfig;
     private WineInfo wineInfo;
     private final EnvVars envVars = new EnvVars();
     private boolean firstTimeBoot = false;
@@ -145,6 +147,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
             audioDriver = container.getAudioDriver();
             dxwrapper = container.getDXWrapper();
             String dxwrapperConfig = container.getDXWrapperConfig();
+            String graphicsDriverConfig = container.getGraphicsDriverConfig();
             screenSize = container.getScreenSize();
 
             if (shortcut != null) {
@@ -152,6 +155,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
                 audioDriver = shortcut.getExtra("audioDriver", container.getAudioDriver());
                 dxwrapper = shortcut.getExtra("dxwrapper", container.getDXWrapper());
                 dxwrapperConfig = shortcut.getExtra("dxwrapperConfig", container.getDXWrapperConfig());
+                graphicsDriverConfig = shortcut.getExtra("graphicsDriverConfig", container.getGraphicsDriverConfig());
                 screenSize = shortcut.getExtra("screenSize", container.getScreenSize());
 
                 String dinputMapperType = shortcut.getExtra("dinputMapperType");
@@ -159,6 +163,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
             }
 
             if (dxwrapper.equals("dxvk")) this.dxwrapperConfig = DXVKConfigDialog.parseConfig(dxwrapperConfig);
+            if (graphicsDriver.equals("turnip")) this.graphicsDriverConfig = TurnipConfigDialog.parseConfig(this, graphicsDriverConfig);
 
             if (!wineInfo.isWin64()) {
                 onExtractFileListener = (file, size) -> {
@@ -407,6 +412,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         winHandler.start();
         envVars.clear();
         dxwrapperConfig = null;
+        graphicsDriverConfig = null;
     }
 
     private void setupUI() {
@@ -529,7 +535,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
     private void extractGraphicsDriverFiles() {
         String cacheId = graphicsDriver;
         if (graphicsDriver.equals("turnip")) {
-            cacheId += "-"+DefaultVersion.TURNIP+"-"+DefaultVersion.ZINK;
+            cacheId += "-"+graphicsDriverConfig.get("version")+"-"+DefaultVersion.ZINK;
         }
         else if (graphicsDriver.equals("virgl")) {
             cacheId += "-"+DefaultVersion.VIRGL;
@@ -549,8 +555,8 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
 
         if (graphicsDriver.equals("turnip")) {
             if (dxwrapper.equals("dxvk")) DXVKConfigDialog.setEnvVars(this, dxwrapperConfig, envVars);
+            TurnipConfigDialog.setEnvVars(graphicsDriverConfig, envVars);
             envVars.put("GALLIUM_DRIVER", "zink");
-            envVars.put("TU_DEBUG", "noconform");
             envVars.put("MESA_VK_WSI_PRESENT_MODE", "mailbox");
             envVars.put("vblank_mode", "0");
 
@@ -561,7 +567,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
             }
 
             if (changed) {
-                TarCompressorUtils.extract(TarCompressorUtils.Type.ZSTD, this, "graphics_driver/turnip-"+DefaultVersion.TURNIP+".tzst", rootDir);
+                TarCompressorUtils.extract(TarCompressorUtils.Type.ZSTD, this, "graphics_driver/turnip-"+graphicsDriverConfig.get("version")+".tzst", rootDir);
                 TarCompressorUtils.extract(TarCompressorUtils.Type.ZSTD, this, "graphics_driver/zink-"+DefaultVersion.ZINK+".tzst", rootDir);
             }
         }

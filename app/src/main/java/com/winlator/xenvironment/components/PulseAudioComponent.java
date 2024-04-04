@@ -55,10 +55,12 @@ public class PulseAudioComponent extends EnvironmentComponent {
             "set-default-sink AAudioSink"
         ));
 
-        File modulesDir = new File(workingDir, "modules/"+ AppUtils.getArchName());
+        String archName = AppUtils.getArchName();
+        File modulesDir = new File(workingDir, "modules/"+archName);
+        String systemLibPath = archName.equals("arm64") ? "/system/lib64" : "system/lib";
 
         ArrayList<String> envVars = new ArrayList<>();
-        envVars.add("LD_LIBRARY_PATH="+nativeLibraryDir+":"+modulesDir);
+        envVars.add("LD_LIBRARY_PATH="+systemLibPath+":"+nativeLibraryDir+":"+modulesDir);
         envVars.add("HOME="+workingDir);
         envVars.add("TMPDIR="+environment.getTmpDir());
 

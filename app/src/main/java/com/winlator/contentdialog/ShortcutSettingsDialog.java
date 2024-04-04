@@ -66,14 +66,17 @@ public class ShortcutSettingsDialog extends ContentDialog {
         final View vDXWrapperConfig = findViewById(R.id.BTDXWrapperConfig);
         vDXWrapperConfig.setTag(shortcut.getExtra("dxwrapperConfig", shortcut.container.getDXWrapperConfig()));
 
+        final View vGraphicsDriverConfig = findViewById(R.id.BTGraphicsDriverConfig);
+        vGraphicsDriverConfig.setTag(shortcut.getExtra("graphicsDriverConfig", shortcut.container.getGraphicsDriverConfig()));
+
         ContainerDetailFragment.setupDXWrapperSpinner(sDXWrapper, vDXWrapperConfig);
-        ContainerDetailFragment.loadGraphicsDriverSpinner(sGraphicsDriver, sDXWrapper,
+        ContainerDetailFragment.loadGraphicsDriverSpinner(sGraphicsDriver, sDXWrapper, vGraphicsDriverConfig,
             shortcut.getExtra("graphicsDriver", shortcut.container.getGraphicsDriver()), shortcut.getExtra("dxwrapper", shortcut.container.getDXWrapper()));
 
         findViewById(R.id.BTHelpDXWrapper).setOnClickListener((v) -> AppUtils.showHelpBox(context, v, R.string.dxwrapper_help_content));
 
         final Spinner sAudioDriver = findViewById(R.id.SAudioDriver);
-        AppUtils.setSpinnerSelectionFromIdentifier(sAudioDriver, shortcut.getExtra("audioDriver"));
+        AppUtils.setSpinnerSelectionFromIdentifier(sAudioDriver, shortcut.getExtra("audioDriver", shortcut.container.getAudioDriver()));
 
         final CheckBox cbForceFullscreen = findViewById(R.id.CBForceFullscreen);
         cbForceFullscreen.setChecked(shortcut.getExtra("forceFullscreen", "0").equals("1"));
@@ -117,6 +120,7 @@ public class ShortcutSettingsDialog extends ContentDialog {
                 String graphicsDriver = StringUtils.parseIdentifier(sGraphicsDriver.getSelectedItem());
                 String dxwrapper = StringUtils.parseIdentifier(sDXWrapper.getSelectedItem());
                 String dxwrapperConfig = vDXWrapperConfig.getTag().toString();
+                String graphicsDriverConfig = vGraphicsDriverConfig.getTag().toString();
                 String audioDriver = StringUtils.parseIdentifier(sAudioDriver.getSelectedItem());
 
                 String execArgs = etExecArgs.getText().toString();
@@ -125,6 +129,7 @@ public class ShortcutSettingsDialog extends ContentDialog {
                 shortcut.putExtra("graphicsDriver", !graphicsDriver.equals(shortcut.container.getGraphicsDriver()) ? graphicsDriver : null);
                 shortcut.putExtra("dxwrapper", !dxwrapper.equals(shortcut.container.getDXWrapper()) ? dxwrapper : null);
                 shortcut.putExtra("dxwrapperConfig", !dxwrapperConfig.equals(shortcut.container.getDXWrapperConfig()) ? dxwrapperConfig : null);
+                shortcut.putExtra("graphicsDriverConfig", !graphicsDriverConfig.equals(shortcut.container.getGraphicsDriverConfig()) ? graphicsDriverConfig : null);
                 shortcut.putExtra("audioDriver", !audioDriver.equals(shortcut.container.getAudioDriver())? audioDriver : null);
                 shortcut.putExtra("forceFullscreen", cbForceFullscreen.isChecked() ? "1" : null);
                 shortcut.putExtra("wincomponents", getWinComponents());

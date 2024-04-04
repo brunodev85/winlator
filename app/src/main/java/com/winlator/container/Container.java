@@ -25,7 +25,7 @@ public class Container {
     public static final String DEFAULT_DXWRAPPER = "wined3d";
     public static final String DEFAULT_WINCOMPONENTS = "direct3d=1,directsound=1,directmusic=0,directshow=0,directplay=0,vcrun2010=1";
     public static final String FALLBACK_WINCOMPONENTS = "direct3d=0,directsound=0,directmusic=0,directshow=0,directplay=0,vcrun2010=0";
-    public static final String DEFAULT_DRIVES = "D:"+Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+    public static final String DEFAULT_DRIVES = "D:"+Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+"E:/data/data/com.winlator/storage";
     public static final byte MAX_DRIVE_LETTERS = 8;
     public final int id;
     private String name;
@@ -34,6 +34,7 @@ public class Container {
     private String graphicsDriver = DEFAULT_GRAPHICS_DRIVER;
     private String dxwrapper = DEFAULT_DXWRAPPER;
     private String dxwrapperConfig = "";
+    private String graphicsDriverConfig = "";
     private String wincomponents = DEFAULT_WINCOMPONENTS;
     private String audioDriver = DEFAULT_AUDIO_DRIVER;
     private String drives = DEFAULT_DRIVES;
@@ -98,6 +99,14 @@ public class Container {
 
     public void setDXWrapperConfig(String dxwrapperConfig) {
         this.dxwrapperConfig = dxwrapperConfig != null ? dxwrapperConfig : "";
+    }
+
+    public String getGraphicsDriverConfig() {
+        return graphicsDriverConfig;
+    }
+
+    public void setGraphicsDriverConfig(String graphicsDriverConfig) {
+        this.graphicsDriverConfig = graphicsDriverConfig != null ? graphicsDriverConfig : "";
     }
 
     public String getAudioDriver() {
@@ -267,6 +276,7 @@ public class Container {
             data.put("graphicsDriver", graphicsDriver);
             data.put("dxwrapper", dxwrapper);
             if (!dxwrapperConfig.isEmpty()) data.put("dxwrapperConfig", dxwrapperConfig);
+            if (!graphicsDriverConfig.isEmpty()) data.put("graphicsDriverConfig", graphicsDriverConfig);
             data.put("audioDriver", audioDriver);
             data.put("wincomponents", wincomponents);
             data.put("drives", drives);
@@ -289,6 +299,7 @@ public class Container {
     public void loadData(JSONObject data) throws JSONException {
         wineVersion = WineInfo.MAIN_WINE_VERSION.identifier();
         dxwrapperConfig = "";
+        graphicsDriverConfig = "";
         checkObsoleteOrMissingProperties(data);
 
         for (Iterator<String> it = data.keys(); it.hasNext(); ) {
@@ -317,6 +328,9 @@ public class Container {
                     break;
                 case "dxwrapperConfig" :
                     setDXWrapperConfig(data.getString(key));
+                    break;
+                case "graphicsDriverConfig" :
+                    setGraphicsDriverConfig(data.getString(key));
                     break;
                 case "drives" :
                     setDrives(data.getString(key));

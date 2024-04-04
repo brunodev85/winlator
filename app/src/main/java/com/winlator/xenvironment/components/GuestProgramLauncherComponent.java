@@ -177,7 +177,7 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
     }
 
     private void addBox86EnvVars(EnvVars envVars) {
-        envVars.put("BOX86_NOBANNER", "1");
+        envVars.put("BOX86_NOBANNER", MainActivity.DEBUG_LEVEL == 1 ? "0" : "1");
         envVars.put("BOX86_DYNAREC", "1");
 
         if (MainActivity.DEBUG_LEVEL >= 3) envVars.put("BOX86_LOG", MainActivity.DEBUG_LEVEL == 3 ? "1" : "2");
@@ -188,7 +188,7 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
     }
 
     private void addBox64EnvVars(EnvVars envVars) {
-        envVars.put("BOX64_NOBANNER", "1");
+        envVars.put("BOX64_NOBANNER", MainActivity.DEBUG_LEVEL == 1 ? "0" : "1");
         envVars.put("BOX64_DYNAREC", "1");
 
         if (MainActivity.DEBUG_LEVEL >= 3) envVars.put("BOX64_LOG", MainActivity.DEBUG_LEVEL == 3 ? "1" : "2");

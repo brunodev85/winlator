@@ -40,6 +40,10 @@
         <item>1.10.3 (Default)</item>
         <item>2.3.1</item>
     </string-array>
+    <string-array name="turnip_version_entries">
+        <item>23.0.0</item>
+        <item>24.1.0</item>
+    </string-array>
     <string-array name="dxvk_max_device_memory_entries">
         <item>0 (Default)</item>
         <item>512 MB</item>

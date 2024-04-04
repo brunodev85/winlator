@@ -103,11 +103,25 @@
             android:layout_height="wrap_content"
             android:text="@string/graphics_driver" />
 
-        <Spinner
-            style="@style/ComboBox"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:id="@+id/SGraphicsDriver"
-            android:entries="@array/graphics_driver_entries" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <Spinner
+                style="@style/ComboBox"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:id="@+id/SGraphicsDriver"
+                android:entries="@array/graphics_driver_entries" />
+
+            <ImageButton
+                style="@style/ListMenuButton"
+                android:id="@+id/BTGraphicsDriverConfig"
+                android:src="@drawable/icon_settings"
+                android:visibility="gone" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

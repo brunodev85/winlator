@@ -85,12 +85,12 @@ public class TouchpadView extends View {
             this.y = transformedPoint[1];
         }
 
-        private int deltaX() {
+        private int deltaX(float sensitivity) {
             float dx = (x - lastX) * sensitivity;
             return (int)(x <= lastX ? Math.floor(dx) : Math.ceil(dx));
         }
 
-        private int deltaY() {
+        private int deltaY(float sensitivity) {
             float dy = (y - lastY) * sensitivity;
             return (int)(y <= lastY ? Math.floor(dy) : Math.ceil(dy));
         }
@@ -214,8 +214,10 @@ public class TouchpadView extends View {
         }
 
         if (!scrolling && numFingers <= 2 && !skipPointerMove) {
-            int dx = finger1.deltaX();
-            int dy = finger1.deltaY();
+            float distance = (float)Math.hypot(finger1.x - finger1.lastX, finger1.y - finger1.lastY);
+            float sensitivity = this.sensitivity * Math.min(distance, 1.0f);
+            int dx = finger1.deltaX(sensitivity);
+            int dy = finger1.deltaY(sensitivity);
 
             if (xServer.cursorLocker.getState() == CursorLocker.State.LOCKED) {
                 WinHandler winHandler = xServer.getWinHandler();
