@@ -1,3 +1,3 @@
-set(CMAKE_SYSTEM_NAME Linux)
-set(CROSS_PATH "/usr/lib/aarch64-linux-gnu")
-set(CMAKE_C_COMPILER "aarch64-linux-gnu-gcc")
+set(CMAKE_SYSTEM_NAME android)
+set(CROSS_PATH "/usr/lib/aarch32")
+set(CMAKE_C_COMPILER "aarch32")
