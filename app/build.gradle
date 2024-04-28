@@ -1,9 +1,7 @@
 apply plugin: 'com.android.application'
-
 android {
     compileSdk 30
-    buildToolsVersion '30.0.3'
-
+    namespace 'com.winlator'
     defaultConfig {
         applicationId 'com.winlator'
         minSdkVersion 26
@@ -11,12 +9,17 @@ android {
         versionCode 13
         versionName "6.1"
     }
-
+    signingConfigs.debug {
+        storeFile file('testkey_untrusted.jks')
+        keyAlias 'alias'
+        storePassword 'xrj45yWGLbsO7W0v'
+        keyPassword 'xrj45yWGLbsO7W0v'
+    }
     buildTypes {
         debug {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-
+            signingConfig signingConfigs.debug
             ndk {
                 abiFilters 'arm64-v8a', 'armeabi-v7a'
             }
@@ -26,7 +29,6 @@ android {
     lintOptions {
         checkReleaseBuilds false
     }
-
     ndkVersion '22.1.7171670'
 
     externalNativeBuild {
@@ -35,6 +37,11 @@ android {
             path 'src/main/cpp/CMakeLists.txt'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildToolsVersion '30.0.2'
 }
 
 dependencies {
