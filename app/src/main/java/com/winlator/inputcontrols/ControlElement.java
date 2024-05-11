@@ -6,6 +6,9 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.RectF;
+import android.os.CountDownTimer;
+import android.util.Log;
 
 import androidx.core.graphics.ColorUtils;
 
@@ -73,10 +76,89 @@ public class ControlElement {
     private String text = "";
     private byte iconId;
     private Range range;
-    private byte currentPage;
     private byte orientation;
-    private int currentElementIndex;
     private PointF thumbstickPosition;
+    //range button. handler for scrolling or key pressing
+    private class RangeDelayTimer extends CountDownTimer{
+        private static final String TAG = "RangeDelayTimer";
+        static final int DELAY_TIME=250, NO_SCROLL_THRESHOLD = 18;
+        long downTime = System.currentTimeMillis();
+        PointF downPos = new PointF(); //finger down position when scroll not started, last finger position when scrolling.
+        PointF scrOff = new PointF(); //current scroll offset. range in [-totalWidth, 0]
+        Binding binding = Binding.NONE; //the key when finger down. not stored in ControlElement.
+        boolean isScrollStarted = false;//true means that finger is scrolling and should press key.
+
+        public RangeDelayTimer() {super(DELAY_TIME, DELAY_TIME*10);}
+
+        @Override
+        public void onTick(long millisUntilFinished) {}
+
+        @Override
+        public void onFinish() {
+            if(isScrollStarted) return;
+            inputControlsView.post(()-> inputControlsView.handleInputEvent(binding, true));
+        }
+
+        /** handleFingerDown. init and start timer */
+        public void start(float x, float y) {
+            Range range = getRange();
+            //calculate index by scroll offset
+            Rect box = getBoundingBox();
+            float elementSize = (float) Math.max(box.width(), box.height()) / bindings.length;
+            float offset = orientation == 0 ? x  - box.left - this.scrOff.x : y - box.top - this.scrOff.y;
+            int index = Mathf.clamp((int) Math.floor(offset/elementSize), 0, getRange().max-1);
+            this.binding = switch (range) {
+                case FROM_A_TO_Z -> Binding.valueOf("KEY_" + ((char) (65 + index)));
+                case FROM_0_TO_9 -> Binding.valueOf("KEY_" + ((index + 1) % 10));
+                case FROM_F1_TO_F12 -> Binding.valueOf("KEY_F" + (index + 1));
+                case FROM_NP0_TO_NP9 -> Binding.valueOf("KEY_KP_" + ((index + 1) % 10));
+                default -> Binding.NONE;
+            };
+            Arrays.fill(bindings, Binding.NONE);
+            this.downTime = System.currentTimeMillis();
+            this.downPos.set(x, y);
+            this.isScrollStarted = false;
+            this.start();
+        }
+
+        public void handleTouchMove(float x, float y) {
+            //for some reason it receives move event without down event first. So check here to make sure it goes through down event first.
+            if(downPos.x == -1) {
+                start(x, y);
+                return;
+            }
+
+            boolean isTimeOut = System.currentTimeMillis()- this.downTime > RangeDelayTimer.DELAY_TIME;
+            if(isTimeOut && !this.isScrollStarted) return;
+            if(!isTimeOut && !this.isScrollStarted && Mathf.lengthSq(x- downPos.x, y- downPos.y) > NO_SCROLL_THRESHOLD * NO_SCROLL_THRESHOLD) {
+                this.isScrollStarted = true;  //In a short time, and moving far away, considered as scrolling and no key event.
+                this.cancel();
+            }
+
+            if(this.isScrollStarted) {
+                int elementSize = Math.max(boundingBox.width(), boundingBox.height()) / bindings.length;
+                float limit = - ((getRange().max - bindings.length) * elementSize);
+                float offX = orientation != 0 ? 0 : Mathf.clamp(scrOff.x + x-downPos.x, limit, 0);
+                float offY = orientation != 1 ? 0 : Mathf.clamp(scrOff.y + y-downPos.y, limit, 0);
+                scrOff.set(offX, offY);
+                downPos.set(x, y);
+                inputControlsView.invalidate();
+            }
+        }
+
+        /** key press(maybe) and release */
+        public void handleTouchUp() {
+            if(System.currentTimeMillis() - downTime < DELAY_TIME && !isScrollStarted) {
+                this.cancel();
+                inputControlsView.handleInputEvent(binding, true);
+                try {Thread.sleep(30);} catch (InterruptedException ignored) {}
+            }
+            inputControlsView.handleInputEvent(binding, false);
+            downPos.set(-1,-1); //for some reason it receives move events without down event, so clear downPos here.
+        }
+    }
+    private final RangeDelayTimer rTimer = new RangeDelayTimer();
+
 
     public ControlElement(InputControlsView inputControlsView) {
         this.inputControlsView = inputControlsView;
@@ -256,7 +338,7 @@ public class ControlElement {
                 break;
             }
             case RANGE_BUTTON: {
-                halfWidth = snappingSize * ((bindings.length * 4 + 8) / 2);
+                halfWidth = snappingSize * ((bindings.length * 4/* + 8*/) / 2);
                 halfHeight = snappingSize * 2;
 
                 if (orientation == 1) {
@@ -408,70 +490,78 @@ public class ControlElement {
             case RANGE_BUTTON: {
                 Range range = getRange();
                 int oldColor = paint.getColor();
-                float minSize = Math.min(boundingBox.width(), boundingBox.height());
-                float radius = minSize * 0.5f;
-                float elementSize = (float)Math.max(boundingBox.width(), boundingBox.height()) / (bindings.length + 2);
+                float radius = snappingSize * 0.75f * scale;//change to normal round rect
+                float elementSize = (float)Math.max(boundingBox.width(), boundingBox.height()) / (bindings.length/* + 2*/); //不包含左右按钮
                 float minTextSize = snappingSize * 2 * scale;
 
                 if (orientation == 0) {
                     float lineTop = boundingBox.top + strokeWidth * 0.5f;
                     float lineBottom = boundingBox.bottom - strokeWidth * 0.5f;
-                    float cy = boundingBox.top + boundingBox.height() * 0.5f;
 
                     float startX = boundingBox.left;
                     canvas.drawRoundRect(startX, boundingBox.top, boundingBox.right, boundingBox.bottom, radius, radius, paint);
-                    drawIcon(canvas, startX + elementSize * 0.5f, cy, minSize, minSize, 8);
-                    startX += elementSize;
+                    //1. don't draw page button. 2. clip round rect and apply scroll offset.
+                    canvas.save();
+                    inputControlsView.getPath().reset();
+                    inputControlsView.getPath().addRoundRect(startX, boundingBox.top, boundingBox.right, boundingBox.bottom, radius, radius, Path.Direction.CW);
+                    canvas.clipPath(inputControlsView.getPath());
+                    startX += rTimer.scrOff.x;
 
-                    for (byte i = 0; i < bindings.length; i++) {
+                    for (byte i = 0; i < getRange().max; i++) { //loop all buttons
                         paint.setStyle(Paint.Style.STROKE);
                         paint.setColor(oldColor);
-                        canvas.drawLine(startX, lineTop, startX, lineBottom, paint);
-                        int index = (i + currentPage * bindings.length) % range.max;
-                        String text = getRangeTextForIndex(range, index);
 
-                        paint.setStyle(Paint.Style.FILL);
-                        paint.setColor(primaryColor);
-                        paint.setTextSize(Math.min(getTextSizeForWidth(paint, text, elementSize - strokeWidth * 2), minTextSize));
-                        paint.setTextAlign(Paint.Align.CENTER);
-                        canvas.drawText(text, startX + elementSize * 0.5f, (y - ((paint.descent() + paint.ascent()) * 0.5f)), paint);
+                        if(startX > boundingBox.left && startX  < boundingBox.right)
+                            canvas.drawLine(startX, lineTop, startX, lineBottom, paint);
+                        String text = getRangeTextForIndex(range, i);
+
+                        if(startX < boundingBox.right && startX + elementSize > boundingBox.left) {
+                            paint.setStyle(Paint.Style.FILL);
+                            paint.setColor(primaryColor);
+                            paint.setTextSize(Math.min(getTextSizeForWidth(paint, text, elementSize - strokeWidth * 2), minTextSize));
+                            paint.setTextAlign(Paint.Align.CENTER);
+                            canvas.drawText(text, startX + elementSize * 0.5f, (y - ((paint.descent() + paint.ascent()) * 0.5f)), paint);
+                        }
                         startX += elementSize;
                     }
 
                     paint.setStyle(Paint.Style.STROKE);
                     paint.setColor(oldColor);
-                    canvas.drawLine(startX, lineTop, startX, lineBottom, paint);
-                    drawIcon(canvas, startX + elementSize * 0.5f, cy, minSize, minSize, 10);
+                    //don't draw the page button. restore canvas transform.
+                    canvas.restore();
                 }
                 else {
                     float lineLeft = boundingBox.left + strokeWidth * 0.5f;
                     float lineRight = boundingBox.right - strokeWidth * 0.5f;
-                    float cx = boundingBox.left + boundingBox.width() * 0.5f;
 
                     float startY = boundingBox.top;
                     canvas.drawRoundRect(boundingBox.left, startY, boundingBox.right, boundingBox.bottom, radius, radius, paint);
-                    drawIcon(canvas, cx, startY + elementSize * 0.5f, minSize, minSize, 9);
-                    startY += elementSize;
+                    canvas.save();
+                    inputControlsView.getPath().reset();
+                    inputControlsView.getPath().addRoundRect(boundingBox.left, startY, boundingBox.right, boundingBox.bottom, radius, radius, Path.Direction.CW);
+                    canvas.clipPath(inputControlsView.getPath());
+                    startY += rTimer.scrOff.y;
 
-                    for (byte i = 0; i < bindings.length; i++) {
+                    for (byte i = 0; i < getRange().max; i++) {
                         paint.setStyle(Paint.Style.STROKE);
                         paint.setColor(oldColor);
-                        canvas.drawLine(lineLeft, startY, lineRight, startY, paint);
-                        int index = (i + currentPage * bindings.length) % range.max;
-                        String text = getRangeTextForIndex(range, index);
+                        if(startY > boundingBox.top && startY < boundingBox.bottom)
+                            canvas.drawLine(lineLeft, startY, lineRight, startY, paint);
+                        String text = getRangeTextForIndex(range, i);
 
-                        paint.setStyle(Paint.Style.FILL);
-                        paint.setColor(primaryColor);
-                        paint.setTextSize(Math.min(getTextSizeForWidth(paint, text, boundingBox.width() - strokeWidth * 2), minTextSize));
-                        paint.setTextAlign(Paint.Align.CENTER);
-                        canvas.drawText(text, x, startY + elementSize * 0.5f - ((paint.descent() + paint.ascent()) * 0.5f), paint);
+                        if(startY < boundingBox.bottom && startY + elementSize > boundingBox.top) {
+                            paint.setStyle(Paint.Style.FILL);
+                            paint.setColor(primaryColor);
+                            paint.setTextSize(Math.min(getTextSizeForWidth(paint, text, boundingBox.width() - strokeWidth * 2), minTextSize));
+                            paint.setTextAlign(Paint.Align.CENTER);
+                            canvas.drawText(text, x, startY + elementSize * 0.5f - ((paint.descent() + paint.ascent()) * 0.5f), paint);
+                        }
                         startY += elementSize;
                     }
 
                     paint.setStyle(Paint.Style.STROKE);
                     paint.setColor(oldColor);
-                    canvas.drawLine(lineLeft, startY, lineRight, startY, paint);
-                    drawIcon(canvas, cx, startY + elementSize * 0.5f, minSize, minSize, 11);
+                    canvas.restore();
                 }
                 break;
             }
@@ -549,31 +639,8 @@ public class ControlElement {
                 return true;
             }
             else if (type == Type.RANGE_BUTTON) {
-                Range range = getRange();
-                currentElementIndex = getElementIndexAt(x, y);
-                if (currentElementIndex > 0 && currentElementIndex < bindings.length + 1) {
-                    int index = ((currentElementIndex - 1) + currentPage * bindings.length) % range.max;
-                    Binding binding = Binding.NONE;
-                    switch (range) {
-                        case FROM_A_TO_Z:
-                            binding = Binding.valueOf("KEY_"+((char)(65 + index)));
-                            break;
-                        case FROM_0_TO_9:
-                            binding = Binding.valueOf("KEY_"+((index + 1) % 10));
-                            break;
-                        case FROM_F1_TO_F12:
-                            binding = Binding.valueOf("KEY_F"+(index + 1));
-                            break;
-                        case FROM_NP0_TO_NP9:
-                            binding = Binding.valueOf("KEY_KP_"+((index + 1) % 10));
-                            break;
-                    }
-
-                    Arrays.fill(bindings, Binding.NONE);
-                    bindings[currentElementIndex-1] = binding;
-                    states[currentElementIndex-1] = true;
-                    inputControlsView.handleInputEvent(binding, true);
-                }
+                //delay the key press. if in a short time finger moved then it should scroll instead of press key.
+                rTimer.start(x, y);
                 return true;
             }
             else return handleTouchMove(pointerId, x, y);
@@ -637,6 +704,11 @@ public class ControlElement {
 
             return true;
         }
+        else if(pointerId == currentPointerId && type == Type.RANGE_BUTTON) {
+            //right after press, check if should start scrolling. after that update the scroll offset.
+            rTimer.handleTouchMove(x, y);
+            return true;
+        }
         else return false;
     }
 
@@ -656,18 +728,8 @@ public class ControlElement {
                 }
 
                 if (type == Type.RANGE_BUTTON) {
-                    Range range = getRange();
-                    float invLength = 1.0f / bindings.length;
-                    byte totalPage = (byte)((Math.ceil(range.max * invLength) * bindings.length) * invLength);
-                    if (currentElementIndex == 0) {
-                        currentPage--;
-                        if (currentPage < 0) currentPage = (byte)(totalPage - 1);
-                        inputControlsView.invalidate();
-                    }
-                    else if (currentElementIndex == (bindings.length+1)) {
-                        currentPage = (byte)((currentPage + 1) % totalPage);
-                        inputControlsView.invalidate();
-                    }
+                    //handle key release. if not scrolled and not pressed, press first.
+                    rTimer.handleTouchUp();
                 }
                 else if (type == Type.STICK) {
                     if (thumbstickPosition != null) thumbstickPosition = null;
@@ -678,12 +740,5 @@ public class ControlElement {
             return true;
         }
         return false;
-    }
-
-    private byte getElementIndexAt(float x, float y) {
-        Rect boundingBox = getBoundingBox();
-        float elementSize = (float)Math.max(boundingBox.width(), boundingBox.height()) / (bindings.length + 2);
-        float offset = orientation == 0 ? x - boundingBox.left : y - boundingBox.top;
-        return (byte)Mathf.clamp((int)Math.floor(offset / elementSize), 0, bindings.length + 1);
     }
 }
