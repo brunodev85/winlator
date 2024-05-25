@@ -21,8 +21,8 @@ public class AddEnvVarDialog extends ContentDialog {
         setIcon(R.drawable.icon_env_var);
 
         setOnConfirmCallback(() -> {
-            String name = etName.getText().toString().trim();
-            String value = etValue.getText().toString().trim();
+            String name = etName.getText().toString().trim().replace(" ", "");
+            String value = etValue.getText().toString().trim().replace(" ", "");
 
             if (!name.isEmpty() && !value.isEmpty()) {
                 LinearLayout parent = container.findViewById(R.id.LLEnvVars);
