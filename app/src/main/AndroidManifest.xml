@@ -24,7 +24,6 @@
         android:icon="@mipmap/ic_launcher"
         android:appCategory="game"
         android:isGame="true"
-        android:extractNativeLibs="true"
         android:allowAudioPlaybackCapture="true"
         android:label="@string/app_name">
 

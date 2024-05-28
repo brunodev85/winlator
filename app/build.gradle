@@ -1,9 +1,9 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdk 30
+    compileSdk 34
     buildToolsVersion '30.0.3'
-
+    namespace 'com.winlator'
     defaultConfig {
         applicationId 'com.winlator'
         minSdkVersion 26
@@ -23,9 +23,6 @@ android {
         }
     }
 
-    lintOptions {
-        checkReleaseBuilds false
-    }
 
     ndkVersion '22.1.7171670'
 
@@ -34,6 +31,18 @@ android {
             version '3.22.1'
             path 'src/main/cpp/CMakeLists.txt'
         }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging true
+        }
+    }
+    lint {
+        checkReleaseBuilds false
     }
 }
 
