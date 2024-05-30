@@ -212,4 +212,5 @@
     <string name="magnifier">Magnifier</string>
     <string name="bring_to_front">Bring to Front</string>
     <string name="options">Options</string>
+    <string name="touchscreen_behavior">Touchscreen Behavior</string>
 </resources>

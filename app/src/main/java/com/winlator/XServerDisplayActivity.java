@@ -50,7 +50,9 @@ import com.winlator.math.Mathf;
 import com.winlator.renderer.GLRenderer;
 import com.winlator.widget.InputControlsView;
 import com.winlator.widget.MagnifierView;
-import com.winlator.widget.TouchpadView;
+import com.winlator.widget.TouchPadBehaviorView;
+import com.winlator.widget.TouchMouseBehaviorView;
+import com.winlator.widget.TouchScreenBehaviorView;
 import com.winlator.widget.XServerView;
 import com.winlator.winhandler.TaskManagerDialog;
 import com.winlator.winhandler.WinHandler;
@@ -76,14 +78,15 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.Executors;
 
 public class XServerDisplayActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private XServerView xServerView;
     private InputControlsView inputControlsView;
-    private TouchpadView touchpadView;
+    private TouchMouseBehaviorView touchpadBehaviorView;
+    private TouchMouseBehaviorView touchscreenBehaviorView;
+
+    private boolean isTouchpadEnabledMode = true;
     private XEnvironment environment;
     private DrawerLayout drawerLayout;
     private ContainerManager containerManager;
@@ -288,6 +291,23 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
             case R.id.main_menu_touchpad_help:
                 showTouchpadHelpDialog();
                 break;
+            case R.id.main_menu_touchscreen_behavior:
+                FrameLayout container = findViewById(R.id.FLXServerDisplay);
+                container.removeView(inputControlsView);
+                if(isTouchpadEnabledMode){
+                    container.removeView(touchpadBehaviorView);
+                    container.addView(touchscreenBehaviorView);
+                    inputControlsView.setTouchpadView(touchscreenBehaviorView);
+                    container.addView(inputControlsView);
+                    isTouchpadEnabledMode = false;
+                }else{
+                    container.removeView(touchscreenBehaviorView);
+                    container.addView(touchpadBehaviorView);
+                    inputControlsView.setTouchpadView(touchpadBehaviorView);
+                    container.addView(inputControlsView);
+                    isTouchpadEnabledMode = true;
+                }
+                break;
             case R.id.main_menu_exit:
                 exit();
                 break;
@@ -430,16 +450,22 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         container.addView(xServerView);
 
         globalCursorSpeed = preferences.getFloat("cursor_speed", 1.0f);
-        touchpadView = new TouchpadView(this, xServer);
-        touchpadView.setSensitivity(globalCursorSpeed);
-        touchpadView.setFourFingersTapCallback(() -> {
+        touchpadBehaviorView = new TouchPadBehaviorView(this, xServer);
+        touchpadBehaviorView.setSensitivity(globalCursorSpeed);
+        touchpadBehaviorView.setFourFingersTapCallback(() -> {
             if (!drawerLayout.isDrawerOpen(GravityCompat.START)) drawerLayout.openDrawer(GravityCompat.START);
         });
-        container.addView(touchpadView);
+        container.addView(touchpadBehaviorView);
+
+        touchscreenBehaviorView = new TouchScreenBehaviorView(this, xServer);
+        touchscreenBehaviorView.setSensitivity(globalCursorSpeed);
+        touchscreenBehaviorView.setFourFingersTapCallback(() -> {
+            if (!drawerLayout.isDrawerOpen(GravityCompat.START)) drawerLayout.openDrawer(GravityCompat.START);
+        });
 
         inputControlsView = new InputControlsView(this);
         inputControlsView.setOverlayOpacity(preferences.getFloat("overlay_opacity", InputControlsView.DEFAULT_OVERLAY_OPACITY));
-        inputControlsView.setTouchpadView(touchpadView);
+        inputControlsView.setTouchpadView(touchpadBehaviorView);
         inputControlsView.setXServer(xServer);
         inputControlsView.setVisibility(View.GONE);
         container.addView(inputControlsView);
@@ -514,8 +540,8 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         inputControlsView.requestFocus();
         inputControlsView.setProfile(profile);
 
-        touchpadView.setSensitivity(profile.getCursorSpeed() * globalCursorSpeed);
-        touchpadView.setPointerButtonRightEnabled(false);
+        touchpadBehaviorView.setSensitivity(profile.getCursorSpeed() * globalCursorSpeed);
+        touchpadBehaviorView.setPointerButtonRightEnabled(false);
 
         inputControlsView.invalidate();
     }
@@ -525,9 +551,9 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         inputControlsView.setVisibility(View.GONE);
         inputControlsView.setProfile(null);
 
-        touchpadView.setSensitivity(globalCursorSpeed);
-        touchpadView.setPointerButtonLeftEnabled(true);
-        touchpadView.setPointerButtonRightEnabled(true);
+        touchpadBehaviorView.setSensitivity(globalCursorSpeed);
+        touchpadBehaviorView.setPointerButtonLeftEnabled(true);
+        touchpadBehaviorView.setPointerButtonRightEnabled(true);
 
         inputControlsView.invalidate();
     }
@@ -592,7 +618,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
 
     @Override
     public boolean dispatchGenericMotionEvent(MotionEvent event) {
-        return !winHandler.onGenericMotionEvent(event) && !touchpadView.onExternalMouseEvent(event) && super.dispatchGenericMotionEvent(event);
+        return !winHandler.onGenericMotionEvent(event) && !touchpadBehaviorView.onExternalMouseEvent(event) && super.dispatchGenericMotionEvent(event);
     }
 
     @Override

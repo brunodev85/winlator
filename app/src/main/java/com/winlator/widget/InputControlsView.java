@@ -12,7 +12,6 @@ import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,7 +25,6 @@ import com.winlator.inputcontrols.ExternalController;
 import com.winlator.inputcontrols.ExternalControllerBinding;
 import com.winlator.inputcontrols.GamepadState;
 import com.winlator.math.Mathf;
-import com.winlator.math.XForm;
 import com.winlator.winhandler.WinHandler;
 import com.winlator.xserver.Pointer;
 import com.winlator.xserver.XServer;
@@ -51,7 +49,7 @@ public class InputControlsView extends View {
     private ControlElement selectedElement;
     private ControlsProfile profile;
     private float overlayOpacity = DEFAULT_OVERLAY_OPACITY;
-    private TouchpadView touchpadView;
+    private TouchMouseBehaviorView touchMouseBehaviorView;
     private XServer xServer;
     private final Bitmap[] icons = new Bitmap[17];
     private Timer mouseMoveTimer;
@@ -239,8 +237,8 @@ public class InputControlsView extends View {
         return colorFilter;
     }
 
-    public void setTouchpadView(TouchpadView touchpadView) {
-        this.touchpadView = touchpadView;
+    public void setTouchpadView(TouchMouseBehaviorView touchMouseBehaviorView) {
+        this.touchMouseBehaviorView = touchMouseBehaviorView;
     }
 
     public XServer getXServer() {
@@ -359,14 +357,14 @@ public class InputControlsView extends View {
                     float x = event.getX(actionIndex);
                     float y = event.getY(actionIndex);
 
-                    touchpadView.setPointerButtonLeftEnabled(true);
+                    touchMouseBehaviorView.setPointerButtonLeftEnabled(true);
                     for (ControlElement element : profile.getElements()) {
                         if (element.handleTouchDown(pointerId, x, y)) handled = true;
                         if (element.getBindingAt(0) == Binding.MOUSE_LEFT_BUTTON) {
-                            touchpadView.setPointerButtonLeftEnabled(false);
+                            touchMouseBehaviorView.setPointerButtonLeftEnabled(false);
                         }
                     }
-                    if (!handled) touchpadView.onTouchEvent(event);
+                    if (!handled) touchMouseBehaviorView.onTouchEvent(event);
                     break;
                 }
                 case MotionEvent.ACTION_MOVE: {
@@ -378,7 +376,7 @@ public class InputControlsView extends View {
                         for (ControlElement element : profile.getElements()) {
                             if (element.handleTouchMove(i, x, y)) handled = true;
                         }
-                        if (!handled) touchpadView.onTouchEvent(event);
+                        if (!handled) touchMouseBehaviorView.onTouchEvent(event);
                     }
                     break;
                 }
@@ -386,7 +384,7 @@ public class InputControlsView extends View {
                 case MotionEvent.ACTION_POINTER_UP:
                 case MotionEvent.ACTION_CANCEL:
                     for (ControlElement element : profile.getElements()) if (element.handleTouchUp(pointerId)) handled = true;
-                    if (!handled) touchpadView.onTouchEvent(event);
+                    if (!handled) touchMouseBehaviorView.onTouchEvent(event);
                     break;
             }
         }
