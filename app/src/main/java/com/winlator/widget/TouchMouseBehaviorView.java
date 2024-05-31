@@ -6,13 +6,18 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.winlator.math.XForm;
+import com.winlator.renderer.Viewport;
 import com.winlator.xserver.Pointer;
 import com.winlator.xserver.XServer;
 
 
 public abstract class TouchMouseBehaviorView extends View {
     protected final XServer xServer;
+    protected float sensitivity = 1.0f;
+    protected boolean pointerButtonLeftEnabled = true;
+    protected boolean pointerButtonRightEnabled = true;
     protected final float[] xform = XForm.getInstance();
+    protected Runnable fourFingersTapCallback;
 
     public TouchMouseBehaviorView(Context context, XServer xServer) {
         super(context);
@@ -22,22 +27,46 @@ public abstract class TouchMouseBehaviorView extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+        updateXform(w, h, xServer.screenInfo.width, xServer.screenInfo.height);
+    }
+
+    protected void updateXform(int outerWidth, int outerHeight, int innerWidth, int innerHeight) {
+        Viewport viewport = new Viewport();
+        viewport.update(outerWidth, outerHeight, innerWidth, innerHeight);
+
+        float invAspect = 1.0f / viewport.aspect;
+        if (!xServer.getRenderer().isFullscreen()) {
+            XForm.makeTranslation(xform, -viewport.x, -viewport.y);
+            XForm.scale(xform, invAspect, invAspect);
+        } else XForm.makeScale(xform, invAspect, invAspect);
     }
 
     @Override
     public abstract boolean onTouchEvent(MotionEvent event);
 
-    public abstract void setSensitivity(float sensitivity);
+    public void setSensitivity(float sensitivity) {
+        this.sensitivity = sensitivity;
+    }
 
-    public abstract boolean isPointerButtonLeftEnabled();
+    public boolean isPointerButtonLeftEnabled() {
+        return pointerButtonLeftEnabled;
+    }
 
-    public abstract void setPointerButtonLeftEnabled(boolean pointerButtonLeftEnabled);
+    public void setPointerButtonLeftEnabled(boolean pointerButtonLeftEnabled) {
+        this.pointerButtonLeftEnabled = pointerButtonLeftEnabled;
+    }
 
-    public abstract boolean isPointerButtonRightEnabled();
+    public boolean isPointerButtonRightEnabled() {
+        return pointerButtonRightEnabled;
+    }
 
-    public abstract void setPointerButtonRightEnabled(boolean pointerButtonRightEnabled);
+    public void setPointerButtonRightEnabled(boolean pointerButtonRightEnabled) {
+        this.pointerButtonRightEnabled = pointerButtonRightEnabled;
+    }
 
-    public abstract void setFourFingersTapCallback(Runnable fourFingersTapCallback);
+    public void setFourFingersTapCallback(Runnable fourFingersTapCallback) {
+        this.fourFingersTapCallback = fourFingersTapCallback;
+    }
 
     public boolean onExternalMouseEvent(MotionEvent event) {
         boolean handled = false;
@@ -80,6 +109,4 @@ public abstract class TouchMouseBehaviorView extends View {
         }
         return handled;
     }
-
-
 }

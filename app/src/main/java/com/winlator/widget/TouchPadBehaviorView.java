@@ -22,15 +22,10 @@ public class TouchPadBehaviorView extends TouchMouseBehaviorView {
     private static final byte MAX_TAP_TRAVEL_DISTANCE = 10;
     private final Finger[] fingers = new Finger[MAX_FINGERS];
     private byte numFingers = 0;
-    private float sensitivity = 1.0f;
-    private boolean pointerButtonLeftEnabled = true;
-    private boolean pointerButtonRightEnabled = true;
     private Finger fingerPointerButtonLeft;
     private Finger fingerPointerButtonRight;
     private float scrollAccumY = 0;
     private boolean scrolling = false;
-    private Runnable fourFingersTapCallback;
-
 
     public TouchPadBehaviorView(Context context, XServer xServer) {
         super(context, xServer);
@@ -39,23 +34,6 @@ public class TouchPadBehaviorView extends TouchMouseBehaviorView {
         setFocusable(false);
         setFocusableInTouchMode(false);
         updateXform(AppUtils.getScreenWidth(), AppUtils.getScreenHeight(), xServer.screenInfo.width, xServer.screenInfo.height);
-    }
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        updateXform(w, h, xServer.screenInfo.width, xServer.screenInfo.height);
-    }
-
-    protected void updateXform(int outerWidth, int outerHeight, int innerWidth, int innerHeight) {
-        Viewport viewport = new Viewport();
-        viewport.update(outerWidth, outerHeight, innerWidth, innerHeight);
-
-        float invAspect = 1.0f / viewport.aspect;
-        if (!xServer.getRenderer().isFullscreen()) {
-            XForm.makeTranslation(xform, -viewport.x, -viewport.y);
-            XForm.scale(xform, invAspect, invAspect);
-        } else XForm.makeScale(xform, invAspect, invAspect);
     }
 
     @Override
@@ -213,35 +191,5 @@ public class TouchPadBehaviorView extends TouchMouseBehaviorView {
                 fingerPointerButtonRight = null;
             }, 30);
         }
-    }
-
-    @Override
-    public void setSensitivity(float sensitivity) {
-        this.sensitivity = sensitivity;
-    }
-
-    @Override
-    public boolean isPointerButtonLeftEnabled() {
-        return pointerButtonLeftEnabled;
-    }
-
-    @Override
-    public void setPointerButtonLeftEnabled(boolean pointerButtonLeftEnabled) {
-        this.pointerButtonLeftEnabled = pointerButtonLeftEnabled;
-    }
-
-    @Override
-    public boolean isPointerButtonRightEnabled() {
-        return pointerButtonRightEnabled;
-    }
-
-    @Override
-    public void setPointerButtonRightEnabled(boolean pointerButtonRightEnabled) {
-        this.pointerButtonRightEnabled = pointerButtonRightEnabled;
-    }
-
-    @Override
-    public void setFourFingersTapCallback(Runnable fourFingersTapCallback) {
-        this.fourFingersTapCallback = fourFingersTapCallback;
     }
 }
