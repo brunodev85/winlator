@@ -145,7 +145,6 @@ public class TouchScreenBehaviorView extends TouchMouseBehaviorView {
         }
 
         if (!scrolling && numFingers <= 2 && !skipPointerMove) {
-            Log.d("Touch","Mouse move X: " + (int)finger1.x + " Y: " + (int)finger1.y);
             if (xServer.cursorLocker.getState() == CursorLocker.State.LOCKED) {
                 WinHandler winHandler = xServer.getWinHandler();
                 winHandler.mouseEvent(MouseEventFlags.MOVE, (int)finger1.x, (int)finger1.y, 0);
@@ -161,7 +160,6 @@ public class TouchScreenBehaviorView extends TouchMouseBehaviorView {
     }
 
     private void pressPointerButtonLeft(Finger finger) {
-        Log.d("Touch","Left button pressed on X:" + finger.x + " Y: " + finger.y);
         if (pointerButtonLeftEnabled && !xServer.pointer.isButtonPressed(Pointer.Button.BUTTON_LEFT)) {
             xServer.injectPointerButtonPress(Pointer.Button.BUTTON_LEFT);
             fingerPointerButtonLeft = finger;
@@ -176,7 +174,6 @@ public class TouchScreenBehaviorView extends TouchMouseBehaviorView {
     }
 
     private void releasePointerButtonLeft(final Finger finger) {
-        Log.d("Touch","Left Button released on X:" + finger.x + " Y: " + finger.y);
         if (pointerButtonLeftEnabled && finger == fingerPointerButtonLeft && xServer.pointer.isButtonPressed(Pointer.Button.BUTTON_LEFT)) {
             postDelayed(() -> {
                 xServer.injectPointerButtonRelease(Pointer.Button.BUTTON_LEFT);
