@@ -387,7 +387,7 @@ public class ContainerDetailFragment extends Fragment {
         for (int i = 0; i < parent.getChildCount(); i++) {
             View child = parent.getChildAt(i);
             String name = ((TextView)child.findViewById(R.id.TextView)).getText().toString();
-            String value = ((EditText)child.findViewById(R.id.EditText)).getText().toString().trim();
+            String value = ((EditText)child.findViewById(R.id.EditText)).getText().toString().trim().replace(" ", "");
             if (!value.isEmpty()) envVars.put(name, value);
         }
         return envVars.toString();
