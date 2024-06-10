@@ -8,7 +8,7 @@ Winlator is an Android application that lets you to run Windows (x86_64) applica
 
 # Installation
 
-1. Download and install the APK (Winlator_6.1.apk) from [GitHub Releases](https://github.com/brunodev85/winlator/releases)
+1. Download and install the APK (Winlator_7.0.apk) from [GitHub Releases](https://github.com/brunodev85/winlator/releases)
 2. Launch the app and wait for the installation process to finish
 
 ----
@@ -22,18 +22,20 @@ Winlator is an Android application that lets you to run Windows (x86_64) applica
 
 # Useful Tips
 
-- If you are experiencing performance issues, try changing the preset for Box86/Box64 in Container Settings -> Advanced Tab.
+- If you are experiencing performance issues, try changing the Box86/Box64 preset in Container Settings -> Advanced Tab.
 - For applications that use .NET Framework, try installing Wine Mono found in Start Menu -> System Tools.
 - If some older games don't open, try adding the environment variable MESA_EXTENSION_MAX_YEAR=2003 in Container Settings -> Environment Variables.
 - Try running the games using the shortcut on the Winlator home screen, there you can define individual settings for each game.
+- To speed up the installers, try changing the Box86/Box64 preset to Intermediate in Container Settings -> Advanced Tab.
 
 # Credits and Third-party apps
 - Ubuntu RootFs ([Focal Fossa](https://releases.ubuntu.com/focal))
 - Wine ([winehq.org](https://www.winehq.org/))
 - Box86/Box64 by [ptitseb](https://github.com/ptitSeb)
 - PRoot ([proot-me.github.io](https://proot-me.github.io))
-- Mesa3D ([mesa3d.org](https://www.mesa3d.org))
+- Mesa (Turnip/Zink/VirGL) ([mesa3d.org](https://www.mesa3d.org))
 - DXVK ([github.com/doitsujin/dxvk](https://github.com/doitsujin/dxvk))
+- VKD3D ([gitlab.winehq.org/wine/vkd3d](https://gitlab.winehq.org/wine/vkd3d))
 - D8VK ([github.com/AlpyneDreams/d8vk](https://github.com/AlpyneDreams/d8vk))
 - CNC DDraw ([github.com/FunkyFr3sh/cnc-ddraw](https://github.com/FunkyFr3sh/cnc-ddraw))
 
