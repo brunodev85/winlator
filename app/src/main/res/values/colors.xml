@@ -4,4 +4,5 @@
     <color name="colorPrimary">#607d8b</color>
     <color name="colorPrimaryDark">#455a64</color>
     <color name="colorAccent">#0288d1</color>
+    <!--OLED-->
 </resources>
