@@ -20,6 +20,7 @@
         <item name="android:windowBackground">#000000</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:pointerIcon">@drawable/hidden_pointer_arrow</item>
     </style>
     <style name="ComboBox">
         <item name="android:layout_width">192dp</item>
