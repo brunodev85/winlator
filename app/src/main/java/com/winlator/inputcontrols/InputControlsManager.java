@@ -205,6 +205,7 @@ public class InputControlsManager {
             int profileId = 0;
             String profileName = null;
             float cursorSpeed = Float.NaN;
+            boolean cursorDirect = false;
             int fieldsRead = 0;
 
             reader.beginObject();
@@ -223,8 +224,12 @@ public class InputControlsManager {
                     cursorSpeed = (float) reader.nextDouble();
                     fieldsRead++;
                 }
+                else if (name.equals("cursorDirect")) {
+                    cursorDirect = reader.nextBoolean();
+                    fieldsRead++;
+                }
                 else {
-                    if (fieldsRead == 3) break;
+                    if (fieldsRead == 4) break;
                     reader.skipValue();
                 }
             }
@@ -232,6 +237,7 @@ public class InputControlsManager {
             ControlsProfile profile = new ControlsProfile(context, profileId);
             profile.setName(profileName);
             profile.setCursorSpeed(cursorSpeed);
+            profile.setCursorDirect(cursorDirect);
             return profile;
         }
         catch (IOException e) {

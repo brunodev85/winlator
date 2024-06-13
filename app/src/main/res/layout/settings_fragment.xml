@@ -184,6 +184,13 @@
                         android:max="200" />
 
                     <CheckBox
+                        android:id="@+id/CBCursorDirect"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/map_cursor_directly"
+                        android:layout_marginTop="8dp" />
+
+                    <CheckBox
                         android:id="@+id/CBUseDRI3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

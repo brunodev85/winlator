@@ -105,6 +105,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
     private OnExtractFileListener onExtractFileListener;
     private final WinHandler winHandler = new WinHandler(this);
     private float globalCursorSpeed = 1.0f;
+    private boolean globalCursorDirect = false;
     private MagnifierView magnifierView;
     private DebugDialog debugDialog;
     private short taskAffinityMask = 0;
@@ -475,8 +476,10 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         rootView.addView(xServerView);
 
         globalCursorSpeed = preferences.getFloat("cursor_speed", 1.0f);
+        globalCursorDirect = preferences.getBoolean("cursor_direct", false);
         touchpadView = new TouchpadView(this, xServer);
         touchpadView.setSensitivity(globalCursorSpeed);
+        touchpadView.setCursorDirect(globalCursorDirect);
         touchpadView.setFourFingersTapCallback(() -> {
             if (!drawerLayout.isDrawerOpen(GravityCompat.START)) drawerLayout.openDrawer(GravityCompat.START);
         });
@@ -566,6 +569,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         inputControlsView.setProfile(profile);
 
         touchpadView.setSensitivity(profile.getCursorSpeed() * globalCursorSpeed);
+        touchpadView.setCursorDirect(profile.getCursorDirect());
         touchpadView.setPointerButtonRightEnabled(false);
 
         inputControlsView.invalidate();
@@ -577,6 +581,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         inputControlsView.setProfile(null);
 
         touchpadView.setSensitivity(globalCursorSpeed);
+        touchpadView.setCursorDirect(globalCursorDirect);
         touchpadView.setPointerButtonLeftEnabled(true);
         touchpadView.setPointerButtonRightEnabled(true);
 

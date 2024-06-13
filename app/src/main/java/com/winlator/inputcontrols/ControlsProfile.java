@@ -21,6 +21,7 @@ public class ControlsProfile implements Comparable<ControlsProfile> {
     public final int id;
     private String name;
     private float cursorSpeed = 1.0f;
+    private boolean cursorDirect = false;
     private final ArrayList<ControlElement> elements = new ArrayList<>();
     private final ArrayList<ExternalController> controllers = new ArrayList<>();
     private final List<ControlElement> immutableElements = Collections.unmodifiableList(elements);
@@ -49,6 +50,14 @@ public class ControlsProfile implements Comparable<ControlsProfile> {
 
     public void setCursorSpeed(float cursorSpeed) {
         this.cursorSpeed = cursorSpeed;
+    }
+
+    public boolean getCursorDirect() {
+        return cursorDirect;
+    }
+
+    public void setCursorDirect(boolean cursorDirect) {
+        this.cursorDirect = cursorDirect;
     }
 
     public boolean isVirtualGamepad() {
@@ -107,6 +116,7 @@ public class ControlsProfile implements Comparable<ControlsProfile> {
             data.put("id", id);
             data.put("name", name);
             data.put("cursorSpeed", Float.valueOf(cursorSpeed));
+            data.put("cursorDirect", cursorDirect);
 
             JSONArray elementsJSONArray = new JSONArray();
             if (!elementsLoaded && file.isFile()) {
