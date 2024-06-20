@@ -1,0 +1,44 @@
+name: 构建apk
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: "Build"
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install Dependencies 
+      run: |
+        sudo apt update && sudo apt install -y libarchive-tools wget
+    - name: Setup
+      uses: actions/checkout@v4
+      with:
+        ref: extra2 
+        submodules: recursive
+      
+    - name: Setup JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+        
+    - name: Setup Gradle Cache
+      uses: actions/cache@v4
+      with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+    - name: Build
+      run: chmod +x ./gradlew && ./gradlew assembleDebug
+    
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: winlator-arm64-v8-debug
+        path: ./app/build/outputs/apk/debug/app-debug.apk
