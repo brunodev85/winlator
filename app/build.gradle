@@ -13,6 +13,11 @@ android {
         versionName "6.1"
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
     buildTypes {
         debug {
             minifyEnabled true
