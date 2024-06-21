@@ -37,7 +37,7 @@ jobs:
 
     - name: Build
       run: | 
-        ./obb_image_generator/generate.sh
+        chmod +x ./obb_image_generator/generate.sh && ./obb_image_generator/generate.sh
         chmod +x ./gradlew && ./gradlew assembleDebug
     
     - name: Upload Artifacts
