@@ -1,6 +1,8 @@
 name: Android_Build
 
 on:
+  push:
+    branches: ["*"]
   workflow_dispatch:
 
 jobs:
@@ -34,7 +36,9 @@ jobs:
             ${{ runner.os }}-gradle-
 
     - name: Build
-      run: chmod +x ./gradlew && ./gradlew assembleDebug
+      run: | 
+        ./obb_image_generator/generate.sh
+        chmod +x ./gradlew && ./gradlew assembleDebug
     
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
