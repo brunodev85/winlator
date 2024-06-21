@@ -13,10 +13,6 @@ android {
         versionName "6.1"
     }
 
-    aaptOptions {
-        noCompress "txz"
-    }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
