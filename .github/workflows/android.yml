@@ -39,7 +39,7 @@ jobs:
       run: |
         rm -rf app/src/main/assets/imagefs.txz 
         wget -P app/src/main/assets \
-        https://github.com/ewt45/winlator-fork/releases/download/0.0.0.store/imagefs.txz
+        https://github.com/Ishan09811/winlator/releases/download/Imagefs/imagefs.txz
 
     - name: Build
       run: | 
