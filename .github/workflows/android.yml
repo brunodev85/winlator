@@ -35,9 +35,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+    - name: Setup Imagefs
+      run: |
+        rm -rf app/src/main/assets/imagefs.txz 
+        wget -P app/src/main/assets \
+        https://github.com/ewt45/winlator-fork/releases/download/0.0.0.store/imagefs.txz
+
     - name: Build
       run: | 
-        chmod +x ./obb_image_generator/generate.sh && ./obb_image_generator/generate.sh
         chmod +x ./gradlew && ./gradlew assembleDebug
     
     - name: Upload Artifacts
