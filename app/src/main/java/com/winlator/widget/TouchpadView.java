@@ -8,9 +8,9 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.winlator.core.AppUtils;
-import com.winlator.core.CursorLocker;
+import com.winlator.math.Mathf;
 import com.winlator.math.XForm;
-import com.winlator.renderer.Viewport;
+import com.winlator.renderer.ViewTransformation;
 import com.winlator.winhandler.MouseEventFlags;
 import com.winlator.winhandler.WinHandler;
 import com.winlator.xserver.Pointer;
@@ -19,7 +19,10 @@ import com.winlator.xserver.XServer;
 public class TouchpadView extends View {
     private static final byte MAX_FINGERS = 4;
     private static final short MAX_TWO_FINGERS_SCROLL_DISTANCE = 350;
-    private static final byte MAX_TAP_TRAVEL_DISTANCE = 10;
+    public static final byte MAX_TAP_TRAVEL_DISTANCE = 10;
+    public static final short MAX_TAP_MILLISECONDS = 200;
+    public static final float CURSOR_ACCELERATION = 1.25f;
+    public static final byte CURSOR_ACCELERATION_THRESHOLD = 6;
     private final Finger[] fingers = new Finger[MAX_FINGERS];
     private byte numFingers = 0;
     private float sensitivity = 1.0f;
@@ -50,30 +53,30 @@ public class TouchpadView extends View {
     }
 
     private void updateXform(int outerWidth, int outerHeight, int innerWidth, int innerHeight) {
-        Viewport viewport = new Viewport();
-        viewport.update(outerWidth, outerHeight, innerWidth, innerHeight);
+        ViewTransformation viewTransformation = new ViewTransformation();
+        viewTransformation.update(outerWidth, outerHeight, innerWidth, innerHeight);
 
-        float invAspect = 1.0f / viewport.aspect;
+        float invAspect = 1.0f / viewTransformation.aspect;
         if (!xServer.getRenderer().isFullscreen()) {
-            XForm.makeTranslation(xform, -viewport.x, -viewport.y);
+            XForm.makeTranslation(xform, -viewTransformation.viewOffsetX, -viewTransformation.viewOffsetY);
             XForm.scale(xform, invAspect, invAspect);
         }
         else XForm.makeScale(xform, invAspect, invAspect);
     }
 
     private class Finger {
-        private float x;
-        private float y;
-        private final float startX;
-        private final float startY;
-        private float lastX;
-        private float lastY;
+        private int x;
+        private int y;
+        private final int startX;
+        private final int startY;
+        private int lastX;
+        private int lastY;
         private final long touchTime;
 
         public Finger(float x, float y) {
             float[] transformedPoint = XForm.transformPoint(xform, x, y);
-            this.x = this.startX = this.lastX = transformedPoint[0];
-            this.y = this.startY = this.lastY = transformedPoint[1];
+            this.x = this.startX = this.lastX = (int)transformedPoint[0];
+            this.y = this.startY = this.lastY = (int)transformedPoint[1];
             touchTime = System.currentTimeMillis();
         }
 
@@ -81,22 +84,24 @@ public class TouchpadView extends View {
             lastX = this.x;
             lastY = this.y;
             float[] transformedPoint = XForm.transformPoint(xform, x, y);
-            this.x = transformedPoint[0];
-            this.y = transformedPoint[1];
+            this.x = (int)transformedPoint[0];
+            this.y = (int)transformedPoint[1];
         }
 
-        private int deltaX(float sensitivity) {
+        private int deltaX() {
             float dx = (x - lastX) * sensitivity;
-            return (int)(x <= lastX ? Math.floor(dx) : Math.ceil(dx));
+            if (Math.abs(dx) > CURSOR_ACCELERATION_THRESHOLD) dx *= CURSOR_ACCELERATION;
+            return Mathf.roundPoint(dx);
         }
 
-        private int deltaY(float sensitivity) {
+        private int deltaY() {
             float dy = (y - lastY) * sensitivity;
-            return (int)(y <= lastY ? Math.floor(dy) : Math.ceil(dy));
+            if (Math.abs(dy) > CURSOR_ACCELERATION_THRESHOLD) dy *= CURSOR_ACCELERATION;
+            return Mathf.roundPoint(dy);
         }
 
         private boolean isTap() {
-            return (System.currentTimeMillis() - touchTime) < 200 && travelDistance() < MAX_TAP_TRAVEL_DISTANCE;
+            return (System.currentTimeMillis() - touchTime) < MAX_TAP_MILLISECONDS && travelDistance() < MAX_TAP_TRAVEL_DISTANCE;
         }
 
         private float travelDistance() {
@@ -214,12 +219,10 @@ public class TouchpadView extends View {
         }
 
         if (!scrolling && numFingers <= 2 && !skipPointerMove) {
-            float distance = (float)Math.hypot(finger1.x - finger1.lastX, finger1.y - finger1.lastY);
-            float sensitivity = this.sensitivity * Math.min(distance, 1.0f);
-            int dx = finger1.deltaX(sensitivity);
-            int dy = finger1.deltaY(sensitivity);
+            int dx = finger1.deltaX();
+            int dy = finger1.deltaY();
 
-            if (xServer.cursorLocker.getState() == CursorLocker.State.LOCKED) {
+            if (xServer.isRelativeMouseMovement()) {
                 WinHandler winHandler = xServer.getWinHandler();
                 winHandler.mouseEvent(MouseEventFlags.MOVE, dx, dy, 0);
             }
@@ -333,5 +336,21 @@ public class TouchpadView extends View {
             }
         }
         return handled;
+    }
+
+    public float[] computeDeltaPoint(float lastX, float lastY, float x, float y) {
+        final float[] result = {0, 0};
+
+        XForm.transformPoint(xform, lastX, lastY, result);
+        lastX = result[0];
+        lastY = result[1];
+
+        XForm.transformPoint(xform, x, y, result);
+        x = result[0];
+        y = result[1];
+
+        result[0] = x - lastX;
+        result[1] = y - lastY;
+        return result;
     }
 }

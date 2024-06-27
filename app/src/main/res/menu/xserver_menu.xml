@@ -7,6 +7,7 @@
         <item android:icon="@drawable/icon_fullscreen" android:id="@+id/main_menu_toggle_fullscreen" android:title="@string/toggle_fullscreen" />
         <item android:icon="@drawable/icon_task_manager" android:id="@+id/main_menu_task_manager" android:title="@string/task_manager" />
         <item android:icon="@drawable/icon_magnifier" android:id="@+id/main_menu_magnifier" android:title="@string/magnifier" />
+        <item android:icon="@drawable/icon_debug" android:id="@+id/main_menu_logs" android:title="@string/logs" />
         <item android:icon="@drawable/icon_help" android:id="@+id/main_menu_touchpad_help" android:title="@string/touchpad_help" />
         <item android:icon="@drawable/icon_exit" android:id="@+id/main_menu_exit" android:title="@string/exit" />
     </group>

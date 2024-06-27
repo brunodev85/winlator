@@ -15,16 +15,18 @@ add_library(winlator SHARED
             xr/main.c
             xr/math.c
             xr/renderer.c
-            drawable.c
-            gpu_image.c
-            sysvshared_memory.c
-            xconnector_epoll.c)
+            winlator/drawable.c
+            winlator/gpu_image.c
+            winlator/sysvshared_memory.c
+            winlator/xconnector_epoll.c
+            winlator/alsa_client.c)
 
 target_link_libraries(winlator
                       log
                       android
                       jnigraphics
                       openxr_loader
+                      aaudio
                       EGL
                       GLESv2
                       GLESv3)

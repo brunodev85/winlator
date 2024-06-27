@@ -18,7 +18,7 @@ public abstract class GrabRequests {
     private enum Status {SUCCESS, ALREADY_GRABBED, INVALID_TIME, NOT_VIEWABLE, FROZEN}
 
     public static void grabPointer(XClient client, XInputStream inputStream, XOutputStream outputStream) throws IOException, XRequestError {
-        if (client.xServer.cursorLocker.getState() == CursorLocker.State.LOCKED) {
+        if (client.xServer.isRelativeMouseMovement()) {
             client.skipRequest();
             try (XStreamLock lock = outputStream.lock()) {
                 outputStream.writeByte(RESPONSE_CODE_SUCCESS);

@@ -2,14 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdk 30
-    buildToolsVersion '30.0.3'
 
     defaultConfig {
         applicationId 'com.winlator'
         minSdkVersion 26
         targetSdkVersion 28
-        versionCode 13
-        versionName "6.1"
+        versionCode 16
+        versionName "7.1"
     }
 
     buildTypes {

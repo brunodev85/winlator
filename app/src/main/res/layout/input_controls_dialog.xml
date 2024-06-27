@@ -34,8 +34,8 @@
         android:text="@string/show_touchscreen_controls" />
 
     <CheckBox
-        android:id="@+id/CBLockCursor"
+        android:id="@+id/CBRelativeMouseMovement"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/lock_cursor" />
+        android:text="@string/relative_mouse_movement" />
 </LinearLayout>

@@ -195,6 +195,44 @@
                     style="@style/FieldSetLabel"
                     android:text="@string/xserver" />
             </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout style="@style/FieldSet">
+                    <CheckBox
+                        android:id="@+id/CBEnableWineDebug"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/enable_wine_debug" />
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:id="@+id/LLWineDebugChannels"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="4dp" />
+                    </HorizontalScrollView>
+
+                    <View style="@style/FieldSeparator" />
+
+                    <CheckBox
+                        android:id="@+id/CBEnableBox86_64Logs"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/enable_box86_64_logs"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/FieldSetLabel"
+                    android:text="@string/logs" />
+            </FrameLayout>
         </LinearLayout>
     </ScrollView>
 

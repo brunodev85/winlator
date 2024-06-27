@@ -93,6 +93,7 @@
 	talloc_unlink((tracee)->fs->bindings.name, binding);		\
 } while (0)
 
+extern char *root_path;
 
 /**
  * Print all bindings (verbose purpose).
@@ -154,8 +155,8 @@ Binding *get_binding(const Tracee *tracee, Side side, const char path[PATH_MAX])
 		 *     proot -m /usr:/location /usr/local/slackware
 		 */
 		if (   side == HOST
-		    && compare_paths(get_root(tracee), "/") != PATHS_ARE_EQUAL
-		    && belongs_to_guestfs(tracee, path))
+		    && compare_paths(root_path, "/") != PATHS_ARE_EQUAL
+		    && belongs_to_guestfs(path))
 				continue;
 
 		return binding;
@@ -187,41 +188,6 @@ const char *get_path_binding(const Tracee *tracee, Side side, const char path[PA
 		assert(0);
 		return NULL;
 	}
-}
-
-/**
- * Return the path to the guest rootfs for the given @tracee, from the
- * host point-of-view obviously.  Depending on whether
- * initialize_bindings() was called or not, the path is retrieved from
- * the "bindings.guest" list or from the "bindings.pending" list,
- * respectively.
- */
-const char *get_root(const Tracee* tracee)
-{
-	const Binding *binding;
-
-	if (tracee == NULL || tracee->fs == NULL)
-		return NULL;
-
-	if (tracee->fs->bindings.guest == NULL) {
-		if (tracee->fs->bindings.pending == NULL
-		    || CIRCLEQ_EMPTY(tracee->fs->bindings.pending))
-			return NULL;
-
-		binding = CIRCLEQ_LAST(tracee->fs->bindings.pending);
-		if (compare_paths(binding->guest.path, "/") != PATHS_ARE_EQUAL)
-			return NULL;
-
-		return binding->host.path;
-	}
-
-	assert(!CIRCLEQ_EMPTY(tracee->fs->bindings.guest));
-
-	binding = CIRCLEQ_LAST(tracee->fs->bindings.guest);
-
-	assert(strcmp(binding->guest.path, "/") == 0);
-
-	return binding->host.path;
 }
 
 /**
@@ -674,7 +640,7 @@ int initialize_bindings(Tracee *tracee)
 	Binding *binding;
 
 	/* Sanity checks.  */
-	assert(get_root(tracee) != NULL);
+	assert(root_path != NULL);
 	assert(tracee->fs->bindings.pending != NULL);
 	assert(tracee->fs->bindings.guest == NULL);
 	assert(tracee->fs->bindings.host == NULL);

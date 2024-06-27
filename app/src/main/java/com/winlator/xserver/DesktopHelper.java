@@ -26,7 +26,7 @@ public abstract class DesktopHelper {
     private static void updateFocusedWindow(XServer xServer) {
         try (XLock lock = xServer.lock(XServer.Lockable.WINDOW_MANAGER, XServer.Lockable.INPUT_DEVICE)) {
             Window focusedWindow = xServer.windowManager.getFocusedWindow();
-            Window child = xServer.windowManager.rootWindow.getChildByCoords(xServer.pointer.getClampedX(), xServer.pointer.getClampedY());
+            Window child = xServer.windowManager.findPointWindow(xServer.pointer.getClampedX(), xServer.pointer.getClampedY());
             if (child == null && focusedWindow != xServer.windowManager.rootWindow) {
                 xServer.windowManager.setFocus(xServer.windowManager.rootWindow, WindowManager.FocusRevertTo.NONE);
             }
@@ -37,8 +37,11 @@ public abstract class DesktopHelper {
     }
 
     private static void setFocusedWindow(XServer xServer, Window window) {
-        boolean parentIsRoot = window.getParent() == xServer.windowManager.rootWindow;
-        xServer.windowManager.setFocus(window, parentIsRoot ? WindowManager.FocusRevertTo.POINTER_ROOT : WindowManager.FocusRevertTo.PARENT);
+        if (window.isApplicationWindow()) {
+            boolean parentIsRoot = window.getParent() == xServer.windowManager.rootWindow;
+            xServer.windowManager.setFocus(window, parentIsRoot ? WindowManager.FocusRevertTo.POINTER_ROOT : WindowManager.FocusRevertTo.PARENT);
+            xServer.getWinHandler().bringToFront(window.getClassName(), window.getHandle());
+        }
     }
 
     private static void setupXResources(XServer xServer) {

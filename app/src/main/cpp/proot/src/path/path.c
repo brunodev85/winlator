@@ -41,6 +41,8 @@
 
 #include "compat.h"
 
+extern char *root_path;
+
 /**
  * Copy in @result the concatenation of several paths (@number_paths)
  * and adds a path separator ('/') in between when needed. This
@@ -162,7 +164,7 @@ not_found:
 		strcpy(path, "<unknown>");
 
 	note(tracee, ERROR, USER, "'%s' not found (root = %s, cwd = %s, $PATH=%s)",
-		command, get_root(tracee), path, paths);
+		command, root_path, path, paths);
 
 	/* Check if the command was found without any $PATH look-up
 	 * but it didn't contain "/".  */
@@ -376,7 +378,7 @@ int detranslate_path(Tracee *tracee, char path[PATH_MAX], const char t_referrer[
 			 * file-system namespace by design. */
 			follow_binding = true;
 		}
-		else if (!belongs_to_guestfs(tracee, t_referrer)) {
+		else if (!belongs_to_guestfs(t_referrer)) {
 			const char *binding_referree;
 			const char *binding_referrer;
 
@@ -414,10 +416,10 @@ int detranslate_path(Tracee *tracee, char path[PATH_MAX], const char t_referrer[
 		}
 	}
 
-	switch (compare_paths(get_root(tracee), path)) {
+	switch (compare_paths(root_path, path)) {
 	case PATH1_IS_PREFIX:
 		/* Remove the leading part, that is, the "root".  */
-		prefix_length = strlen(get_root(tracee));
+		prefix_length = strlen(root_path);
 
 		/* Special case when path to the guest rootfs == "/". */
 		if (prefix_length == 1)
@@ -450,11 +452,11 @@ int detranslate_path(Tracee *tracee, char path[PATH_MAX], const char t_referrer[
  * Check if the translated @host_path belongs to the guest rootfs,
  * that is, isn't from a binding.
  */
-bool belongs_to_guestfs(const Tracee *tracee, const char *host_path)
+bool belongs_to_guestfs(const char *host_path)
 {
 	Comparison comparison;
 
-	comparison = compare_paths(get_root(tracee), host_path);
+	comparison = compare_paths(root_path, host_path);
 	return (comparison == PATHS_ARE_EQUAL || comparison == PATH1_IS_PREFIX);
 }
 

@@ -26,7 +26,6 @@
         <item name="android:layout_height">42dp</item>
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
-        <item name="android:textColor">#ffffff</item>
         <item name="android:textSize">16sp</item>
         <item name="android:gravity">left|center_vertical</item>
         <item name="android:paddingLeft">12dp</item>
@@ -38,6 +37,20 @@
         <item name="android:spinnerMode">dropdown</item>
         <item name="android:background">@drawable/combo_box</item>
         <item name="android:popupBackground">@drawable/content_dialog_background</item>
+    </style>
+    <style name="MultiSelectionComboBox">
+        <item name="android:layout_width">192dp</item>
+        <item name="android:layout_height">42dp</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">36dp</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:background">@drawable/combo_box</item>
     </style>
     <style name="ListPopupWindow" parent="@android:style/Widget.ListPopupWindow">
         <item name="android:popupBackground">@drawable/content_dialog_background</item>

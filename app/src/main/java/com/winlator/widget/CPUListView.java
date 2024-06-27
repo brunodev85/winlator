@@ -43,7 +43,7 @@ public class CPUListView extends LinearLayout {
             String tag = "CPU"+i;
             CheckBox checkBox = itemView.findViewById(R.id.CheckBox);
             checkBox.setTag(tag);
-            checkBox.setChecked(checkedCPUList != null ? checkedCPUList.contains(String.valueOf(i)) : i > 0);
+            checkBox.setChecked(checkedCPUList == null || checkedCPUList.contains(String.valueOf(i)));
 
             ((TextView)itemView.findViewById(R.id.TextView)).setText(tag);
             addView(itemView);
@@ -52,6 +52,12 @@ public class CPUListView extends LinearLayout {
 
     public void setCheckedCPUList(String checkedCPUList) {
         this.checkedCPUList = Arrays.asList(checkedCPUList.split(","));
+        refreshContent();
+    }
+
+    public void setCheckedCPUList(int from, int to) {
+        checkedCPUList.clear();
+        for (int i = from; i < to; i++) checkedCPUList.add(String.valueOf(i));
         refreshContent();
     }
 
@@ -72,5 +78,9 @@ public class CPUListView extends LinearLayout {
             cpuList[i] = checkBox.isChecked();
         }
         return cpuList;
+    }
+
+    public byte getNumProcessors() {
+        return numProcessors;
     }
 }

@@ -40,7 +40,7 @@ public class ALSARequestHandler implements RequestHandler {
             case RequestCodes.PREPARE:
                 if (inputStream.available() < requestLength) return false;
 
-                alsaClient.setChannels(inputStream.readByte());
+                alsaClient.setChannelCount(inputStream.readByte());
                 alsaClient.setDataType(ALSAClient.DataType.values()[inputStream.readByte()]);
                 alsaClient.setSampleRate(inputStream.readInt());
                 alsaClient.setBufferSize(inputStream.readInt());
@@ -49,14 +49,14 @@ public class ALSARequestHandler implements RequestHandler {
                 createSharedMemory(alsaClient, outputStream);
                 break;
             case RequestCodes.WRITE:
-                ByteBuffer buffer = alsaClient.getBuffer();
+                ByteBuffer buffer = alsaClient.getSharedBuffer();
                 if (buffer != null) {
                     buffer.limit(requestLength);
-                    alsaClient.writeDataToTrack(buffer);
+                    alsaClient.writeDataToStream(buffer);
                 }
                 else {
                     if (inputStream.available() < requestLength) return false;
-                    alsaClient.writeDataToTrack(inputStream.readByteBuffer(requestLength));
+                    alsaClient.writeDataToStream(inputStream.readByteBuffer(requestLength));
                 }
                 break;
             case RequestCodes.DRAIN:
@@ -77,7 +77,7 @@ public class ALSARequestHandler implements RequestHandler {
 
         if (fd >= 0) {
             ByteBuffer buffer = SysVSharedMemory.mapSHMSegment(fd, size, 0, true);
-            if (buffer != null) alsaClient.setBuffer(buffer);
+            if (buffer != null) alsaClient.setSharedBuffer(buffer);
         }
 
         try (XStreamLock lock = outputStream.lock()) {

@@ -124,25 +124,11 @@
                 android:layout_height="wrap_content"
                 android:text="@string/graphics_driver" />
 
-            <LinearLayout
+            <Spinner
+                style="@style/ComboBox"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <Spinner
-                    style="@style/ComboBox"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:id="@+id/SGraphicsDriver"
-                    android:entries="@array/graphics_driver_entries" />
-
-                <ImageButton
-                    style="@style/ListMenuButton"
-                    android:id="@+id/BTGraphicsDriverConfig"
-                    android:src="@drawable/icon_settings"
-                    android:visibility="gone" />
-            </LinearLayout>
+                android:id="@+id/SGraphicsDriver"
+                android:entries="@array/graphics_driver_entries" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -196,19 +182,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/show_fps"
                 android:layout_marginTop="8dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/processor_affinity"
-                android:layout_marginTop="8dp" />
-
-            <com.winlator.widget.CPUListView
-                android:id="@+id/CPUListView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:layout_marginTop="4dp" />
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/TabLayout"
@@ -386,7 +359,36 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="gone" />
+                android:visibility="gone">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp">
+
+                    <LinearLayout
+                        style="@style/FieldSet"
+                        android:id="@+id/LLWinComponentsDirectX" />
+
+                    <TextView
+                        style="@style/FieldSetLabel"
+                        android:text="@string/directx" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp">
+
+                    <LinearLayout
+                        style="@style/FieldSet"
+                        android:id="@+id/LLWinComponentsGeneral" />
+
+                    <TextView
+                        style="@style/FieldSetLabel"
+                        android:text="@string/general" />
+                </FrameLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/LLTabEnvVars"
@@ -395,22 +397,12 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <LinearLayout
-                    android:id="@+id/LLEnvVars"
+                <com.winlator.widget.EnvVarsView
+                    android:id="@+id/EnvVarsView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"/>
-
-                <TextView
-                    android:id="@+id/TVEnvVarsEmptyText"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="@string/no_items_to_display"
-                    android:padding="16dp"
-                    android:visibility="gone" />
 
                 <View style="@style/HorizontalLine" />
 
@@ -522,11 +514,23 @@
                     android:layout_marginTop="8dp">
 
                     <LinearLayout style="@style/FieldSet">
-                        <CheckBox
-                            android:id="@+id/CBStopServicesOnStartup"
+                        <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/stop_services_on_startup" />
+                            android:text="@string/startup_selection" />
+
+                        <Spinner
+                            style="@style/ComboBox"
+                            android:layout_width="match_parent"
+                            android:id="@+id/SStartupSelection"
+                            android:entries="@array/startup_selection_entries" />
+
+                        <CheckBox
+                            android:id="@+id/CBWoW64Mode"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/enable_experimental_wow64_mode"
+                            android:layout_marginTop="8dp" />
                     </LinearLayout>
 
                     <TextView
@@ -534,6 +538,31 @@
                         android:text="@string/system" />
                 </FrameLayout>
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/processor_affinity"
+                    android:layout_marginTop="8dp" />
+
+                <com.winlator.widget.CPUListView
+                    android:id="@+id/CPUListView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:layout_marginTop="4dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/processor_affinity_32_bit_apps"
+                    android:layout_marginTop="8dp" />
+
+                <com.winlator.widget.CPUListView
+                    android:id="@+id/CPUListViewWoW64"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:layout_marginTop="4dp" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

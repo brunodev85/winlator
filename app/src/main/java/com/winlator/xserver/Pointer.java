@@ -57,7 +57,7 @@ public class Pointer {
         return (short)Mathf.clamp(y, 0, xServer.screenInfo.height -1);
     }
 
-    public void moveTo(int x, int y) {
+    public void setPosition(int x, int y) {
         setX(x);
         setY(y);
         triggerOnPointerMove(this.x, this.y);
