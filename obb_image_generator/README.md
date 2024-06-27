@@ -1,1 +1,0 @@
-This is the script used to generate the OBB image used in Winlator.
