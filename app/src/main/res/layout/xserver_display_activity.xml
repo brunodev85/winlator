@@ -10,7 +10,8 @@
     <FrameLayout
         android:id="@+id/FLXServerDisplay"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:pointerIcon="@drawable/hidden_pointer_arrow" />
 
     <com.google.android.material.navigation.NavigationView
         android:layout_width="wrap_content"
