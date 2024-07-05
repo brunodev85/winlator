@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginHorizontal="16dp"
+    tools:context=".AboutFragment">
+
+  <ScrollView
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:scrollbars="vertical"
+      android:defaultFocusHighlightEnabled="false">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="18dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+      <LinearLayout
+          android:layout_height="wrap_content"
+          android:layout_width="0dp"
+          android:layout_weight="1"
+          android:orientation="vertical">
+
+        <TextView
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textSize="38sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Version 7.1"/>
+      </LinearLayout>
+
+      <ImageView
+          android:layout_width="70dp"
+          android:layout_height="70dp"
+          android:layout_gravity="center_horizontal"
+          android:src="@mipmap/ic_launcher"/>
+
+    </LinearLayout>
+
+      <View style="@style/HorizontalLine"/>
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:paddingVertical="8dp"
+          android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:textAlignment="viewStart"
+            android:textStyle="bold"
+            android:textSize="18dp"
+            android:text="@string/about"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="6dp"
+            android:textAlignment="viewStart"
+            android:text="@string/about_app"/>
+
+      </LinearLayout>
+
+      <View style="@style/HorizontalLine"/>
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:paddingVertical="8dp"
+          android:background="?attr/selectableItemBackground"
+          android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:textAlignment="viewStart"
+            android:textStyle="bold"
+            android:textSize="18dp"
+            android:text="@string/credits_and_third_party_apps"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="6dp"
+            android:id="@+id/credits" />
+
+      </LinearLayout>
+
+      <View style="@style/HorizontalLine"/>
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal"
+          android:gravity="center_horizontal"
+          android:layout_marginVertical="12dp"
+          android:layout_marginHorizontal="40dp">
+
+        <Button
+            style="@style/ButtonPositive"
+            android:id="@+id/button_website"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/website"/>
+
+        <Button
+            style="@style/ButtonPositive"
+            android:id="@+id/button_github"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/github"/>
+      </LinearLayout>
+    </LinearLayout>
+  </ScrollView>
+</FrameLayout>

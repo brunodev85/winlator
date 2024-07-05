@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 show(new SettingsFragment());
                 break;
             case R.id.main_menu_about:
-                showAboutDialog();
+                show(new AboutFragment());
                 break;
         }
         return true;
@@ -175,39 +175,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             .commit();
 
         drawerLayout.closeDrawer(GravityCompat.START);
-    }
-
-    private void showAboutDialog() {
-        ContentDialog dialog = new ContentDialog(this, R.layout.about_dialog);
-        dialog.findViewById(R.id.LLBottomBar).setVisibility(View.GONE);
-
-        try {
-            final PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-
-            TextView tvWebpage = dialog.findViewById(R.id.TVWebpage);
-            tvWebpage.setText(Html.fromHtml("<a href=\"https://www.winlator.org\">winlator.org</a>", Html.FROM_HTML_MODE_LEGACY));
-            tvWebpage.setMovementMethod(LinkMovementMethod.getInstance());
-
-            ((TextView)dialog.findViewById(R.id.TVAppVersion)).setText(getString(R.string.version)+" "+pInfo.versionName);
-
-            String creditsAndThirdPartyAppsHTML = String.join("<br />",
-                "Ubuntu RootFs (<a href=\"https://releases.ubuntu.com/focal\">Focal Fossa</a>)",
-                "Wine (<a href=\"https://www.winehq.org\">winehq.org</a>)",
-                "Box86/Box64 by <a href=\"https://github.com/ptitSeb\">ptitseb</a>",
-                "PRoot (<a href=\"https://proot-me.github.io\">proot-me.github.io</a>)",
-                "Mesa (Turnip/Zink/VirGL) (<a href=\"https://www.mesa3d.org\">mesa3d.org</a>)",
-                "DXVK (<a href=\"https://github.com/doitsujin/dxvk\">github.com/doitsujin/dxvk</a>)",
-                "VKD3D (<a href=\"https://gitlab.winehq.org/wine/vkd3d\">gitlab.winehq.org/wine/vkd3d</a>)",
-                "D8VK (<a href=\"https://github.com/AlpyneDreams/d8vk\">github.com/AlpyneDreams/d8vk</a>)",
-                "CNC DDraw (<a href=\"https://github.com/FunkyFr3sh/cnc-ddraw\">github.com/FunkyFr3sh/cnc-ddraw</a>)"
-            );
-
-            TextView tvCreditsAndThirdPartyApps = dialog.findViewById(R.id.TVCreditsAndThirdPartyApps);
-            tvCreditsAndThirdPartyApps.setText(Html.fromHtml(creditsAndThirdPartyAppsHTML, Html.FROM_HTML_MODE_LEGACY));
-            tvCreditsAndThirdPartyApps.setMovementMethod(LinkMovementMethod.getInstance());
-        }
-        catch (PackageManager.NameNotFoundException e) {}
-
-        dialog.show();
     }
 }
