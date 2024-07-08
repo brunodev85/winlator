@@ -4413,7 +4413,7 @@ static void handle_io_arrays(struct dump_ctx *ctx)
     * enhanced layouts */
    if (ctx->guest_sent_io_arrays)  {
 
-      /* Array ID numbering is not ordered accross shaders, so do
+      /* Array ID numbering is not ordered across shaders, so do
        * some renumbering for generics and patches. */
       renumber_io_arrays(ctx->num_inputs, ctx->inputs);
       renumber_io_arrays(ctx->num_outputs, ctx->outputs);
