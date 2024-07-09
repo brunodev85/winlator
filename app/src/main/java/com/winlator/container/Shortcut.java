@@ -36,9 +36,10 @@ public class Shortcut {
 
         int index;
         for (String line : FileUtils.readLines(file)) {
-            index = line.indexOf("[");
-            if (index != -1) {
-                section = line.substring(index+1, line.indexOf("]", index));
+            line = line.trim();
+            if (line.isEmpty() || line.startsWith("#")) continue; // Skip empty lines and comments
+            if (line.startsWith("[")) {
+                section = line.substring(1, line.indexOf("]"));
             }
             else {
                 index = line.indexOf("=");
