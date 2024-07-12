@@ -2,7 +2,7 @@ package com.winlator.core;
 
 import android.content.Context;
 import android.net.Uri;
-import android.utils.Log;
+import android.util.Log;
 
 import com.winlator.container.Container;
 import com.winlator.xenvironment.ImageFs;
