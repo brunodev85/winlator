@@ -1,0 +1,73 @@
+name: 构建apk
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: "构建apk"
+    runs-on: ubuntu-latest
+    steps:
+    - name: 1 安装依赖
+      run: |
+        sudo apt update && sudo apt install -y libarchive-tools wget
+    - name: 2 克隆仓库
+      uses: actions/checkout@v4
+      with:
+        ref: extra2 #指定checkout的分支
+        submodules: recursive
+    - name: 3 gradle验证
+      uses: gradle/wrapper-validation-action@v2
+      
+    - name: 4 java配置
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+        
+    - name: 5 恢复缓存
+      uses: actions/cache@v4
+      with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+    
+    # 先删除旧文件。然后下载完整文件
+    - name: 6 下载数据包
+      run: |
+        rm -rf app/src/main/assets/imagefs.txz 
+        wget -P app/src/main/assets \
+        https://github.com/ewt45/winlator-fork/releases/download/0.0.0.store/imagefs.txz
+
+    - name: 7. 构建
+      run: chmod +x ./gradlew && ./gradlew assembleDebug
+    
+    - name: 8. 上传apk到action
+      uses: actions/upload-artifact@v4
+      with:
+        name: winlator-arm64-v8-debug
+        path: ./app/build/outputs/apk/debug/app-debug.apk
+    
+
+    # - name: Update Nightly Release
+    #   uses: andelf/nightly-release@main
+    #   if: github.repository == 'termux/termux-x11' && github.ref == 'refs/heads/master'
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     tag_name: nightly
+    #     name: 'Nightly Release $$'
+    #     draft: false
+    #     prerelease: false
+    #     body: |
+    #       This is a nightly release of the termux-x11 app.
+    #       Based on ${{ github.sha }}
+    #     files: |
+    #       ./app/build/outputs/apk/debug/app-*-debug.apk
+    #       ./app/build/outputs/apk/debug/shell-loader-nightly.apk
+    #       ./app/build/outputs/apk/debug/termux-x11-*-all.deb
+    #       ./app/build/outputs/apk/debug/termux-x11-*-any.pkg.tar.xz
