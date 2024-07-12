@@ -627,6 +627,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
             Log.d(TAG, line);
         };
 
+        try{
         GuestProgramLauncherComponent guestProgramLauncherComponent = environment.getComponent(GuestProgramLauncherComponent.class);
         guestProgramLauncherComponent.setGuestExecutable(wineInfo.binName()+" explorer /desktop=shell,"+Container.DEFAULT_SCREEN_SIZE+" winecfg");
 
@@ -669,6 +670,9 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
             preloaderDialog.closeOnUiThread();
             AppUtils.restartApplication(this, R.id.main_menu_settings);
         }));
+        } catch (Exception e) {
+            Log.e(TAG, "Error generating wineprefix", e);
+        }
     }
 
     private void extractDXWrapperFiles(String dxwrapper) {
