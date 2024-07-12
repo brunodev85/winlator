@@ -1,6 +1,7 @@
 package com.winlator.core;
 
 import android.os.Environment;
+import android.util.Log;
 import android.os.Process;
 
 import java.io.BufferedReader;
@@ -20,6 +21,7 @@ public abstract class ProcessHelper {
     public static boolean generateDebugFile = false;
     private static final byte SIGCONT = 18;
     private static final byte SIGSTOP = 19;
+    private static final String TAG = "WINEINSTALL";
 
     public static void suspendProcess(int pid) {
         Process.sendSignal(pid, SIGSTOP);
@@ -58,7 +60,9 @@ public abstract class ProcessHelper {
 
             if (terminationCallback != null) createWaitForThread(process, terminationCallback);
         }
-        catch (Exception e) {}
+        catch (Exception e) {
+          Log.e(TAG, "Error executing command: "+command, e);
+        }
         return pid;
     }
 
