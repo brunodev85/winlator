@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -106,6 +107,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
     private final WinHandler winHandler = new WinHandler(this);
     private float globalCursorSpeed = 1.0f;
     private MagnifierView magnifierView;
+    private static final String TAG = "WINEINSTALL";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -621,6 +623,9 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         File linkFile = new File(rootDir, ImageFs.HOME_PATH);
         linkFile.delete();
         FileUtils.symlink(".."+FileUtils.toRelativePath(rootDir.getPath(), containerPatternDir.getPath()), linkFile.getPath());
+        ProcessHelper.debugCallback = (line) -> {
+            Log.d(TAG, line);
+        };
 
         GuestProgramLauncherComponent guestProgramLauncherComponent = environment.getComponent(GuestProgramLauncherComponent.class);
         guestProgramLauncherComponent.setGuestExecutable(wineInfo.binName()+" explorer /desktop=shell,"+Container.DEFAULT_SCREEN_SIZE+" winecfg");
@@ -649,6 +654,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
                 }
             }
 
+            ProcessHelper.debugCallback = null;
             String suffix = wineInfo.fullVersion()+"-"+wineInfo.getArch();
             File containerPatternFile = new File(installedWineDir, "/preinstall/container-pattern-"+suffix+".tzst");
             TarCompressorUtils.compress(TarCompressorUtils.Type.ZSTD, new File(rootDir, ImageFs.WINEPREFIX), containerPatternFile, MainActivity.CONTAINER_PATTERN_COMPRESSION_LEVEL);

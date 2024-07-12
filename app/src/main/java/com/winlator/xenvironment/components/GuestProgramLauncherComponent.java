@@ -154,6 +154,7 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
 
         if (MainActivity.DEBUG_LEVEL >= 1) ProcessHelper.debugMode = true;
         return ProcessHelper.exec(command, envVars.toStringArray(), rootDir, (status) -> {
+            Log.d(TAG, "Guest program terminated with status "+status);
             synchronized (lock) {
                 pid = -1;
             }
