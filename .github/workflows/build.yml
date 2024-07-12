@@ -14,7 +14,7 @@ jobs:
     - name: 2 克隆仓库
       uses: actions/checkout@v4
       with:
-        ref: extra2 #指定checkout的分支
+        ref: main-make-it-build #指定checkout的分支
         submodules: recursive
     - name: 3 gradle验证
       uses: gradle/wrapper-validation-action@v2
