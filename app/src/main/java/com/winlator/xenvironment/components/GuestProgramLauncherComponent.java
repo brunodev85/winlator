@@ -3,6 +3,7 @@ package com.winlator.xenvironment.components;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Process;
+import android.utils.Log;
 
 import androidx.preference.PreferenceManager;
 
@@ -29,6 +30,7 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
     private String box64Preset = Box86_64Preset.COMPATIBILITY;
     private Callback<Integer> terminationCallback;
     private static final Object lock = new Object();
+    private static final String TAG = "WINEINSTALL";
 
     @Override
     public void start() {
@@ -114,8 +116,10 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
         envVars.put("DISPLAY", ":0");
         envVars.put("PATH", imageFs.getWinePath()+"/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin");
         envVars.put("LD_LIBRARY_PATH", "/usr/lib/aarch64-linux-gnu:/usr/lib/arm-linux-gnueabihf");
-        envVars.put("LD_PRELOAD", "libandroid-sysvshm.so");
         envVars.put("ANDROID_SYSVSHM_SERVER", UnixSocketConfig.SYSVSHM_SERVER_PATH);
+        envVars.put("WINEDLLPATH", "/opt/installed-wine/preinstall/wine/wine-ge-custom-8-25/lib/wine");
+        if ((new File(imageFs.getLib64Dir(), "libandroid-sysvshm.so")).exists() ||
+            (new File(imageFs.getLib32Dir(), "libandroid-sysvshm.so")).exists()) envVars.put("LD_PRELOAD", "libandroid-sysvshm.so");
         if (this.envVars != null) envVars.putAll(this.envVars);
 
         boolean bindSHM = envVars.get("WINEESYNC").equals("1");
@@ -140,6 +144,8 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
         }
 
         command += " /usr/bin/env "+envVars.toEscapedString()+" box64 "+guestExecutable;
+
+        Log.d(TAG, "Executing: "+command);
 
         envVars.clear();
         envVars.put("PROOT_TMP_DIR", tmpDir);

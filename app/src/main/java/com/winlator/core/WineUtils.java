@@ -2,6 +2,7 @@ package com.winlator.core;
 
 import android.content.Context;
 import android.net.Uri;
+import android.utils.Log;
 
 import com.winlator.container.Container;
 import com.winlator.xenvironment.ImageFs;
@@ -22,6 +23,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class WineUtils {
+    private static final String TAG = "WINEINSTALL";
     public static void createDosdevicesSymlinks(Container container) {
         String dosdevicesPath = (new File(container.getRootDir(), ".wine/dosdevices")).getPath();
         File[] files = (new File(dosdevicesPath)).listFiles();
@@ -108,6 +110,7 @@ public abstract class WineUtils {
         try {
             final AtomicReference<WineInfo> wineInfoRef = new AtomicReference<>();
             ProcessHelper.debugCallback = (line) -> {
+                Log.d(TAG, line);
                 Pattern pattern = Pattern.compile("^wine\\-([0-9\\.]+)\\-?([0-9\\.]+)?", Pattern.CASE_INSENSITIVE);
                 Matcher matcher = pattern.matcher(line);
                 if (matcher.find()) {

@@ -80,6 +80,15 @@ public class ImageFs {
         return new File(rootDir, "/tmp");
     }
 
+    
+    public File getLib32Dir() {
+        return new File(rootDir, "/usr/lib/arm-linux-gnueabihf");
+    }
+
+    public File getLib64Dir() {
+        return new File(rootDir, "/usr/lib/aarch64-linux-gnu");
+    }
+
     @NonNull
     @Override
     public String toString() {
