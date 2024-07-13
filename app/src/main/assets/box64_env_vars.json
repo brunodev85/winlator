@@ -7,5 +7,6 @@
     {"name" : "BOX64_DYNAREC_STRONGMEM", "values" : ["0", "1", "2", "3"], "defaultValue" : "0"},
     {"name" : "BOX64_DYNAREC_FORWARD", "values" : ["0", "128", "256", "512", "1024"], "defaultValue" : "128"},
     {"name" : "BOX64_DYNAREC_CALLRET", "values" : ["0", "1"], "toggleSwitch" : true, "defaultValue" : "1"},
-    {"name" : "BOX64_DYNAREC_WAIT", "values" : ["0", "1"], "toggleSwitch" : true, "defaultValue" : "1"}
+    {"name" : "BOX64_DYNAREC_WAIT", "values" : ["0", "1"], "toggleSwitch" : true, "defaultValue" : "1"},
+    {"name" : "BOX64_AVX", "values" : ["0", "1", "2"], "defaultValue" : "0"}
 ]
