@@ -16,9 +16,9 @@ import java.util.ArrayList;
 import java.util.concurrent.Executors;
 
 public abstract class ProcessHelper {
-    public static boolean debugMode = true;
+    public static boolean debugMode = false;
     public static Callback<String> debugCallback;
-    public static boolean generateDebugFile = true;
+    public static boolean generateDebugFile = false;
     private static final byte SIGCONT = 18;
     private static final byte SIGSTOP = 19;
     private static final String TAG = "WINEINSTALL";
