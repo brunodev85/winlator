@@ -233,6 +233,49 @@
                     style="@style/FieldSetLabel"
                     android:text="@string/logs" />
             </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout style="@style/FieldSet">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/trigger_mode"/>
+
+                    <RadioGroup
+                        android:id="@+id/RGTriggerMode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <RadioButton
+                            android:id="@+id/RBTriggerAsButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/as_button"/>
+
+                        <RadioButton
+                            android:id="@+id/RBTriggerAsAxis"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/as_axis"/>
+
+                        <RadioButton
+                            android:id="@+id/RBTriggerAsBoth"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/both"/>
+                    </RadioGroup>
+                </LinearLayout>
+
+                <TextView
+                    style="@style/FieldSetLabel"
+                    android:text="@string/game_controller" />
+            </FrameLayout>
         </LinearLayout>
     </ScrollView>
 

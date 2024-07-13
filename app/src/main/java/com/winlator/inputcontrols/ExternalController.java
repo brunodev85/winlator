@@ -25,9 +25,13 @@ public class ExternalController {
     public static final byte IDX_BUTTON_R3 = 9;
     public static final byte IDX_BUTTON_L2 = 10;
     public static final byte IDX_BUTTON_R2 = 11;
+    public static final byte TRIGGER_AS_BUTTON = 0;
+    public static final byte TRIGGER_AS_AXIS = 1;
+    public static final byte TRIGGER_AS_BOTH = 2;
     private String name;
     private String id;
     private int deviceId = -1;
+    private byte triggerMode = TRIGGER_AS_BOTH;
     private final ArrayList<ExternalControllerBinding> controllerBindings = new ArrayList<>();
     public final GamepadState state = new GamepadState();
 
@@ -45,6 +49,14 @@ public class ExternalController {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public byte getTriggerMode() {
+        return triggerMode;
+    }
+
+    public void setTriggerMode(byte mode) {
+        triggerMode = mode;
     }
 
     public int getDeviceId() {
@@ -142,7 +154,8 @@ public class ExternalController {
 
     public boolean updateStateFromMotionEvent(MotionEvent event) {
         if (isJoystickDevice(event)) {
-            processTriggerButton(event);
+            if (triggerMode != TRIGGER_AS_BUTTON)
+                processTriggerButton(event);
             int historySize = event.getHistorySize();
             for (int i = 0; i < historySize; i++) processJoystickInput(event, i);
             processJoystickInput(event, -1);
@@ -156,7 +169,9 @@ public class ExternalController {
         int keyCode = event.getKeyCode();
         int buttonIdx = getButtonIdxByKeyCode(keyCode);
         if (buttonIdx != -1) {
-            state.setPressed(buttonIdx, pressed);
+            if (triggerMode != TRIGGER_AS_AXIS || (buttonIdx != IDX_BUTTON_L2 && buttonIdx != IDX_BUTTON_R2)) {
+                state.setPressed(buttonIdx, pressed);
+            }
             return true;
         }
 

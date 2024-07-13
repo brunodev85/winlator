@@ -13,6 +13,8 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -135,6 +137,14 @@ public class SettingsFragment extends Fragment {
         });
         sbCursorSpeed.setProgress((int)(preferences.getFloat("cursor_speed", 1.0f) * 100));
 
+        final RadioGroup rgTriggerMode = view.findViewById(R.id.RGTriggerMode);
+        List<Integer> triggerRbIds = List.of(R.id.RBTriggerAsButton, R.id.RBTriggerAsAxis, R.id.RBTriggerAsBoth);
+        int triggerMode = preferences.getInt("trigger_mode", 2);
+
+        if (triggerMode >= 0 && triggerMode < triggerRbIds.size()) {
+            ((RadioButton) (rgTriggerMode.findViewById(triggerRbIds.get(triggerMode)))).setChecked(true);
+        }
+
         loadInstalledWineList(view);
 
         view.findViewById(R.id.BTSelectWineFile).setOnClickListener((v) -> {
@@ -151,6 +161,7 @@ public class SettingsFragment extends Fragment {
             editor.putFloat("cursor_speed", sbCursorSpeed.getProgress() / 100.0f);
             editor.putBoolean("enable_wine_debug", cbEnableWineDebug.isChecked());
             editor.putBoolean("enable_box86_64_logs", cbEnableBox86_64Logs.isChecked());
+            editor.putInt("trigger_mode", triggerRbIds.indexOf(rgTriggerMode.getCheckedRadioButtonId()));
 
             if (!wineDebugChannels.isEmpty()) {
                 editor.putString("wine_debug_channels", String.join(",", wineDebugChannels));

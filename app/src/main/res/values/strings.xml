@@ -225,4 +225,9 @@
     <string name="msg_warning_install_wine">Warning: Installing a new version of Wine is recommended for testing purposes only.</string>
     <string name="startup_selection">Startup Selection</string>
     <string name="wine_debug_channel">Wine Debug Channel</string>
+    <string name="game_controller">Game Controller</string>
+    <string name="as_button">As Button</string>
+    <string name="as_axis">As Axis</string>
+    <string name="both">Both</string>
+    <string name="trigger_mode">Trigger Mode</string>
 </resources>

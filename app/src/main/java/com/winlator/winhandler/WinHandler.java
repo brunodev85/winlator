@@ -1,7 +1,10 @@
 package com.winlator.winhandler;
 
+import android.content.SharedPreferences;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+
+import androidx.preference.PreferenceManager;
 
 import com.winlator.XServerDisplayActivity;
 import com.winlator.core.StringUtils;
@@ -41,6 +44,8 @@ public class WinHandler {
     private byte dinputMapperType = DINPUT_MAPPER_TYPE_XINPUT;
     private final XServerDisplayActivity activity;
     private final List<Integer> gamepadClients = new CopyOnWriteArrayList<>();
+    private SharedPreferences preferences;
+    private byte triggerMode;
 
     public WinHandler(XServerDisplayActivity activity) {
         this.activity = activity;
@@ -221,6 +226,8 @@ public class WinHandler {
         switch (requestCode) {
             case RequestCodes.INIT: {
                 initReceived = true;
+                preferences = PreferenceManager.getDefaultSharedPreferences(activity.getBaseContext());
+                triggerMode = (byte) preferences.getInt("trigger_mode", ExternalController.TRIGGER_AS_BOTH);
 
                 synchronized (actions) {
                     actions.notify();
@@ -252,6 +259,8 @@ public class WinHandler {
 
                 if (!useVirtualGamepad && (currentController == null || !currentController.isConnected())) {
                     currentController = ExternalController.getController(0);
+                    assert currentController != null;
+                    currentController.setTriggerMode(triggerMode);
                 }
 
                 final boolean enabled = currentController != null || useVirtualGamepad;
