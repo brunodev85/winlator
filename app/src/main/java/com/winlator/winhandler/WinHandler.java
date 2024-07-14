@@ -259,8 +259,8 @@ public class WinHandler {
 
                 if (!useVirtualGamepad && (currentController == null || !currentController.isConnected())) {
                     currentController = ExternalController.getController(0);
-                    assert currentController != null;
-                    currentController.setTriggerMode(triggerMode);
+                    if (currentController != null)
+                        currentController.setTriggerMode(triggerMode);
                 }
 
                 final boolean enabled = currentController != null || useVirtualGamepad;
