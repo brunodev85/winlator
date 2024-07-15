@@ -84,7 +84,10 @@ public abstract class ProcessHelper {
                         if (debugCallback != null) {
                             debugCallback.call(line);
                         }
-                        else System.out.println(line);
+                        else {
+                          System.out.println(line);
+                          Log.d(TAG, line);
+                        }
                     }
                 }
             }
@@ -100,7 +103,9 @@ public abstract class ProcessHelper {
                 int status = process.waitFor();
                 terminationCallback.call(status);
             }
-            catch (InterruptedException e) {}
+            catch (InterruptedException e) {
+              Log.e(TAG, "Error waiting for process", e);
+            }
         });
     }
 

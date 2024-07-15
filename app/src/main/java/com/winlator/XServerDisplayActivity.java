@@ -633,6 +633,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
 
         final PreloaderDialog preloaderDialog = new PreloaderDialog(this);
         guestProgramLauncherComponent.setTerminationCallback((status) -> Executors.newSingleThreadExecutor().execute(() -> {
+            Log.d(TAG, "winecfg terminated with status "+status);
             if (status > 0) {
                 AppUtils.showToast(this, R.string.unable_to_install_wine);
                 FileUtils.delete(new File(installedWineDir, "/preinstall"));
