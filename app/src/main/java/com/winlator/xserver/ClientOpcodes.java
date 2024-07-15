@@ -51,6 +51,7 @@ public abstract class ClientOpcodes {
     public static final byte SET_SCREEN_SAVER = 107;
     public static final byte GET_SCREEN_SAVER = 108;
     public static final byte FORCE_SCREEN_SAVER = 115;
+    public static final byte GET_POINTER_CONTROL = 117;
     public static final byte GET_MODIFIER_MAPPING = 119;
     public static final byte NO_OPERATION = 127;
 }

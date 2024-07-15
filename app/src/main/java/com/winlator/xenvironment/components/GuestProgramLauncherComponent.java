@@ -118,6 +118,7 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
         envVars.put("LD_LIBRARY_PATH", "/usr/lib/aarch64-linux-gnu:/usr/lib/arm-linux-gnueabihf");
         envVars.put("ANDROID_SYSVSHM_SERVER", UnixSocketConfig.SYSVSHM_SERVER_PATH);
         envVars.put("WINEDLLPATH", "/opt/installed-wine/preinstall/wine/lutris-GE-Proton8-26-x86_64/lib/wine:/opt/installed-wine/preinstall/wine/lutris-GE-Proton8-26-x86_64/lib/wine:/opt/wine/lib/wine:/opt/wine/lib64/wine");
+        envVars.put("WINEDLLOVERRIDES", "winegstreamer=");
         if ((new File(imageFs.getLib64Dir(), "libandroid-sysvshm.so")).exists() ||
             (new File(imageFs.getLib32Dir(), "libandroid-sysvshm.so")).exists()) envVars.put("LD_PRELOAD", "libandroid-sysvshm.so");
         if (this.envVars != null) envVars.putAll(this.envVars);
@@ -145,12 +146,12 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
 
         command += " /usr/bin/env "+envVars.toEscapedString()+" box64 "+guestExecutable;
 
-        Log.d(TAG, "Executing: "+command);
-
         envVars.clear();
         envVars.put("PROOT_TMP_DIR", tmpDir);
         envVars.put("PROOT_LOADER", nativeLibraryDir+"/libproot-loader.so");
         envVars.put("PROOT_LOADER_32", nativeLibraryDir+"/libproot-loader32.so");
+
+        Log.d(TAG, "PROOT_TMP_DIR="+tmpDir+" PROOT_LOADER="+nativeLibraryDir+"/libproot-loader.so"+" PROOT_LOADER_32="+nativeLibraryDir+"/libproot-loader32.so "+command);
 
         if (MainActivity.DEBUG_LEVEL >= 1) ProcessHelper.debugMode = true;
         return ProcessHelper.exec(command, envVars.toStringArray(), rootDir, (status) -> {

@@ -390,6 +390,9 @@ public class XClientRequestHandler implements RequestHandler {
                 case ClientOpcodes.FORCE_SCREEN_SAVER:
                     client.skipRequest();
                     break;
+                case ClientOpcodes.GET_POINTER_CONTROL:
+                    client.skipRequest();
+                    break;
                 case ClientOpcodes.GET_MODIFIER_MAPPING:
                     KeyboardRequests.getModifierMapping(client, inputStream, outputStream);
                     break;
