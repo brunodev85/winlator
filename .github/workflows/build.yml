@@ -37,11 +37,11 @@ jobs:
             ${{ runner.os }}-gradle-
     
     # 先删除旧文件。然后下载完整文件
-    # - name: 6 下载数据包
-    #   run: |
-    #     rm -rf app/src/main/assets/imagefs.txz 
-    #     wget -P app/src/main/assets \
-    #     https://github.com/ewt45/winlator-fork/releases/download/0.0.0.store/imagefs.txz
+    - name: 6 下载数据包
+      run: |
+        rm -rf app/src/main/assets/imagefs.txz 
+        wget -P app/src/main/assets \
+        https://github.com/FrontMage/winlator-855/releases/download/image/imagefs.txz
 
     - name: 7. 构建
       run: chmod +x ./gradlew && ./gradlew assembleDebug
