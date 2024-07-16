@@ -3,8 +3,6 @@ package com.winlator.xserver;
 import android.util.SparseArray;
 
 import com.winlator.sysvshm.SysVSharedMemory;
-import com.winlator.xserver.errors.BadAccess;
-import com.winlator.xserver.errors.BadSHMSegment;
 
 import java.nio.ByteBuffer;
 
@@ -16,18 +14,18 @@ public class SHMSegmentManager {
         this.sysVSharedMemory = sysVSharedMemory;
     }
 
-    public void attach(int xid, int shmid) throws BadAccess, BadSHMSegment {
+    public void attach(int xid, int shmid) {
         if (shmSegments.indexOfKey(xid) >= 0) detach(xid);
         ByteBuffer data = sysVSharedMemory.attach(shmid);
-        if (data == null) throw new BadAccess();
-        shmSegments.put(xid, data);
+        if (data != null) shmSegments.put(xid, data);
     }
 
-    public void detach(int xid) throws BadSHMSegment {
+    public void detach(int xid) {
         ByteBuffer data = shmSegments.get(xid);
-        if (data == null) throw new BadSHMSegment(xid);
-        sysVSharedMemory.detach(data);
-        shmSegments.remove(xid);
+        if (data != null) {
+            sysVSharedMemory.detach(data);
+            shmSegments.remove(xid);
+        }
     }
 
     public ByteBuffer getData(int xid) {

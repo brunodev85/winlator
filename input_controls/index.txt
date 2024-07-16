@@ -24,6 +24,7 @@ Prey.icp
 Quake 4.icp
 RAGE.icp
 Rayman 3.icp
+Risen 2.icp
 Second Sight.icp
 Shovel Knight.icp
 Singularity.icp
@@ -33,7 +34,9 @@ Stalker CS.icp
 Star Wars Jedi Knight 2.icp
 SteamWorld Dig 2.icp
 The Saboteur.icp
+Turok 2.icp
 Ultima Underworld.icp
 Unepic.icp
 Wolfenstein.icp
 Xanadu Next.icp
+Ys Origin.icp

@@ -39,6 +39,7 @@ public class XServer {
     private GLRenderer renderer;
     private WinHandler winHandler;
     private final EnumMap<Lockable, ReentrantLock> locks = new EnumMap<>(Lockable.class);
+    private boolean relativeMouseMovement = false;
 
     public XServer(ScreenInfo screenInfo) {
         this.screenInfo = screenInfo;
@@ -55,6 +56,15 @@ public class XServer {
 
         DesktopHelper.attachTo(this);
         setupExtensions();
+    }
+
+    public boolean isRelativeMouseMovement() {
+        return relativeMouseMovement;
+    }
+
+    public void setRelativeMouseMovement(boolean relativeMouseMovement) {
+        cursorLocker.setEnabled(!relativeMouseMovement);
+        this.relativeMouseMovement = relativeMouseMovement;
     }
 
     public GLRenderer getRenderer() {
@@ -133,13 +143,13 @@ public class XServer {
 
     public void injectPointerMove(int x, int y) {
         try (XLock lock = lock(Lockable.WINDOW_MANAGER, Lockable.INPUT_DEVICE)) {
-            pointer.moveTo(x, y);
+            pointer.setPosition(x, y);
         }
     }
 
     public void injectPointerMoveDelta(int dx, int dy) {
         try (XLock lock = lock(Lockable.WINDOW_MANAGER, Lockable.INPUT_DEVICE)) {
-            pointer.moveTo(pointer.getX() + dx, pointer.getY() + dy);
+            pointer.setPosition(pointer.getX() + dx, pointer.getY() + dy);
         }
     }
 

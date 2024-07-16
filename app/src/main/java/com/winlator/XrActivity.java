@@ -237,7 +237,7 @@ public class XrActivity extends XServerDisplayActivity implements TextWatcher {
             }
 
             // Set mouse status
-            mouse.moveTo((int) smoothedMouse[0], (int) smoothedMouse[1]);
+            mouse.setPosition((int) smoothedMouse[0], (int) smoothedMouse[1]);
             mouse.setButton(Pointer.Button.BUTTON_LEFT, buttons[ControllerButton.R_TRIGGER.ordinal()]);
             mouse.setButton(Pointer.Button.BUTTON_RIGHT, buttons[ControllerButton.R_GRIP.ordinal()]);
             mouse.setButton(Pointer.Button.BUTTON_SCROLL_UP, buttons[ControllerButton.R_THUMBSTICK_UP.ordinal()]);

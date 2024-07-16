@@ -46,7 +46,6 @@ typedef struct mapping {
 typedef struct load_info {
 	char *host_path;
 	char *user_path;
-	char *raw_path;
 	Mapping *mappings;
 	ElfHeader elf_header;
 	bool needs_executable_stack;

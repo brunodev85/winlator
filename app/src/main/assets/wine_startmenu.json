@@ -34,6 +34,10 @@
         "name" : "System Tools",
         "children" : [
             {
+                "name" : "Test Direct3D",
+                "path" : "Z:/opt/apps/TestD3D.exe"
+            },
+            {
                 "name" : "Computer",
                 "path" : "C:/windows/wfm.exe"
             },
@@ -51,8 +55,15 @@
             },
             {
                 "name" : "Wine Mono Installer",
-                "path" : "C:/windows/system32/wineboot.exe",
-                "cmdArgs" : "-u",
+                "path" : "C:/windows/system32/control.exe",
+                "cmdArgs" : "appwiz.cpl install_mono",
+                "iconLocation" : "shell32.dll",
+                "iconIndex" : -25
+            },
+            {
+                "name" : "Wine Gecko Installer",
+                "path" : "C:/windows/system32/control.exe",
+                "cmdArgs" : "appwiz.cpl install_gecko",
                 "iconLocation" : "shell32.dll",
                 "iconIndex" : -25
             },

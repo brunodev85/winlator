@@ -2,7 +2,6 @@ package com.winlator.box86_64;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Environment;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
@@ -10,13 +9,8 @@ import android.widget.SpinnerAdapter;
 import androidx.preference.PreferenceManager;
 
 import com.winlator.R;
-import com.winlator.SettingsFragment;
 import com.winlator.core.EnvVars;
-import com.winlator.core.FileUtils;
-import com.winlator.core.ImageUtils;
-import com.winlator.xenvironment.ImageFs;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
@@ -32,8 +26,9 @@ public abstract class Box86_64PresetManager {
             envVars.put(ucPrefix+"_DYNAREC_FASTROUND", "0");
             envVars.put(ucPrefix+"_DYNAREC_X87DOUBLE", "1");
             envVars.put(ucPrefix+"_DYNAREC_BIGBLOCK", "0");
-            envVars.put(ucPrefix+"_DYNAREC_CALLRET", "0");
             envVars.put(ucPrefix+"_DYNAREC_STRONGMEM", "2");
+            envVars.put(ucPrefix+"_DYNAREC_FORWARD", "128");
+            envVars.put(ucPrefix+"_DYNAREC_CALLRET", "0");
             envVars.put(ucPrefix+"_DYNAREC_WAIT", "0");
         }
         else if (id.equals(Box86_64Preset.COMPATIBILITY)) {
@@ -43,26 +38,30 @@ public abstract class Box86_64PresetManager {
             envVars.put(ucPrefix+"_DYNAREC_X87DOUBLE", "1");
             envVars.put(ucPrefix+"_DYNAREC_BIGBLOCK", "0");
             envVars.put(ucPrefix+"_DYNAREC_STRONGMEM", "1");
+            envVars.put(ucPrefix+"_DYNAREC_FORWARD", "128");
+            envVars.put(ucPrefix+"_DYNAREC_CALLRET", "0");
             envVars.put(ucPrefix+"_DYNAREC_WAIT", "1");
         }
         else if (id.equals(Box86_64Preset.INTERMEDIATE)) {
             envVars.put(ucPrefix+"_DYNAREC_SAFEFLAGS", "2");
             envVars.put(ucPrefix+"_DYNAREC_FASTNAN", "1");
-            envVars.put(ucPrefix+"_DYNAREC_FASTROUND", "1");
+            envVars.put(ucPrefix+"_DYNAREC_FASTROUND", "0");
             envVars.put(ucPrefix+"_DYNAREC_X87DOUBLE", "1");
             envVars.put(ucPrefix+"_DYNAREC_BIGBLOCK", "1");
             envVars.put(ucPrefix+"_DYNAREC_STRONGMEM", "0");
             envVars.put(ucPrefix+"_DYNAREC_FORWARD", "128");
+            envVars.put(ucPrefix+"_DYNAREC_CALLRET", "0");
             envVars.put(ucPrefix+"_DYNAREC_WAIT", "1");
         }
         else if (id.equals(Box86_64Preset.PERFORMANCE)) {
-            envVars.put(ucPrefix+"_DYNAREC_SAFEFLAGS", "0");
+            envVars.put(ucPrefix+"_DYNAREC_SAFEFLAGS", "1");
             envVars.put(ucPrefix+"_DYNAREC_FASTNAN", "1");
             envVars.put(ucPrefix+"_DYNAREC_FASTROUND", "1");
             envVars.put(ucPrefix+"_DYNAREC_X87DOUBLE", "0");
-            envVars.put(ucPrefix+"_DYNAREC_BIGBLOCK", "2");
+            envVars.put(ucPrefix+"_DYNAREC_BIGBLOCK", "3");
             envVars.put(ucPrefix+"_DYNAREC_STRONGMEM", "0");
             envVars.put(ucPrefix+"_DYNAREC_FORWARD", "512");
+            envVars.put(ucPrefix+"_DYNAREC_CALLRET", "1");
             envVars.put(ucPrefix+"_DYNAREC_WAIT", "1");
         }
         else if (id.startsWith(Box86_64Preset.CUSTOM)) {

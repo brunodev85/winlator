@@ -34,12 +34,6 @@ public class GamepadState {
         buffer.putShort((short)(thumbRY * Short.MAX_VALUE));
     }
 
-    public byte[] toByteArray() {
-        ByteBuffer buffer = ByteBuffer.allocate(11).order(ByteOrder.LITTLE_ENDIAN);
-        writeTo(buffer);
-        return buffer.array();
-    }
-
     public void setPressed(int buttonIdx, boolean pressed) {
         int flag = 1<<buttonIdx;
         if (pressed) {

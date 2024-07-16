@@ -33,8 +33,6 @@
 #include <assert.h>     /* assert(3), */
 
 #include "execve/execve.h"
-#include "execve/shebang.h"
-#include "execve/aoxp.h"
 #include "execve/elf.h"
 #include "path/path.h"
 #include "path/temp.h"
@@ -364,7 +362,6 @@ int translate_execve_enter(Tracee *tracee)
 	char user_path[PATH_MAX];
 	char host_path[PATH_MAX];
 	char new_exe[PATH_MAX];
-	char *raw_path;
 	const char *loader_path;
 	int status;
 
@@ -382,23 +379,10 @@ int translate_execve_enter(Tracee *tracee)
 	if (status < 0)
 		return status;
 
-	/* Remember the user path before it is overwritten by
-	 * expand_shebang().  This "raw" path is useful to fix the
-	 * value of AT_EXECFN and /proc/{@tracee->pid}/comm.  */
-	raw_path = talloc_strdup(tracee->ctx, user_path);
-	if (raw_path == NULL)
-		return -ENOMEM;
-
-	status = expand_shebang(tracee, host_path, user_path);
-	if (status < 0)
-		/* The Linux kernel actually returns -EACCES when
-		 * trying to execute a directory.  */
-		return status == -EISDIR ? -EACCES : status;
-
-	/* user_path is modified only if there's an interpreter
-	 * (ie. for a script).  */
-	if (status == 0)
-		TALLOC_FREE(raw_path);
+    /* Translate this path (user -> host), then check it is executable.  */
+    status = translate_and_check_exec(tracee, host_path, user_path);
+    if (status < 0)
+        return status;
 
 	strcpy(new_exe, host_path);
 	status = detranslate_path(tracee, new_exe, NULL);
@@ -421,12 +405,6 @@ int translate_execve_enter(Tracee *tracee)
 
 	tracee->load_info->user_path = talloc_strdup(tracee->load_info, user_path);
 	if (tracee->load_info->user_path == NULL)
-		return -ENOMEM;
-
-	tracee->load_info->raw_path = (raw_path != NULL
-			? talloc_reparent(tracee->ctx, tracee->load_info, raw_path)
-			: talloc_reference(tracee->load_info, tracee->load_info->user_path));
-	if (tracee->load_info->raw_path == NULL)
 		return -ENOMEM;
 
 	status = extract_load_info(tracee, tracee->load_info);

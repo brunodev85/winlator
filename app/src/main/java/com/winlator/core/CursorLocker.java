@@ -1,18 +1,17 @@
 package com.winlator.core;
 
 import com.winlator.math.Mathf;
-import com.winlator.xserver.Window;
 import com.winlator.xserver.XServer;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class CursorLocker extends TimerTask {
-    public enum State {NONE, LOCKED, CONFINED}
     private final XServer xServer;
-    private State state = State.CONFINED;
     private float damping = 0.25f;
     private short maxDistance;
+    private boolean enabled = true;
+    private final Object pauseLock = new Object();
 
     public CursorLocker(XServer xServer) {
         this.xServer = xServer;
@@ -37,40 +36,45 @@ public class CursorLocker extends TimerTask {
         this.damping = damping;
     }
 
-    public State getState() {
-        return state;
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    public void setState(State state) {
-        this.state = state;
+    public void setEnabled(boolean enabled) {
+        if (enabled) {
+            synchronized (pauseLock) {
+                this.enabled = true;
+                pauseLock.notifyAll();
+            }
+        }
+        else this.enabled = enabled;
     }
 
     @Override
     public void run() {
-        if (state == State.LOCKED) {
-            Window window = xServer.inputDeviceManager.getPointWindow();
-            short centerX = (short)(window.getRootX() + window.getWidth() / 2);
-            short centerY = (short)(window.getRootY() + window.getHeight() / 2);
-            xServer.pointer.setX(centerX);
-            xServer.pointer.setY(centerY);
-
+        synchronized (pauseLock) {
+            if (!enabled) {
+                try {
+                    pauseLock.wait();
+                }
+                catch (InterruptedException e) {}
+            }
         }
-        else if (state == State.CONFINED) {
-            short x = (short)Mathf.clamp(xServer.pointer.getX(), -maxDistance, xServer.screenInfo.width + maxDistance);
-            short y = (short)Mathf.clamp(xServer.pointer.getY(), -maxDistance, xServer.screenInfo.height + maxDistance);
 
-            if (x < 0) {
-                xServer.pointer.setX((short)Math.ceil(x * damping));
-            }
-            else if (x >= xServer.screenInfo.width) {
-                xServer.pointer.setX((short)Math.floor(xServer.screenInfo.width + (x - xServer.screenInfo.width) * damping));
-            }
-            if (y < 0) {
-                xServer.pointer.setY((short)Math.ceil(y * damping));
-            }
-            else if (y >= xServer.screenInfo.height) {
-                xServer.pointer.setY((short)Math.floor(xServer.screenInfo.height + (y - xServer.screenInfo.height) * damping));
-            }
+        short x = (short)Mathf.clamp(xServer.pointer.getX(), -maxDistance, xServer.screenInfo.width + maxDistance);
+        short y = (short)Mathf.clamp(xServer.pointer.getY(), -maxDistance, xServer.screenInfo.height + maxDistance);
+
+        if (x < 0) {
+            xServer.pointer.setX((short)Math.ceil(x * damping));
+        }
+        else if (x >= xServer.screenInfo.width) {
+            xServer.pointer.setX((short)Math.floor(xServer.screenInfo.width + (x - xServer.screenInfo.width) * damping));
+        }
+        if (y < 0) {
+            xServer.pointer.setY((short)Math.ceil(y * damping));
+        }
+        else if (y >= xServer.screenInfo.height) {
+            xServer.pointer.setY((short)Math.floor(xServer.screenInfo.height + (y - xServer.screenInfo.height) * damping));
         }
     }
 }

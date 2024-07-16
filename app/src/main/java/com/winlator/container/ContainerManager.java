@@ -104,7 +104,7 @@ public class ContainerManager {
             container.setRootDir(containerDir);
             container.loadData(data);
 
-            boolean isMainWineVersion = !data.has("wineVersion") || data.getString("wineVersion").equals(WineInfo.MAIN_WINE_VERSION.identifier());
+            boolean isMainWineVersion = !data.has("wineVersion") || WineInfo.isMainWineVersion(data.getString("wineVersion"));
             if (!isMainWineVersion) container.setWineVersion(data.getString("wineVersion"));
 
             if (!extractContainerPatternFile(container.getWineVersion(), containerDir, null)) {
@@ -138,15 +138,16 @@ public class ContainerManager {
         dstContainer.setScreenSize(srcContainer.getScreenSize());
         dstContainer.setEnvVars(srcContainer.getEnvVars());
         dstContainer.setCPUList(srcContainer.getCPUList());
+        dstContainer.setCPUListWoW64(srcContainer.getCPUListWoW64());
         dstContainer.setGraphicsDriver(srcContainer.getGraphicsDriver());
         dstContainer.setDXWrapper(srcContainer.getDXWrapper());
         dstContainer.setDXWrapperConfig(srcContainer.getDXWrapperConfig());
-        dstContainer.setGraphicsDriverConfig(srcContainer.getGraphicsDriverConfig());
         dstContainer.setAudioDriver(srcContainer.getAudioDriver());
         dstContainer.setWinComponents(srcContainer.getWinComponents());
         dstContainer.setDrives(srcContainer.getDrives());
         dstContainer.setShowFPS(srcContainer.isShowFPS());
-        dstContainer.setStopServicesOnStartup(srcContainer.isStopServicesOnStartup());
+        dstContainer.setWoW64Mode(srcContainer.isWoW64Mode());
+        dstContainer.setStartupSelection(srcContainer.getStartupSelection());
         dstContainer.setBox86Preset(srcContainer.getBox86Preset());
         dstContainer.setBox64Preset(srcContainer.getBox64Preset());
         dstContainer.setDesktopTheme(srcContainer.getDesktopTheme());
@@ -201,7 +202,7 @@ public class ContainerManager {
     }
 
     public boolean extractContainerPatternFile(String wineVersion, File containerDir, OnExtractFileListener onExtractFileListener) {
-        if (wineVersion == null || wineVersion.equals(WineInfo.MAIN_WINE_VERSION.identifier())) {
+        if (WineInfo.isMainWineVersion(wineVersion)) {
             boolean result = TarCompressorUtils.extract(TarCompressorUtils.Type.ZSTD, context, "container_pattern.tzst", containerDir, onExtractFileListener);
 
             if (result) {

@@ -16,10 +16,8 @@ add_executable(libproot.so
                src/cli/note.c
                src/execve/enter.c
                src/execve/exit.c
-               src/execve/shebang.c
                src/execve/elf.c
                src/execve/auxv.c
-               src/execve/aoxp.c
                src/path/binding.c
                src/path/glue.c
                src/path/canon.c

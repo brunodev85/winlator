@@ -37,7 +37,7 @@ public class GLRenderer implements GLSurfaceView.Renderer, WindowManager.OnWindo
     private final float[] tmpXForm2 = XForm.getInstance();
     private final CursorMaterial cursorMaterial = new CursorMaterial();
     private final WindowMaterial windowMaterial = new WindowMaterial();
-    public final Viewport viewport = new Viewport();
+    public final ViewTransformation viewTransformation = new ViewTransformation();
     private final Drawable rootCursorDrawable;
     private final ArrayList<RenderableWindow> renderableWindows = new ArrayList<>();
     private String forceFullscreenWMClass = null;
@@ -48,6 +48,7 @@ public class GLRenderer implements GLSurfaceView.Renderer, WindowManager.OnWindo
     private boolean screenOffsetYRelativeToCursor = false;
     private String[] unviewableWMClasses = null;
     private float magnifierZoom = 1.0f;
+    private boolean magnifierEnabled = true;
     private int surfaceWidth;
     private int surfaceHeight;
 
@@ -89,11 +90,13 @@ public class GLRenderer implements GLSurfaceView.Renderer, WindowManager.OnWindo
             activity.init();
             width = activity.getWidth();
             height = activity.getHeight();
+            GLES20.glViewport(0, 0, width, height);
+            magnifierEnabled = false;
         }
 
         surfaceWidth = width;
         surfaceHeight = height;
-        viewport.update(width, height, xServer.screenInfo.width, xServer.screenInfo.height);
+        viewTransformation.update(width, height, xServer.screenInfo.width, xServer.screenInfo.height);
     }
 
     @Override
@@ -109,38 +112,55 @@ public class GLRenderer implements GLSurfaceView.Renderer, WindowManager.OnWindo
 
     private void drawFrame() {
         boolean xrFrame = false;
-        if (XrActivity.isSupported()) {
-            xrFrame = XrActivity.getInstance().beginFrame(XrActivity.getImmersive(), XrActivity.getSBS());
-        }
+        if (XrActivity.isSupported()) xrFrame = XrActivity.getInstance().beginFrame(XrActivity.getImmersive(), XrActivity.getSBS());
 
-        if (viewportNeedsUpdate) {
+        if (viewportNeedsUpdate && magnifierEnabled) {
             if (fullscreen) {
                 GLES20.glViewport(0, 0, surfaceWidth, surfaceHeight);
             }
-            else GLES20.glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+            else GLES20.glViewport(viewTransformation.viewOffsetX, viewTransformation.viewOffsetY, viewTransformation.viewWidth, viewTransformation.viewHeight);
             viewportNeedsUpdate = false;
         }
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
-        float pointerX = 0;
-        float pointerY = 0;
-        float magnifierZoom = !screenOffsetYRelativeToCursor ? this.magnifierZoom : 1.0f;
+        if (magnifierEnabled) {
+            float pointerX = 0;
+            float pointerY = 0;
+            float magnifierZoom = !screenOffsetYRelativeToCursor ? this.magnifierZoom : 1.0f;
 
-        if (magnifierZoom != 1.0f) {
-            pointerX = Mathf.clamp(xServer.pointer.getX() * magnifierZoom - xServer.screenInfo.width * 0.5f, 0, xServer.screenInfo.width * Math.abs(1.0f - magnifierZoom));
+            if (magnifierZoom != 1.0f) {
+                pointerX = Mathf.clamp(xServer.pointer.getX() * magnifierZoom - xServer.screenInfo.width * 0.5f, 0, xServer.screenInfo.width * Math.abs(1.0f - magnifierZoom));
+            }
+
+            if (screenOffsetYRelativeToCursor || magnifierZoom != 1.0f) {
+                float scaleY = magnifierZoom != 1.0f ? Math.abs(1.0f - magnifierZoom) : 0.5f;
+                float offsetY = xServer.screenInfo.height * (screenOffsetYRelativeToCursor ? 0.25f : 0.5f);
+                pointerY = Mathf.clamp(xServer.pointer.getY() * magnifierZoom - offsetY, 0, xServer.screenInfo.height * scaleY);
+            }
+
+            XForm.makeTransform(tmpXForm2, -pointerX, -pointerY, magnifierZoom, magnifierZoom, 0);
         }
+        else {
+            if (!fullscreen) {
+                int pointerY = 0;
+                if (screenOffsetYRelativeToCursor) {
+                    short halfScreenHeight = (short)(xServer.screenInfo.height / 2);
+                    pointerY = Mathf.clamp(xServer.pointer.getY() - halfScreenHeight / 2, 0, halfScreenHeight);
+                }
 
-        if (screenOffsetYRelativeToCursor || magnifierZoom != 1.0f) {
-            float scaleY = magnifierZoom != 1.0f ? Math.abs(1.0f - magnifierZoom) : 0.5f;
-            float offsetY = xServer.screenInfo.height * (screenOffsetYRelativeToCursor ? 0.25f : 0.5f);
-            pointerY = Mathf.clamp(xServer.pointer.getY() * magnifierZoom - offsetY, 0, xServer.screenInfo.height * scaleY);
+                XForm.makeTransform(tmpXForm2, viewTransformation.sceneOffsetX, viewTransformation.sceneOffsetY - pointerY, viewTransformation.sceneScaleX, viewTransformation.sceneScaleY, 0);
+
+                GLES20.glEnable(GLES20.GL_SCISSOR_TEST);
+                GLES20.glScissor(viewTransformation.viewOffsetX, viewTransformation.viewOffsetY, viewTransformation.viewWidth, viewTransformation.viewHeight);
+            }
+            else XForm.identity(tmpXForm2);
         }
-
-        XForm.makeTransform(tmpXForm2, -pointerX, -pointerY, magnifierZoom, magnifierZoom, 0);
 
         renderWindows();
         if (cursorVisible) renderCursor();
+
+        if (!magnifierEnabled && !fullscreen) GLES20.glDisable(GLES20.GL_SCISSOR_TEST);
 
         if (xrFrame) {
             XrActivity.getInstance().endFrame();

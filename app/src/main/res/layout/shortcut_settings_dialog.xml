@@ -103,25 +103,11 @@
             android:layout_height="wrap_content"
             android:text="@string/graphics_driver" />
 
-        <LinearLayout
+        <Spinner
+            style="@style/ComboBox"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <Spinner
-                style="@style/ComboBox"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:id="@+id/SGraphicsDriver"
-                android:entries="@array/graphics_driver_entries" />
-
-            <ImageButton
-                style="@style/ListMenuButton"
-                android:id="@+id/BTGraphicsDriverConfig"
-                android:src="@drawable/icon_settings"
-                android:visibility="gone" />
-        </LinearLayout>
+            android:id="@+id/SGraphicsDriver"
+            android:entries="@array/graphics_driver_entries" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -204,7 +190,38 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone" />
+            android:visibility="gone">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
+
+                <LinearLayout
+                    style="@style/FieldSet"
+                    android:id="@+id/LLWinComponentsDirectX" />
+
+                <TextView
+                    style="@style/FieldSetLabel"
+                    android:background="#ffffff"
+                    android:text="@string/directx" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
+
+                <LinearLayout
+                    style="@style/FieldSet"
+                    android:id="@+id/LLWinComponentsGeneral" />
+
+                <TextView
+                    style="@style/FieldSetLabel"
+                    android:background="#ffffff"
+                    android:text="@string/general" />
+            </FrameLayout>
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/LLTabEnvVars"
@@ -213,22 +230,12 @@
             android:orientation="vertical"
             android:visibility="gone">
 
-            <LinearLayout
-                android:id="@+id/LLEnvVars"
+            <com.winlator.widget.EnvVarsView
+                android:id="@+id/EnvVarsView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"/>
-
-            <TextView
-                android:id="@+id/TVEnvVarsEmptyText"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="@string/no_items_to_display"
-                android:padding="16dp"
-                android:visibility="gone" />
 
             <View style="@style/HorizontalLine" />
 

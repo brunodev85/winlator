@@ -4,5 +4,6 @@
     "directmusic" : ["dmband", "dmcompos", "dmime", "dmloader", "dmscript", "dmstyle", "dmsynth", "dmusic", "dmusic32", "dswave"],
     "directshow" : ["amstream", "qasf", "qcap", "qdvd", "qedit", "quartz"],
     "directplay" : ["dplaysvr.exe", "dplayx", "dpmodemx", "dpnet", "dpnhpast", "dpnhupnp", "dpnsvr.exe", "dpwsockx"],
-    "vcrun2010" : ["msvcp100", "msvcr100", "vcomp100", "atl100"]
+    "vcrun2010" : ["msvcp100", "msvcr100", "vcomp100", "atl100"],
+    "wmdecoder" : ["wmvcore", "wmasf", "wmadmod", "wmvdecod"]
 }

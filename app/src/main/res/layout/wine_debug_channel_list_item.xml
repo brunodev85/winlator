@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:layout_marginRight="8dp"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="34dp"
+        android:textSize="16dp"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:layout_marginRight="2dp"
+        android:gravity="center_vertical"
+        android:background="@drawable/element_left_box" />
+
+    <ImageView
+        android:id="@+id/BTAdd"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:padding="6dp"
+        android:src="@drawable/icon_add"
+        android:background="@drawable/element_left_box"
+        app:tint="@color/colorPrimary"
+        android:layout_marginRight="4dp"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/BTReset"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:padding="6dp"
+        android:src="@drawable/icon_reset"
+        android:background="@drawable/element_right_box"
+        app:tint="@color/colorPrimary"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/BTRemove"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:padding="6dp"
+        android:src="@drawable/icon_remove2"
+        android:background="@drawable/element_right_box"
+        app:tint="@color/colorPrimary" />
+</LinearLayout>

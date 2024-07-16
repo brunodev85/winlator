@@ -1,5 +1,6 @@
 package com.winlator.xserver;
 
+import android.graphics.Bitmap;
 import android.util.SparseArray;
 
 public class PixmapManager extends XResourceManager {
@@ -50,5 +51,13 @@ public class PixmapManager extends XResourceManager {
             if (id == visual.id && visual.displayable) return visual;
         }
         return null;
+    }
+
+    public Bitmap getWindowIcon(Window window) {
+        int colorPixmapId = window.getWMHintsValue(Window.WMHints.ICON_PIXMAP);
+        int maskPixmapId = window.getWMHintsValue(Window.WMHints.ICON_MASK);
+        Pixmap colorPixmap = colorPixmapId != 0 ? getPixmap(colorPixmapId) : null;
+        Pixmap maskPixmap = maskPixmapId != 0 ? getPixmap(maskPixmapId) : null;
+        return colorPixmap != null ? colorPixmap.toBitmap(maskPixmap) : null;
     }
 }
