@@ -111,6 +111,10 @@ public abstract class WindowRequests {
         client.xServer.windowManager.destroyWindow(inputStream.readInt());
     }
 
+    public static void destroySubWindows(XClient client, XInputStream inputStream, XOutputStream outputStream) {
+        client.xServer.windowManager.destroyWindow(inputStream.readInt());
+    }
+
     public static void reparentWindow(XClient client, XInputStream inputStream, XOutputStream outputStream) throws XRequestError {
         int windowId = inputStream.readInt();
         int parentId = inputStream.readInt();
@@ -129,6 +133,23 @@ public abstract class WindowRequests {
         int windowId = inputStream.readInt();
         Window window = client.xServer.windowManager.getWindow(windowId);
         if (window == null) throw new BadWindow(windowId);
+        client.xServer.windowManager.mapWindow(window);
+    }
+
+    public static void mapSubWindows(XClient client, XInputStream inputStream, XOutputStream outputStream) throws XRequestError {
+        int windowId = inputStream.readInt();
+        Window window = client.xServer.windowManager.getWindow(windowId);
+        if (window == null) throw new BadWindow(windowId);
+        for (Window child : window.getChildren())
+            mapSubWindows(client, child.id);
+        client.xServer.windowManager.mapWindow(window);
+    }
+
+    private static void mapSubWindows(XClient client, int windowId) throws XRequestError {
+        Window window = client.xServer.windowManager.getWindow(windowId);
+        if (window == null) throw new BadWindow(windowId);
+        for (Window child : window.getChildren())
+            mapSubWindows(client, child.id);
         client.xServer.windowManager.mapWindow(window);
     }
 
