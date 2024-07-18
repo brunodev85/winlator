@@ -1,6 +1,5 @@
 package com.winlator;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -26,20 +25,15 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.winlator.container.Container;
 import com.winlator.container.ContainerManager;
-import com.winlator.core.Callback;
-import com.winlator.core.FileUtils;
-import com.winlator.core.PreloaderDialog;
-import com.winlator.core.StringUtils;
 import com.winlator.contentdialog.ContentDialog;
+import com.winlator.contentdialog.StorageInfoDialog;
+import com.winlator.core.PreloaderDialog;
 import com.winlator.xenvironment.ImageFs;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class ContainersFragment extends Fragment {
     private RecyclerView recyclerView;
@@ -178,76 +172,12 @@ public class ContainersFragment extends Fragment {
                         });
                         break;
                     case R.id.container_info:
-                        showStorageInfoDialog(container);
+                        (new StorageInfoDialog(getActivity(), container)).show();
                         break;
                 }
                 return true;
             });
             listItemMenu.show();
         }
-    }
-
-    private void showStorageInfoDialog(final Container container) {
-        final Activity activity = getActivity();
-        ContentDialog dialog = new ContentDialog(activity, R.layout.container_storage_info_dialog);
-        dialog.setTitle(R.string.storage_info);
-        dialog.setIcon(R.drawable.icon_info);
-
-        AtomicLong driveCSize = new AtomicLong();
-        driveCSize.set(0);
-
-        AtomicLong cacheSize = new AtomicLong();
-        cacheSize.set(0);
-
-        AtomicLong totalSize = new AtomicLong();
-        totalSize.set(0);
-
-        final TextView tvDriveCSize = dialog.findViewById(R.id.TVDriveCSize);
-        final TextView tvCacheSize = dialog.findViewById(R.id.TVCacheSize);
-        final TextView tvTotalSize = dialog.findViewById(R.id.TVTotalSize);
-        final TextView tvUsedSpace = dialog.findViewById(R.id.TVUsedSpace);
-        final CircularProgressIndicator circularProgressIndicator = dialog.findViewById(R.id.CircularProgressIndicator);
-
-        final long internalStorageSize = FileUtils.getInternalStorageSize();
-
-        Runnable updateUI = () -> {
-            tvDriveCSize.setText(StringUtils.formatBytes(driveCSize.get()));
-            tvCacheSize.setText(StringUtils.formatBytes(cacheSize.get()));
-            tvTotalSize.setText(StringUtils.formatBytes(totalSize.get()));
-
-            int progress = (int)(((double)totalSize.get() / internalStorageSize) * 100);
-            tvUsedSpace.setText(progress+"%");
-            circularProgressIndicator.setProgress(progress, true);
-        };
-
-        File rootDir = container.getRootDir();
-        final File driveCDir = new File(rootDir, ".wine/drive_c");
-        final File cacheDir = new File(rootDir, ".cache");
-        AtomicLong lastTime = new AtomicLong(System.currentTimeMillis());
-
-        final Callback<Long> onAddSize = (size) -> {
-            totalSize.addAndGet(size);
-            long currTime = System.currentTimeMillis();
-            int elapsedTime = (int)(currTime - lastTime.get());
-            if (elapsedTime > 30) {
-                activity.runOnUiThread(updateUI);
-                lastTime.set(currTime);
-            }
-        };
-
-        FileUtils.getSizeAsync(driveCDir, (size) -> {
-            driveCSize.addAndGet(size);
-            onAddSize.call(size);
-        });
-
-        FileUtils.getSizeAsync(cacheDir, (size) -> {
-            cacheSize.addAndGet(size);
-            onAddSize.call(size);
-        });
-
-        ((TextView)dialog.findViewById(R.id.BTCancel)).setText(R.string.clear_cache);
-        dialog.setOnCancelCallback(() -> FileUtils.clear(cacheDir));
-
-        dialog.show();
     }
 }

@@ -33,6 +33,8 @@
 /* These should be included last.  */
 #include "cli/proot.h"
 
+char *root_path = NULL;
+
 static int handle_option_r(Tracee *tracee, const Cli *cli UNUSED, const char *value)
 {
 	Binding *binding;
@@ -43,6 +45,7 @@ static int handle_option_r(Tracee *tracee, const Cli *cli UNUSED, const char *va
 	if (binding == NULL)
 		return -1;
 
+    root_path = binding->host.path;
 	return 0;
 }
 
@@ -136,7 +139,7 @@ int pre_initialize_bindings(Tracee *tracee, const Cli *cli)
 	}
 
 	 /* The default guest rootfs is "/" if none was specified.  */
-	if (get_root(tracee) == NULL) {
+	if (root_path == NULL) {
 		status = handle_option_r(tracee, cli, "/");
 		if (status < 0)
 			return -1;

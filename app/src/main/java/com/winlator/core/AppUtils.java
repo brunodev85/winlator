@@ -21,7 +21,6 @@ import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
@@ -34,6 +33,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.winlator.R;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
 public abstract class AppUtils {
     private static WeakReference<Toast> globalToastReference = null;
@@ -52,6 +52,13 @@ public abstract class AppUtils {
             }
         }
         return "armhf";
+    }
+
+    public static void restartActivity(AppCompatActivity activity) {
+        Intent intent = activity.getIntent();
+        activity.finish();
+        activity.startActivity(intent);
+        activity.overridePendingTransition(0, 0);
     }
 
     public static void restartApplication(Context context) {
@@ -296,5 +303,18 @@ public abstract class AppUtils {
             }
         });
         tabLayout.getTabAt(0).select();
+    }
+
+    public static void findViewsWithClass(ViewGroup parent, Class viewClass, ArrayList<View> outViews) {
+        for (int i = 0, childCount = parent.getChildCount(); i < childCount; i++) {
+            View child = parent.getChildAt(i);
+            Class _class = child.getClass();
+            if (_class == viewClass || _class.getSuperclass() == viewClass) {
+                outViews.add(child);
+            }
+            else if (child instanceof ViewGroup) {
+                findViewsWithClass((ViewGroup)child, viewClass, outViews);
+            }
+        }
     }
 }

@@ -31,7 +31,7 @@ public class Shortcut {
         File iconFile = null;
         String wmClass = "";
 
-        File[] iconDirs = {container.getIconsDir(64), container.getIconsDir(48), container.getIconsDir(32)};
+        File[] iconDirs = {container.getIconsDir(64), container.getIconsDir(48), container.getIconsDir(32), container.getIconsDir(16)};
         String section = "";
 
         int index;

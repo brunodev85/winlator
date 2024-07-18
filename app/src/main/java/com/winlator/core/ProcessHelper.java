@@ -1,29 +1,21 @@
 package com.winlator.core;
 
-import android.os.Environment;
-import android.util.Log;
 import android.os.Process;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 public abstract class ProcessHelper {
-    public static boolean debugMode = false;
-    public static Callback<String> debugCallback;
-    public static boolean generateDebugFile = false;
+    public static final boolean PRINT_DEBUG = false; // FIXME change to false
+    private static final ArrayList<Callback<String>> debugCallbacks = new ArrayList<>();
     private static final byte SIGCONT = 18;
     private static final byte SIGSTOP = 19;
-    private static final String TAG = "WINEINSTALL";
 
     public static void suspendProcess(int pid) {
         Process.sendSignal(pid, SIGSTOP);
@@ -47,7 +39,6 @@ public abstract class ProcessHelper {
 
     public static int exec(String command, String[] envp, File workingDir, Callback<Integer> terminationCallback) {
         int pid = -1;
-        ExecutorService executorService = Executors.newFixedThreadPool(2); // Fixed thread pool to handle both streams
         try {
             java.lang.Process process = Runtime.getRuntime().exec(splitCommand(command), envp, workingDir);
             Field pidField = process.getClass().getDeclaredField("pid");
@@ -55,81 +46,31 @@ public abstract class ProcessHelper {
             pid = pidField.getInt(process);
             pidField.setAccessible(false);
 
-            Callback<String> debugCallback = ProcessHelper.debugCallback;
-            Future<?> inputStreamFuture = null;
-            Future<?> errorStreamFuture = null;
-
-            if (debugMode || debugCallback != null) {
-                inputStreamFuture = executorService.submit(() -> readStream(false, process.getInputStream(), debugCallback));
-                errorStreamFuture = executorService.submit(() -> readStream(true, process.getErrorStream(), debugCallback));
+            if (!debugCallbacks.isEmpty()) {
+                createDebugThread(process.getInputStream());
+                createDebugThread(process.getErrorStream());
             }
-            Log.d(TAG, "Waiting for streams finish");
-            if (inputStreamFuture != null) inputStreamFuture.get(); // Wait for input stream to be read
-            if (errorStreamFuture != null) errorStreamFuture.get(); // Wait for error stream to be read
-            Log.d(TAG, "Streams are all read, waiting for thread to finish");
-            if (terminationCallback != null) createWaitForThread(process, terminationCallback);
 
-        } catch (Exception e) {
-            Log.e(TAG, "Error executing command: " + command, e);
-        } finally {
-            executorService.shutdown(); // Shutdown the executor service
+            if (terminationCallback != null) createWaitForThread(process, terminationCallback);
         }
+        catch (Exception e) {}
         return pid;
     }
 
-    private static void readStream(boolean isError, final InputStream inputStream, final Callback<String> debugCallback) {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-            String line;
-            if (debugMode && generateDebugFile) {
-                File winlatorDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "Winlator");
-                winlatorDir.mkdirs();
-                final File debugFile = new File(winlatorDir, isError ? "debug-err.txt" : "debug-out.txt");
-                if (debugFile.isFile()) debugFile.delete();
-                try (BufferedWriter writer = new BufferedWriter(new FileWriter(debugFile))) {
-                    while ((line = reader.readLine()) != null) writer.write(line + "\n");
-                }
-            } else {
-                while ((line = reader.readLine()) != null) {
-                    if (debugCallback != null) {
-                        debugCallback.call(line);
-                    } else {
-                        System.out.println(line);
-                        Log.d(TAG, line);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            Log.e(TAG, "Error reading process output", e);
-        }
-    }
-    private static void createDebugThread(boolean isError, final InputStream inputStream, final Callback<String> debugCallback) {
+    private static void createDebugThread(final InputStream inputStream) {
         Executors.newSingleThreadExecutor().execute(() -> {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
                 String line;
-                if (debugMode && generateDebugFile) {
-                    File winlatorDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "Winlator");
-                    winlatorDir.mkdirs();
-                    final File debugFile = new File(winlatorDir, isError ? "debug-err.txt" : "debug-out.txt");
-                    if (debugFile.isFile()) debugFile.delete();
-                    try (BufferedWriter writer = new BufferedWriter(new FileWriter(debugFile))) {
-                        while ((line = reader.readLine()) != null) writer.write(line+"\n");
-                    }
-                }
-                else {
-                    while ((line = reader.readLine()) != null) {
-                        if (debugCallback != null) {
-                            debugCallback.call(line);
-                        }
-                        else {
-                          System.out.println(line);
-                          Log.d(TAG, line);
+                while ((line = reader.readLine()) != null) {
+                    if (PRINT_DEBUG) System.out.println(line);
+                    synchronized (debugCallbacks) {
+                        if (!debugCallbacks.isEmpty()) {
+                            for (Callback<String> callback : debugCallbacks) callback.call(line);
                         }
                     }
                 }
             }
-            catch (IOException e) {
-              Log.e(TAG, "Error reading process output", e);
-            }
+            catch (IOException e) {}
         });
     }
 
@@ -139,10 +80,26 @@ public abstract class ProcessHelper {
                 int status = process.waitFor();
                 terminationCallback.call(status);
             }
-            catch (InterruptedException e) {
-              Log.e(TAG, "Error waiting for process", e);
-            }
+            catch (InterruptedException e) {}
         });
+    }
+
+    public static void removeAllDebugCallbacks() {
+        synchronized (debugCallbacks) {
+            debugCallbacks.clear();
+        }
+    }
+
+    public static void addDebugCallback(Callback<String> callback) {
+        synchronized (debugCallbacks) {
+            if (!debugCallbacks.contains(callback)) debugCallbacks.add(callback);
+        }
+    }
+
+    public static void removeDebugCallback(Callback<String> callback) {
+        synchronized (debugCallbacks) {
+            debugCallbacks.remove(callback);
+        }
     }
 
     public static String[] splitCommand(String command) {
@@ -193,7 +150,7 @@ public abstract class ProcessHelper {
         return result.toArray(new String[0]);
     }
 
-    public static String getAffinityMask(String cpuList) {
+    public static String getAffinityMaskAsHexString(String cpuList) {
         String[] values = cpuList.split(",");
         int affinityMask = 0;
         for (String value : values) {
@@ -203,11 +160,28 @@ public abstract class ProcessHelper {
         return Integer.toHexString(affinityMask);
     }
 
+    public static int getAffinityMask(String cpuList) {
+        if (cpuList == null || cpuList.isEmpty()) return 0;
+        String[] values = cpuList.split(",");
+        int affinityMask = 0;
+        for (String value : values) {
+            byte index = Byte.parseByte(value);
+            affinityMask |= (int)Math.pow(2, index);
+        }
+        return affinityMask;
+    }
+
     public static int getAffinityMask(boolean[] cpuList) {
         int affinityMask = 0;
         for (int i = 0; i < cpuList.length; i++) {
             if (cpuList[i]) affinityMask |= (int)Math.pow(2, i);
         }
+        return affinityMask;
+    }
+
+    public static int getAffinityMask(int from, int to) {
+        int affinityMask = 0;
+        for (int i = from; i < to; i++) affinityMask |= (int)Math.pow(2, i);
         return affinityMask;
     }
 }

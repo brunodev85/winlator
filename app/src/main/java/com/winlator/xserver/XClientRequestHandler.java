@@ -188,6 +188,10 @@ public class XClientRequestHandler implements RequestHandler {
                         WindowRequests.destroyWindow(client, inputStream, outputStream);
                     }
                     break;
+                case ClientOpcodes.DESTROY_SUB_WINDOWS:
+                    try (XLock lock = client.xServer.lock(XServer.Lockable.WINDOW_MANAGER, XServer.Lockable.DRAWABLE_MANAGER, XServer.Lockable.INPUT_DEVICE)) {
+                        WindowRequests.destroySubWindows(client, inputStream, outputStream);
+                    }
                 case ClientOpcodes.REPARENT_WINDOW:
                     try (XLock lock = client.xServer.lock(XServer.Lockable.WINDOW_MANAGER)) {
                         WindowRequests.reparentWindow(client, inputStream, outputStream);
@@ -196,6 +200,11 @@ public class XClientRequestHandler implements RequestHandler {
                 case ClientOpcodes.MAP_WINDOW:
                     try (XLock lock = client.xServer.lock(XServer.Lockable.WINDOW_MANAGER, XServer.Lockable.INPUT_DEVICE)) {
                         WindowRequests.mapWindow(client, inputStream, outputStream);
+                    }
+                    break;
+                case ClientOpcodes.MAP_SUB_WINDOWS:
+                    try (XLock lock = client.xServer.lock(XServer.Lockable.WINDOW_MANAGER, XServer.Lockable.INPUT_DEVICE)) {
+                        WindowRequests.mapSubWindows(client, inputStream, outputStream);
                     }
                     break;
                 case ClientOpcodes.UNMAP_WINDOW:
@@ -390,14 +399,14 @@ public class XClientRequestHandler implements RequestHandler {
                 case ClientOpcodes.FORCE_SCREEN_SAVER:
                     client.skipRequest();
                     break;
-                case ClientOpcodes.GET_POINTER_CONTROL:
-                    client.skipRequest();
-                    break;
                 case ClientOpcodes.GET_MODIFIER_MAPPING:
                     KeyboardRequests.getModifierMapping(client, inputStream, outputStream);
                     break;
                 case ClientOpcodes.NO_OPERATION:
                     client.skipRequest();
+                    break;
+                case ClientOpcodes.GET_POINTER_MAPPING:
+                    CursorRequests.getPointerMaping(client, inputStream, outputStream);
                     break;
                 default:
                     if (opcode < 0) {

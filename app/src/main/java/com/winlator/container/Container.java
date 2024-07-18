@@ -3,7 +3,6 @@ package com.winlator.container;
 import android.os.Environment;
 
 import com.winlator.box86_64.Box86_64Preset;
-import com.winlator.core.AppUtils;
 import com.winlator.core.EnvVars;
 import com.winlator.core.FileUtils;
 import com.winlator.core.KeyValueSet;
@@ -18,14 +17,17 @@ import java.io.File;
 import java.util.Iterator;
 
 public class Container {
-    public static final String DEFAULT_ENV_VARS = "ZINK_DESCRIPTORS=lazy ZINK_CONTEXT_THREADED=true ZINK_DEBUG=compact MESA_SHADER_CACHE_DISABLE=false MESA_SHADER_CACHE_MAX_SIZE=512MB mesa_glthread=true WINEESYNC=1";
-    public static final String DEFAULT_SCREEN_SIZE = "800x600";
+    public static final String DEFAULT_ENV_VARS = "ZINK_DESCRIPTORS=lazy ZINK_DEBUG=compact MESA_SHADER_CACHE_DISABLE=false MESA_SHADER_CACHE_MAX_SIZE=512MB mesa_glthread=true WINEESYNC=1 MESA_VK_WSI_PRESENT_MODE=mailbox TU_DEBUG=noconform";
+    public static final String DEFAULT_SCREEN_SIZE = "1280x720";
     public static final String DEFAULT_GRAPHICS_DRIVER = "turnip";
     public static final String DEFAULT_AUDIO_DRIVER = "alsa";
-    public static final String DEFAULT_DXWRAPPER = "wined3d";
-    public static final String DEFAULT_WINCOMPONENTS = "direct3d=1,directsound=1,directmusic=0,directshow=0,directplay=0,vcrun2010=1";
-    public static final String FALLBACK_WINCOMPONENTS = "direct3d=0,directsound=0,directmusic=0,directshow=0,directplay=0,vcrun2010=0";
+    public static final String DEFAULT_DXWRAPPER = "dxvk";
+    public static final String DEFAULT_WINCOMPONENTS = "direct3d=1,directsound=1,directmusic=0,directshow=0,directplay=0,vcrun2010=1,wmdecoder=1";
+    public static final String FALLBACK_WINCOMPONENTS = "direct3d=0,directsound=0,directmusic=0,directshow=0,directplay=0,vcrun2010=0,wmdecoder=0";
     public static final String DEFAULT_DRIVES = "D:"+Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+"E:/data/data/com.winlator/storage";
+    public static final byte STARTUP_SELECTION_NORMAL = 0;
+    public static final byte STARTUP_SELECTION_ESSENTIAL = 1;
+    public static final byte STARTUP_SELECTION_AGGRESSIVE = 2;
     public static final byte MAX_DRIVE_LETTERS = 8;
     public final int id;
     private String name;
@@ -34,14 +36,15 @@ public class Container {
     private String graphicsDriver = DEFAULT_GRAPHICS_DRIVER;
     private String dxwrapper = DEFAULT_DXWRAPPER;
     private String dxwrapperConfig = "";
-    private String graphicsDriverConfig = "";
     private String wincomponents = DEFAULT_WINCOMPONENTS;
     private String audioDriver = DEFAULT_AUDIO_DRIVER;
     private String drives = DEFAULT_DRIVES;
     private String wineVersion = WineInfo.MAIN_WINE_VERSION.identifier();
     private boolean showFPS;
-    private boolean stopServicesOnStartup = true;
+    private boolean wow64Mode = true;
+    private byte startupSelection = STARTUP_SELECTION_ESSENTIAL;
     private String cpuList;
+    private String cpuListWoW64;
     private String desktopTheme = WineThemeManager.DEFAULT_DESKTOP_THEME;
     private String box86Preset = Box86_64Preset.COMPATIBILITY;
     private String box64Preset = Box86_64Preset.COMPATIBILITY;
@@ -101,14 +104,6 @@ public class Container {
         this.dxwrapperConfig = dxwrapperConfig != null ? dxwrapperConfig : "";
     }
 
-    public String getGraphicsDriverConfig() {
-        return graphicsDriverConfig;
-    }
-
-    public void setGraphicsDriverConfig(String graphicsDriverConfig) {
-        this.graphicsDriverConfig = graphicsDriverConfig != null ? graphicsDriverConfig : "";
-    }
-
     public String getAudioDriver() {
         return audioDriver;
     }
@@ -141,20 +136,44 @@ public class Container {
         this.showFPS = showFPS;
     }
 
-    public boolean isStopServicesOnStartup() {
-        return stopServicesOnStartup;
+    public boolean isWoW64Mode() {
+        return wow64Mode;
     }
 
-    public void setStopServicesOnStartup(boolean stopServicesOnStartup) {
-        this.stopServicesOnStartup = stopServicesOnStartup;
+    public void setWoW64Mode(boolean wow64Mode) {
+        this.wow64Mode = wow64Mode;
+    }
+
+    public byte getStartupSelection() {
+        return startupSelection;
+    }
+
+    public void setStartupSelection(byte startupSelection) {
+        this.startupSelection = startupSelection;
     }
 
     public String getCPUList() {
-        return cpuList;
+        return getCPUList(false);
+    }
+
+    public String getCPUList(boolean allowFallback) {
+        return cpuList != null ? cpuList : (allowFallback ? getFallbackCPUList() : null);
     }
 
     public void setCPUList(String cpuList) {
         this.cpuList = cpuList != null && !cpuList.isEmpty() ? cpuList : null;
+    }
+
+    public String getCPUListWoW64() {
+        return getCPUListWoW64(false);
+    }
+
+    public String getCPUListWoW64(boolean allowFallback) {
+        return cpuListWoW64 != null ? cpuListWoW64 : (allowFallback ? getFallbackCPUListWoW64() : null);
+    }
+
+    public void setCPUListWoW64(String cpuListWoW64) {
+        this.cpuListWoW64 = cpuListWoW64 != null && !cpuListWoW64.isEmpty() ? cpuListWoW64 : null;
     }
 
     public String getBox86Preset() {
@@ -273,24 +292,22 @@ public class Container {
             data.put("screenSize", screenSize);
             data.put("envVars", envVars);
             data.put("cpuList", cpuList);
+            data.put("cpuListWoW64", cpuListWoW64);
             data.put("graphicsDriver", graphicsDriver);
             data.put("dxwrapper", dxwrapper);
             if (!dxwrapperConfig.isEmpty()) data.put("dxwrapperConfig", dxwrapperConfig);
-            if (!graphicsDriverConfig.isEmpty()) data.put("graphicsDriverConfig", graphicsDriverConfig);
             data.put("audioDriver", audioDriver);
             data.put("wincomponents", wincomponents);
             data.put("drives", drives);
             data.put("showFPS", showFPS);
-            data.put("stopServicesOnStartup", stopServicesOnStartup);
+            data.put("wow64Mode", wow64Mode);
+            data.put("startupSelection", startupSelection);
             data.put("box86Preset", box86Preset);
             data.put("box64Preset", box64Preset);
             data.put("desktopTheme", desktopTheme);
             data.put("extraData", extraData);
 
-            if (!wineVersion.equals(WineInfo.MAIN_WINE_VERSION.identifier())) {
-                data.put("wineVersion", wineVersion);
-            }
-
+            if (!WineInfo.isMainWineVersion(wineVersion)) data.put("wineVersion", wineVersion);
             FileUtils.writeString(getConfigFile(), data.toString());
         }
         catch (JSONException e) {}
@@ -299,7 +316,6 @@ public class Container {
     public void loadData(JSONObject data) throws JSONException {
         wineVersion = WineInfo.MAIN_WINE_VERSION.identifier();
         dxwrapperConfig = "";
-        graphicsDriverConfig = "";
         checkObsoleteOrMissingProperties(data);
 
         for (Iterator<String> it = data.keys(); it.hasNext(); ) {
@@ -317,6 +333,9 @@ public class Container {
                 case "cpuList" :
                     setCPUList(data.getString(key));
                     break;
+                case "cpuListWoW64" :
+                    setCPUListWoW64(data.getString(key));
+                    break;
                 case "graphicsDriver" :
                     setGraphicsDriver(data.getString(key));
                     break;
@@ -329,17 +348,17 @@ public class Container {
                 case "dxwrapperConfig" :
                     setDXWrapperConfig(data.getString(key));
                     break;
-                case "graphicsDriverConfig" :
-                    setGraphicsDriverConfig(data.getString(key));
-                    break;
                 case "drives" :
                     setDrives(data.getString(key));
                     break;
                 case "showFPS" :
                     setShowFPS(data.getBoolean(key));
                     break;
-                case "stopServicesOnStartup" :
-                    setStopServicesOnStartup(data.getBoolean(key));
+                case "wow64Mode" :
+                    setWoW64Mode(data.getBoolean(key));
+                    break;
+                case "startupSelection" :
+                    setStartupSelection((byte)data.getInt(key));
                     break;
                 case "extraData" : {
                     JSONObject extraData = data.getJSONObject(key);
@@ -396,7 +415,7 @@ public class Container {
             if (data.has("envVars") && data.has("extraData")) {
                 JSONObject extraData = data.getJSONObject("extraData");
                 int appVersion = Integer.parseInt(extraData.optString("appVersion", "0"));
-                if (appVersion < 12) {
+                if (appVersion < 16) {
                     EnvVars defaultEnvVars = new EnvVars(DEFAULT_ENV_VARS);
                     EnvVars envVars = new EnvVars(data.getString("envVars"));
                     for (String name : defaultEnvVars) if (!envVars.has(name)) envVars.put(name, defaultEnvVars.get(name));
@@ -424,5 +443,19 @@ public class Container {
             data.put("wincomponents", result);
         }
         catch (JSONException e) {}
+    }
+
+    public static String getFallbackCPUList() {
+        String cpuList = "";
+        int numProcessors = Runtime.getRuntime().availableProcessors();
+        for (int i = 0; i < numProcessors; i++) cpuList += (!cpuList.isEmpty() ? "," : "")+i;
+        return cpuList;
+    }
+
+    public static String getFallbackCPUListWoW64() {
+        String cpuList = "";
+        int numProcessors = Runtime.getRuntime().availableProcessors();
+        for (int i = numProcessors / 2; i < numProcessors; i++) cpuList += (!cpuList.isEmpty() ? "," : "")+i;
+        return cpuList;
     }
 }

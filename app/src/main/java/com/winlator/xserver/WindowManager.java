@@ -40,6 +40,8 @@ public class WindowManager extends XResourceManager {
         default void onUpdateWindowGeometry(Window window, boolean resized) {}
 
         default void onUpdateWindowAttributes(Window window, Bitmask mask) {}
+
+        default void onModifyWindowProperty(Window window, Property property) {}
     }
 
     public WindowManager(ScreenInfo screenInfo, DrawableManager drawableManager) {
@@ -53,6 +55,14 @@ public class WindowManager extends XResourceManager {
 
     public Window getWindow(int id) {
         return windows.get(id);
+    }
+
+    public Window findWindowWithProcessId(int processId) {
+        for (int i = 0; i < windows.size(); i++) {
+            Window window = windows.valueAt(i);
+            if (window != null && window.getProcessId() == processId) return window;
+        }
+        return null;
     }
 
     public void destroyWindow(int id) {
@@ -268,9 +278,8 @@ public class WindowManager extends XResourceManager {
         newParent.addChild(window);
     }
 
-    public Window findPointWindow(XServer xServer) {
-        Window pointWindow = findPointWindow(rootWindow, xServer.pointer.getClampedX(), xServer.pointer.getClampedY());
-        return pointWindow != null ? pointWindow : rootWindow;
+    public Window findPointWindow(short rootX, short rootY) {
+        return findPointWindow(rootWindow, rootX, rootY);
     }
 
     private Window findPointWindow(Window window, short rootX, short rootY) {
@@ -320,6 +329,12 @@ public class WindowManager extends XResourceManager {
     public void triggerOnUpdateWindowAttributes(Window window, Bitmask mask) {
         for (int i = onWindowModificationListeners.size()-1; i >= 0; i--) {
             onWindowModificationListeners.get(i).onUpdateWindowAttributes(window, mask);
+        }
+    }
+
+    public void triggerOnModifyWindowProperty(Window window, Property property) {
+        for (int i = onWindowModificationListeners.size()-1; i >= 0; i--) {
+            onWindowModificationListeners.get(i).onModifyWindowProperty(window, property);
         }
     }
 }

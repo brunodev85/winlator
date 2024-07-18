@@ -15,6 +15,7 @@
     <string name="removing_container">Removing Container...</string>
     <string name="duplicating_container">Duplicating Container...</string>
     <string name="installing_system_files">Installing System Files...</string>
+    <string name="updating_system_files">Updating System Files...</string>
     <string name="starting_up">Starting up...</string>
     <string name="unable_to_install_system_files">Unable to install system files</string>
     <string name="keyboard">Keyboard</string>
@@ -58,8 +59,9 @@
     <string name="environment_variables">Environment Variables</string>
     <string name="value">Value</string>
     <string name="processor_affinity">Processor Affinity</string>
+    <string name="processor_affinity_32_bit_apps">Processor Affinity (32-bit apps)</string>
     <string name="cursor_speed">Cursor Speed</string>
-    <string name="lock_cursor">Lock Cursor</string>
+    <string name="relative_mouse_movement">Relative Mouse Movement</string>
     <string name="toggle_switch">Toggle Switch</string>
     <string name="profile_exported_to">Profile exported to</string>
     <string name="unable_to_import_profile">Unable to import profile</string>
@@ -102,7 +104,9 @@
     <string name="directmusic">DirectMusic</string>
     <string name="directplay">DirectPlay</string>
     <string name="directshow">DirectShow</string>
+    <string name="directx">DirectX</string>
     <string name="vcrun2010">Visual C++ 2010</string>
+    <string name="wmdecoder">Windows Media Decoder</string>
     <string name="settings">Settings</string>
     <string name="exec_arguments">Exec Arguments</string>
     <string name="win_components">Win Components</string>
@@ -130,7 +134,6 @@
     <string name="estimated_used_space">Estimated Used Space</string>
     <string name="advanced">Advanced</string>
     <string name="box86_box64">Box86/Box64</string>
-    <string name="stop_services_on_startup">Stop services on startup</string>
     <string name="system">System</string>
     <string name="box86_preset">Box86 Preset</string>
     <string name="box64_preset">Box64 Preset</string>
@@ -171,7 +174,7 @@
     <string name="dxwrapper_help_content"><![CDATA[
         <i><b>WineD3D</b></i> is a translation layer for DirectX 1-11 to OpenGL.<br /><br />
         <i><b>DXVK</b></i> is a translation layer for Direct3D 9-11 to Vulkan.<br /><br />
-        <i><b>D8VK</b></i> is a translation layer for Direct3D 8 to Vulkan.<br /><br />
+        <i><b>VKD3D</b></i> is a translation layer for Direct3D 12 API to Vulkan.<br /><br />
         <i><b>CNC DDraw</b></i> is an implementation of DirectDraw for better compatibility with classic games.
     ]]></string>
     <string name="box86_64_env_var_help__dynarec_safeflags"><![CDATA[
@@ -195,7 +198,7 @@
         <b>0</b> : Don\'t try anything special<br />
         <b>1</b> : Enable some Memory Barrier when writing to memory (on some MOV opcode)<br />
         <b>2</b> : All 1 plus a Memory Barrier on every write to memory using MOV<br />
-        <b>2</b> : All 2 plus Memory Barrier when reading from memory and on some SSE/SSE2 opcodes
+        <b>3</b> : All 2 plus Memory Barrier when reading from memory and on some SSE/SSE2 opcodes
     ]]></string>
     <string name="box86_64_env_var_help__dynarec_forward">Defines the max allowed forward value when building Block</string>
     <string name="box86_64_env_var_help__dynarec_callret">Optimization of CALL/RET opcodes</string>
@@ -212,4 +215,14 @@
     <string name="magnifier">Magnifier</string>
     <string name="bring_to_front">Bring to Front</string>
     <string name="options">Options</string>
+    <string name="enable_experimental_wow64_mode">Enable experimental WoW64 mode</string>
+    <string name="logs">Logs</string>
+    <string name="enable_wine_debug">Enable Wine debug</string>
+    <string name="enable_box86_64_logs">Enable Box86/Box64 logs</string>
+    <string name="export">Export</string>
+    <string name="logs_exported_to">Logs exported to</string>
+    <string name="general">General</string>
+    <string name="msg_warning_install_wine">Warning: Installing a new version of Wine is recommended for testing purposes only.</string>
+    <string name="startup_selection">Startup Selection</string>
+    <string name="wine_debug_channel">Wine Debug Channel</string>
 </resources>

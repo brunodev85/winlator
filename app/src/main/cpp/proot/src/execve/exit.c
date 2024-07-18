@@ -183,12 +183,10 @@ static int transfer_load_script(Tracee *tracee)
 	size_t strings_size;
 	size_t string1_size;
 	size_t string2_size;
-	size_t string3_size;
 	size_t padding_size;
 
 	word_t string1_address;
 	word_t string2_address;
-	word_t string3_address;
 
 	void *buffer;
 	size_t buffer_size;
@@ -219,20 +217,13 @@ static int transfer_load_script(Tracee *tracee)
 	string2_size = (tracee->load_info->interp == NULL ? 0
 			: strlen(tracee->load_info->interp->user_path) + 1);
 
-	string3_size = (tracee->load_info->raw_path == tracee->load_info->user_path ? 0
-			: strlen(tracee->load_info->raw_path) + 1);
-
 	/* A padding will be appended at the end of the load script
 	 * (a.k.a "strings area") to ensure this latter is aligned properly. */
-	padding_size = (stack_pointer - string1_size - string2_size - string3_size)
-			% STACK_ALIGNMENT;
+	padding_size = (stack_pointer - string1_size - string2_size) % STACK_ALIGNMENT;
 
-	strings_size = string1_size + string2_size + string3_size + padding_size;
+	strings_size = string1_size + string2_size + padding_size;
 	string1_address = stack_pointer - strings_size;
 	string2_address = stack_pointer - strings_size + string1_size;
-	string3_address = (string3_size == 0
-			? string1_address
-			: stack_pointer - strings_size + string1_size + string2_size);
 
 	/* Compute the size of the load script.  */
 	script_size =
@@ -307,7 +298,7 @@ static int transfer_load_script(Tracee *tracee)
 	statement->start.at_entry = ELF_FIELD(tracee->load_info->elf_header, entry);
 	statement->start.at_phdr  = ELF_FIELD(tracee->load_info->elf_header, phoff)
 				  + tracee->load_info->mappings[0].addr;
-	statement->start.at_execfn = string3_address;
+	statement->start.at_execfn = string1_address;
 
 	cursor += LOAD_STATEMENT_SIZE(*statement, start);
 
@@ -328,11 +319,6 @@ static int transfer_load_script(Tracee *tracee)
 	if (string2_size != 0) {
 		memcpy(cursor, tracee->load_info->interp->user_path, string2_size);
 		cursor += string2_size;
-	}
-
-	if (string3_size != 0) {
-		memcpy(cursor, tracee->load_info->raw_path, string3_size);
-		cursor += string3_size;
 	}
 
 	/* Sanity check.  */

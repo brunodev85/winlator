@@ -5,8 +5,10 @@ public abstract class ClientOpcodes {
     public static final byte CHANGE_WINDOW_ATTRIBUTES = 2;
     public static final byte GET_WINDOW_ATTRIBUTES = 3;
     public static final byte DESTROY_WINDOW = 4;
+    public static final byte DESTROY_SUB_WINDOWS = 5;
     public static final byte REPARENT_WINDOW = 7;
     public static final byte MAP_WINDOW = 8;
+    public static final byte MAP_SUB_WINDOWS = 9;
     public static final byte UNMAP_WINDOW = 10;
     public static final byte CONFIGURE_WINDOW = 12;
     public static final byte GET_GEOMETRY = 14;
@@ -51,7 +53,7 @@ public abstract class ClientOpcodes {
     public static final byte SET_SCREEN_SAVER = 107;
     public static final byte GET_SCREEN_SAVER = 108;
     public static final byte FORCE_SCREEN_SAVER = 115;
-    public static final byte GET_POINTER_CONTROL = 117;
+    public static final byte GET_POINTER_MAPPING = 117;
     public static final byte GET_MODIFIER_MAPPING = 119;
     public static final byte NO_OPERATION = 127;
 }

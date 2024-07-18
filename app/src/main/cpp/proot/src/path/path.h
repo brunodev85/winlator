@@ -80,7 +80,7 @@ extern int translate_path(Tracee *tracee, char host_path[PATH_MAX],
 			int dir_fd, const char *guest_path, bool deref_final);
 
 extern int detranslate_path(Tracee *tracee, char path[PATH_MAX], const char t_referrer[PATH_MAX]);
-extern bool belongs_to_guestfs(const Tracee *tracee, const char *path);
+extern bool belongs_to_guestfs(const char *path);
 
 extern void join_paths(char result[PATH_MAX], const  char *path1, const  char *path2);
 extern int list_open_fd(const Tracee *tracee);
@@ -92,8 +92,5 @@ extern size_t substitute_path_prefix(char path[PATH_MAX], size_t old_prefix_leng
 				const char *new_prefix, size_t new_prefix_length);
 
 extern int readlink_proc_pid_fd(pid_t pid, int fd, char path[PATH_MAX]);
-
-/* Check if path interpretable relatively to dirfd, see openat(2) for details. */
-#define AT_FD(dirfd, path) ((dirfd) != AT_FDCWD && ((path) != NULL && (path)[0] != '/'))
 
 #endif /* PATH_H */

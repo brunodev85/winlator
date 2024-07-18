@@ -80,7 +80,6 @@ public class ImageFs {
         return new File(rootDir, "/tmp");
     }
 
-    
     public File getLib32Dir() {
         return new File(rootDir, "/usr/lib/arm-linux-gnueabihf");
     }

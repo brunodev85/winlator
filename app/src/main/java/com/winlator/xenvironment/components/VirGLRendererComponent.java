@@ -14,7 +14,6 @@ import com.winlator.xserver.Drawable;
 import com.winlator.xserver.XServer;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class VirGLRendererComponent extends EnvironmentComponent implements ConnectionHandler, RequestHandler {
     private final XServer xServer;
@@ -105,7 +104,8 @@ public class VirGLRendererComponent extends EnvironmentComponent implements Conn
             texture.copyFromFramebuffer(framebuffer, drawable.width, drawable.height);
         }
 
-        xServer.getRenderer().xServerView.requestRender();
+        Runnable onDrawListener = drawable.getOnDrawListener();
+        if (onDrawListener != null) onDrawListener.run();
     }
 
     private native long handleNewConnection(int fd);

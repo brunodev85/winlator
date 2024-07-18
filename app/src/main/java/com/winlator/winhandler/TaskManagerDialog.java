@@ -2,11 +2,13 @@ package com.winlator.winhandler;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -15,10 +17,16 @@ import com.winlator.R;
 import com.winlator.XServerDisplayActivity;
 import com.winlator.contentdialog.ContentDialog;
 import com.winlator.core.CPUStatus;
+import com.winlator.core.FileUtils;
 import com.winlator.core.ProcessHelper;
 import com.winlator.core.StringUtils;
 import com.winlator.widget.CPUListView;
+import com.winlator.xenvironment.ImageFs;
+import com.winlator.xserver.Window;
+import com.winlator.xserver.XLock;
+import com.winlator.xserver.XServer;
 
+import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -51,6 +59,7 @@ public class TaskManagerDialog extends ContentDialog implements OnGetProcessInfo
             activity.getWinHandler().setOnGetProcessInfoListener(null);
         });
 
+        FileUtils.clear(getIconDir(activity));
         inflater = LayoutInflater.from(activity);
     }
 
@@ -105,6 +114,12 @@ public class TaskManagerDialog extends ContentDialog implements OnGetProcessInfo
         dialog.show();
     }
 
+    public static File getIconDir(Context context) {
+        File iconDir = new File(ImageFs.find(context).getRootDir(), "home/xuser/.local/share/icons/taskmgr");
+        if (!iconDir.isDirectory()) iconDir.mkdirs();
+        return iconDir;
+    }
+
     @Override
     public void show() {
         update();
@@ -137,10 +152,25 @@ public class TaskManagerDialog extends ContentDialog implements OnGetProcessInfo
 
                 int childCount = container.getChildCount();
                 View itemView = index < childCount ? container.getChildAt(index) : inflater.inflate(R.layout.process_info_list_item, container, false);
-                ((TextView)itemView.findViewById(R.id.TVName)).setText(processInfo.name);
+                ((TextView)itemView.findViewById(R.id.TVName)).setText(processInfo.name+(processInfo.wow64Process ? " *32" : ""));
                 ((TextView)itemView.findViewById(R.id.TVPID)).setText(String.valueOf(processInfo.pid));
                 ((TextView)itemView.findViewById(R.id.TVMemoryUsage)).setText(processInfo.getFormattedMemoryUsage());
                 itemView.findViewById(R.id.BTMenu).setOnClickListener((v) -> showListItemMenu(v, processInfo));
+
+                XServer xServer = activity.getXServer();
+                Window window;
+
+                try (XLock xlock = xServer.lock(XServer.Lockable.WINDOW_MANAGER)) {
+                    window = xServer.windowManager.findWindowWithProcessId(processInfo.pid);
+                }
+
+                ImageView ivIcon = itemView.findViewById(R.id.IVIcon);
+                ivIcon.setImageResource(R.drawable.taskmgr_process);
+                if (window != null) {
+                    Bitmap icon = xServer.pixmapManager.getWindowIcon(window);
+                    if (icon != null) ivIcon.setImageBitmap(icon);
+                }
+
                 if (index >= childCount) container.addView(itemView);
 
                 if (index == numProcesses-1 && childCount > numProcesses) {

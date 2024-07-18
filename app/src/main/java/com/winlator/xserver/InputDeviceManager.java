@@ -1,6 +1,5 @@
 package com.winlator.xserver;
 
-import com.winlator.core.CursorLocker;
 import com.winlator.winhandler.MouseEventFlags;
 import com.winlator.winhandler.WinHandler;
 import com.winlator.xserver.events.ButtonPress;
@@ -59,9 +58,8 @@ public class InputDeviceManager implements Pointer.OnPointerMotionListener, Keyb
     }
 
     private void updatePointWindow() {
-        Window pointWindow = xServer.windowManager.findPointWindow(xServer);
-        sendEnterLeaveNotify(this.pointWindow, pointWindow, PointerWindowEvent.Mode.NORMAL);
-        this.pointWindow = pointWindow;
+        Window pointWindow = xServer.windowManager.findPointWindow(xServer.pointer.getClampedX(), xServer.pointer.getClampedY());
+        this.pointWindow = pointWindow != null ? pointWindow : xServer.windowManager.rootWindow;
     }
 
     public Window getPointWindow() {
@@ -128,7 +126,7 @@ public class InputDeviceManager implements Pointer.OnPointerMotionListener, Keyb
 
     @Override
     public void onPointerButtonPress(Pointer.Button button) {
-        if (xServer.cursorLocker.getState() == CursorLocker.State.LOCKED) {
+        if (xServer.isRelativeMouseMovement()) {
             WinHandler winHandler = xServer.getWinHandler();
             int wheelDelta = button == Pointer.Button.BUTTON_SCROLL_UP ? MOUSE_WHEEL_DELTA : (button == Pointer.Button.BUTTON_SCROLL_DOWN ? -MOUSE_WHEEL_DELTA : 0);
             winHandler.mouseEvent(MouseEventFlags.getFlagFor(button, true), 0, 0, wheelDelta);
@@ -156,7 +154,7 @@ public class InputDeviceManager implements Pointer.OnPointerMotionListener, Keyb
 
     @Override
     public void onPointerButtonRelease(Pointer.Button button) {
-        if (xServer.cursorLocker.getState() == CursorLocker.State.LOCKED) {
+        if (xServer.isRelativeMouseMovement()) {
             WinHandler winHandler = xServer.getWinHandler();
             winHandler.mouseEvent(MouseEventFlags.getFlagFor(button, false), 0, 0, 0);
         }

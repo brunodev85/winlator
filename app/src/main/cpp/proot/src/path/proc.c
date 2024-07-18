@@ -31,6 +31,8 @@
 #include "path/path.h"
 #include "path/binding.h"
 
+extern char *root_path;
+
 /**
  * This function emulates the @result of readlink("@base/@component")
  * with respect to @tracee, where @base belongs to "/proc" (according
@@ -104,7 +106,7 @@ Action readlink_proc(const Tracee *tracee, char result[PATH_MAX],
 		 * of tracee->???.  */
 		SUBSTITUTE(exe, known_tracee->exe);
 		SUBSTITUTE(cwd, known_tracee->fs->cwd);
-		SUBSTITUTE(root, get_root(known_tracee));
+		SUBSTITUTE(root, root_path);
 #undef SUBSTITUTE
 		return DEFAULT;
 

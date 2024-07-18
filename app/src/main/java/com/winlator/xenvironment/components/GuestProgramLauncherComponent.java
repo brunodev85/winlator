@@ -3,18 +3,16 @@ package com.winlator.xenvironment.components;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Process;
-import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
-import com.winlator.MainActivity;
 import com.winlator.box86_64.Box86_64Preset;
 import com.winlator.box86_64.Box86_64PresetManager;
 import com.winlator.core.Callback;
+import com.winlator.core.DefaultVersion;
 import com.winlator.core.EnvVars;
 import com.winlator.core.ProcessHelper;
 import com.winlator.core.TarCompressorUtils;
-import com.winlator.core.DefaultVersion;
 import com.winlator.xconnector.UnixSocketConfig;
 import com.winlator.xenvironment.EnvironmentComponent;
 import com.winlator.xenvironment.ImageFs;
@@ -30,7 +28,7 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
     private String box64Preset = Box86_64Preset.COMPATIBILITY;
     private Callback<Integer> terminationCallback;
     private static final Object lock = new Object();
-    private static final String TAG = "WINEINSTALL";
+    private boolean wow64Mode = true;
 
     @Override
     public void start() {
@@ -65,6 +63,14 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
 
     public void setGuestExecutable(String guestExecutable) {
         this.guestExecutable = guestExecutable;
+    }
+
+    public boolean isWoW64Mode() {
+        return wow64Mode;
+    }
+
+    public void setWoW64Mode(boolean wow64Mode) {
+        this.wow64Mode = wow64Mode;
     }
 
     public String[] getBindingPaths() {
@@ -106,9 +112,12 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
         File tmpDir = environment.getTmpDir();
         String nativeLibraryDir = context.getApplicationInfo().nativeLibraryDir;
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean enableBox86_64Logs = preferences.getBoolean("enable_box86_64_logs", false);
+
         EnvVars envVars = new EnvVars();
-        addBox86EnvVars(envVars);
-        addBox64EnvVars(envVars);
+        if (!wow64Mode) addBox86EnvVars(envVars, enableBox86_64Logs);
+        addBox64EnvVars(envVars, enableBox86_64Logs);
         envVars.put("HOME", ImageFs.HOME_PATH);
         envVars.put("USER", ImageFs.USER);
         envVars.put("TMPDIR", "/tmp");
@@ -119,6 +128,7 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
         envVars.put("ANDROID_SYSVSHM_SERVER", UnixSocketConfig.SYSVSHM_SERVER_PATH);
         envVars.put("WINEDLLPATH", "/opt/installed-wine/preinstall/wine/wine-lutris-GE-Proton8-25-x86_64/lib/wine:/opt/installed-wine/preinstall/wine/wine-lutris-GE-Proton8-25-x86_64/lib/wine:/opt/wine/lib/wine:/opt/wine/lib64/wine");
         envVars.put("WINEDLLOVERRIDES", "winegstreamer=");
+
         if ((new File(imageFs.getLib64Dir(), "libandroid-sysvshm.so")).exists() ||
             (new File(imageFs.getLib32Dir(), "libandroid-sysvshm.so")).exists()) envVars.put("LD_PRELOAD", "libandroid-sysvshm.so");
         if (this.envVars != null) envVars.putAll(this.envVars);
@@ -149,13 +159,9 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
         envVars.clear();
         envVars.put("PROOT_TMP_DIR", tmpDir);
         envVars.put("PROOT_LOADER", nativeLibraryDir+"/libproot-loader.so");
-        envVars.put("PROOT_LOADER_32", nativeLibraryDir+"/libproot-loader32.so");
+        if (!wow64Mode) envVars.put("PROOT_LOADER_32", nativeLibraryDir+"/libproot-loader32.so");
 
-        Log.d(TAG, "PROOT_TMP_DIR="+tmpDir+" PROOT_LOADER="+nativeLibraryDir+"/libproot-loader.so"+" PROOT_LOADER_32="+nativeLibraryDir+"/libproot-loader32.so "+command);
-
-        if (MainActivity.DEBUG_LEVEL >= 1) ProcessHelper.debugMode = true;
         return ProcessHelper.exec(command, envVars.toStringArray(), rootDir, (status) -> {
-            Log.d(TAG, "Guest program terminated with status "+status);
             synchronized (lock) {
                 pid = -1;
             }
@@ -173,7 +179,14 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
         String currentBox64Version = preferences.getString("current_box64_version", "");
         File rootDir = imageFs.getRootDir();
 
-        if (!box86Version.equals(currentBox86Version)) {
+        if (wow64Mode) {
+            File box86File = new File(rootDir, "/usr/local/bin/box86");
+            if (box86File.isFile()) {
+                box86File.delete();
+                preferences.edit().putString("current_box86_version", "").apply();
+            }
+        }
+        else if (!box86Version.equals(currentBox86Version)) {
             TarCompressorUtils.extract(TarCompressorUtils.Type.ZSTD, context, "box86_64/box86-"+box86Version+".tzst", rootDir);
             preferences.edit().putString("current_box86_version", box86Version).apply();
         }
@@ -184,22 +197,30 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
         }
     }
 
-    private void addBox86EnvVars(EnvVars envVars) {
-        envVars.put("BOX86_NOBANNER", MainActivity.DEBUG_LEVEL == 1 ? "0" : "1");
+    private void addBox86EnvVars(EnvVars envVars, boolean enableLogs) {
+        envVars.put("BOX86_NOBANNER", ProcessHelper.PRINT_DEBUG && enableLogs ? "0" : "1");
         envVars.put("BOX86_DYNAREC", "1");
 
-        if (MainActivity.DEBUG_LEVEL >= 3) envVars.put("BOX86_LOG", MainActivity.DEBUG_LEVEL == 3 ? "1" : "2");
+        if (enableLogs) {
+            envVars.put("BOX86_LOG", "1");
+            envVars.put("BOX86_DYNAREC_MISSING", "1");
+        }
 
         envVars.putAll(Box86_64PresetManager.getEnvVars("box86", environment.getContext(), box86Preset));
         envVars.put("BOX86_X11GLX", "1");
         envVars.put("BOX86_NORCFILES", "1");
     }
 
-    private void addBox64EnvVars(EnvVars envVars) {
-        envVars.put("BOX64_NOBANNER", MainActivity.DEBUG_LEVEL == 1 ? "0" : "1");
+    private void addBox64EnvVars(EnvVars envVars, boolean enableLogs) {
+        envVars.put("BOX64_NOBANNER", ProcessHelper.PRINT_DEBUG && enableLogs ? "0" : "1");
         envVars.put("BOX64_DYNAREC", "1");
+        if (wow64Mode) envVars.put("BOX64_MMAP32", "1");
+        envVars.put("BOX64_AVX", "1");
 
-        if (MainActivity.DEBUG_LEVEL >= 3) envVars.put("BOX64_LOG", MainActivity.DEBUG_LEVEL == 3 ? "1" : "2");
+        if (enableLogs) {
+            envVars.put("BOX64_LOG", "1");
+            envVars.put("BOX64_DYNAREC_MISSING", "1");
+        }
 
         envVars.putAll(Box86_64PresetManager.getEnvVars("box64", environment.getContext(), box64Preset));
         envVars.put("BOX64_X11GLX", "1");

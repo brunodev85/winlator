@@ -2,8 +2,6 @@ package com.winlator.xserver;
 
 import android.util.SparseArray;
 
-import androidx.annotation.NonNull;
-
 import com.winlator.xserver.events.Event;
 import com.winlator.xserver.events.PropertyNotify;
 
@@ -22,6 +20,7 @@ public class Window extends XResource {
     public static final int FLAG_STACK_MODE = 1<<6;
     public enum StackMode {ABOVE, BELOW, TOP_IF, BOTTOM_IF, OPPOSITE}
     public enum MapState {UNMAPPED, UNVIEWABLE, VIEWABLE}
+    public enum WMHints {FLAGS, INPUT, INITIAL_STATE, ICON_PIXMAP, ICON_WINDOW, ICON_X, ICON_Y, ICON_MASK, WINDOW_GROUP}
     private Drawable content;
     private short x;
     private short y;
@@ -106,12 +105,6 @@ public class Window extends XResource {
         return properties.get(id);
     }
 
-    @NonNull
-    public String getPropertyValue(String name) {
-        Property property = getProperty(Atom.getId(name));
-        return property != null ? property.toString() : "";
-    }
-
     public void addProperty(Property property) {
         properties.put(property.name, property);
     }
@@ -121,11 +114,11 @@ public class Window extends XResource {
         sendEvent(Event.PROPERTY_CHANGE, new PropertyNotify(this, id, true));
     }
 
-    public boolean modifyProperty(int atom, int type, Property.Format format, Property.Mode mode, byte[] data) {
+    public Property modifyProperty(int atom, int type, Property.Format format, Property.Mode mode, byte[] data) {
         Property property = getProperty(atom);
         boolean modified = false;
         if (property == null) {
-            addProperty(new Property(atom, type, format, data));
+            addProperty((property = new Property(atom, type, format, data)));
             modified = true;
         }
         else if (mode == Property.Mode.REPLACE) {
@@ -145,16 +138,46 @@ public class Window extends XResource {
             modified = true;
         }
 
-        if (modified) sendEvent(Event.PROPERTY_CHANGE, new PropertyNotify(this, atom, false));
-        return modified;
+        if (modified) {
+            sendEvent(Event.PROPERTY_CHANGE, new PropertyNotify(this, atom, false));
+            return property;
+        }
+        else return null;
     }
 
     public String getName() {
-        return getPropertyValue("WM_NAME");
+        Property property = getProperty(Atom.getId("WM_NAME"));
+        return property != null ? property.toString() : "";
     }
 
     public String getClassName() {
-        return getPropertyValue("WM_CLASS");
+        Property property = getProperty(Atom.getId("WM_CLASS"));
+        return property != null ? property.toString() : "";
+    }
+
+    public int getWMHintsValue(WMHints wmHints) {
+        Property property = getProperty(Atom.getId("WM_HINTS"));
+        return property != null ? property.getInt(wmHints.ordinal()) : 0;
+    }
+
+    public int getProcessId() {
+        Property property = getProperty(Atom.getId("_NET_WM_PID"));
+        return property != null ? property.getInt(0) : 0;
+    }
+
+    public boolean isWoW64() {
+        Property property = getProperty(Atom.getId("_NET_WM_WOW64"));
+        return property != null && property.data.get(0) == 1;
+    }
+
+    public long getHandle() {
+        Property property = getProperty(Atom.getId("_NET_WM_HWND"));
+        return property != null ? property.getLong(0) : 0;
+    }
+
+    public boolean isApplicationWindow() {
+        int windowGroup = getWMHintsValue(WMHints.WINDOW_GROUP);
+        return attributes.isMapped() && !getName().isEmpty() && windowGroup == id && width > 1 && height > 1;
     }
 
     public boolean isInputOutput() {
@@ -381,5 +404,14 @@ public class Window extends XResource {
             window.attributes.setEnabled(false);
             stack.addAll(window.children);
         }
+    }
+
+    public String serializeProperties() {
+        String result = "";
+        for (int i = 0; i < properties.size(); i++) {
+            Property property = properties.valueAt(i);
+            result += property.nameAsString()+"="+property+"\n";
+        }
+        return result;
     }
 }

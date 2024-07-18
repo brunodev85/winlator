@@ -111,6 +111,10 @@ public abstract class WindowRequests {
         client.xServer.windowManager.destroyWindow(inputStream.readInt());
     }
 
+    public static void destroySubWindows(XClient client, XInputStream inputStream, XOutputStream outputStream) {
+        client.xServer.windowManager.destroyWindow(inputStream.readInt());
+    }
+
     public static void reparentWindow(XClient client, XInputStream inputStream, XOutputStream outputStream) throws XRequestError {
         int windowId = inputStream.readInt();
         int parentId = inputStream.readInt();
@@ -129,6 +133,23 @@ public abstract class WindowRequests {
         int windowId = inputStream.readInt();
         Window window = client.xServer.windowManager.getWindow(windowId);
         if (window == null) throw new BadWindow(windowId);
+        client.xServer.windowManager.mapWindow(window);
+    }
+
+    public static void mapSubWindows(XClient client, XInputStream inputStream, XOutputStream outputStream) throws XRequestError {
+        int windowId = inputStream.readInt();
+        Window window = client.xServer.windowManager.getWindow(windowId);
+        if (window == null) throw new BadWindow(windowId);
+        for (Window child : window.getChildren())
+            mapSubWindows(client, child.id);
+        client.xServer.windowManager.mapWindow(window);
+    }
+
+    private static void mapSubWindows(XClient client, int windowId) throws XRequestError {
+        Window window = client.xServer.windowManager.getWindow(windowId);
+        if (window == null) throw new BadWindow(windowId);
+        for (Window child : window.getChildren())
+            mapSubWindows(client, child.id);
         client.xServer.windowManager.mapWindow(window);
     }
 
@@ -159,7 +180,10 @@ public abstract class WindowRequests {
             inputStream.skip(-totalSize & 3);
         }
 
-        if (!window.modifyProperty(atom, type, Property.Format.valueOf(format), mode, data)) throw new BadMatch();
+        Property property = window.modifyProperty(atom, type, Property.Format.valueOf(format), mode, data);
+        if (property == null) throw new BadMatch();
+
+        client.xServer.windowManager.triggerOnModifyWindowProperty(window, property);
     }
 
     public static void deleteProperty(XClient client, XInputStream inputStream, XOutputStream outputStream) throws XRequestError {
@@ -205,7 +229,7 @@ public abstract class WindowRequests {
                 outputStream.writePad(12);
             }
             else {
-                byte[] data = property.data();
+                byte[] data = property.data.array();
                 int offset = longOffset * 4;
                 int length = Math.min(data.length - offset, longLength * 4);
                 if (length < 0) throw new BadValue(longOffset);
@@ -240,7 +264,7 @@ public abstract class WindowRequests {
 
         try (XStreamLock lock = outputStream.lock()) {
             outputStream.writeByte(RESPONSE_CODE_SUCCESS);
-            outputStream.writeByte((byte)(client.xServer.cursorLocker.getState() != CursorLocker.State.LOCKED ? 1 : 0));
+            outputStream.writeByte((byte)(!client.xServer.isRelativeMouseMovement() ? 1 : 0));
             outputStream.writeShort(client.getSequenceNumber());
             outputStream.writeInt(0);
             outputStream.writeInt(client.xServer.windowManager.rootWindow.id);
@@ -283,7 +307,7 @@ public abstract class WindowRequests {
     }
 
     public static void warpPointer(XClient client, XInputStream inputStream, XOutputStream outputStream) throws IOException, XRequestError {
-        if (client.xServer.cursorLocker.getState() == CursorLocker.State.LOCKED) {
+        if (client.xServer.isRelativeMouseMovement()) {
             client.skipRequest();
             return;
         }
@@ -307,11 +331,13 @@ public abstract class WindowRequests {
         }
 
         if (dstWindow == null) {
-            client.xServer.pointer.moveTo(client.xServer.pointer.getX() + dstX, client.xServer.pointer.getY() + dstY);
+            client.xServer.pointer.setX(client.xServer.pointer.getX() + dstX);
+            client.xServer.pointer.setY(client.xServer.pointer.getY() + dstY);
         }
         else {
             short[] localPoint = dstWindow.localPointToRoot(dstX, dstY);
-            client.xServer.pointer.moveTo(localPoint[0], localPoint[1]);
+            client.xServer.pointer.setX(localPoint[0]);
+            client.xServer.pointer.setY(localPoint[1]);
         }
     }
 

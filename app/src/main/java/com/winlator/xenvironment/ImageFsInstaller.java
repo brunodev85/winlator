@@ -14,7 +14,7 @@ import com.winlator.core.DownloadProgressDialog;
 import com.winlator.core.FileUtils;
 import com.winlator.core.PreloaderDialog;
 import com.winlator.core.TarCompressorUtils;
-import com.winlator.xenvironment.ImageFs;
+import com.winlator.core.WineInfo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,11 +26,17 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class ImageFsInstaller {
-    public static final byte LATEST_VERSION = 5;
+    public static final byte LATEST_VERSION = 8;
 
     private static void resetContainerImgVersions(Context context) {
         ContainerManager manager = new ContainerManager(context);
         for (Container container : manager.getContainers()) {
+            String imgVersion = container.getExtra("imgVersion");
+            String wineVersion = container.getWineVersion();
+            if (!imgVersion.isEmpty() && WineInfo.isMainWineVersion(wineVersion) && Short.parseShort(imgVersion) <= 5) {
+                container.putExtra("wineprefixNeedsUpdate", "t");
+            }
+
             container.putExtra("imgVersion", null);
             container.saveData();
         }
@@ -105,6 +111,7 @@ public abstract class ImageFsInstaller {
     }
 
     public static void generateCompactContainerPattern(final AppCompatActivity activity) {
+        AppUtils.keepScreenOn(activity);
         PreloaderDialog preloaderDialog = new PreloaderDialog(activity);
         preloaderDialog.show(R.string.loading);
         Executors.newSingleThreadExecutor().execute(() -> {
