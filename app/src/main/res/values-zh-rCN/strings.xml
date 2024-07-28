@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Winlator</string>
+    <string name="run">运行</string>
+    <string name="edit">编辑</string>
+    <string name="remove">移除</string>
+    <string name="add">新增</string>
+    <string name="shortcuts">快捷方式</string>
+    <string name="containers">容器</string>
+    <string name="input_controls">输入控制器</string>
+    <string name="no_items_to_display">没有需要显示的项目</string>
+    <string name="new_container">新建容器</string>
+    <string name="edit_container">编辑容器</string>
+    <string name="creating_container">创建容器中...</string>
+    <string name="removing_container">移除容器中...</string>
+    <string name="duplicating_container">复制容器中...</string>
+    <string name="installing_system_files">安装系统文件中...</string>
+    <string name="updating_system_files">更新系统文件中...</string>
+    <string name="starting_up">启动中...</string>
+    <string name="unable_to_install_system_files">无法安装系统文件,请从官网重新下载软件</string>
+    <string name="keyboard">键盘</string>
+    <string name="toggle_fullscreen">全屏切换</string>
+    <string name="exit">退出</string>
+    <string name="no_control_element_selected">未选择控制器元素</string>
+    <string name="scale">缩放</string>
+    <string name="shape">形状</string>
+    <string name="type">类型</string>
+    <string name="binding">绑定</string>
+    <string name="binding_up">向上绑定</string>
+    <string name="binding_right">向右绑定</string>
+    <string name="binding_down">向下绑定</string>
+    <string name="binding_left">向左绑定</string>
+    <string name="overlay_opacity">覆盖层透明度</string>
+    <string name="profile">配置文件</string>
+    <string name="select_profile">选择配置文件</string>
+    <string name="profile_name">配置文件名称</string>
+    <string name="name">名称</string>
+    <string name="ok">确定</string>
+    <string name="cancel">取消</string>
+    <string name="untitled">未命名</string>
+    <string name="no_profile_selected">未选择配置文件</string>
+    <string name="no_profile_found">找不到配置文件</string>
+    <string name="do_you_want_to_remove_this_profile">您要移除此配置文件吗?</string>
+    <string name="do_you_want_to_duplicate_this_profile">您要复制此配置文件吗?</string>
+    <string name="do_you_want_to_duplicate_this_preset">您要复制此预设吗?</string>
+    <string name="do_you_want_to_remove_this_container">您要移除此容器吗?</string>
+    <string name="do_you_want_to_duplicate_this_container">您要复制此容器吗?</string>
+    <string name="do_you_want_to_remove_this_shortcut">您要移除此快捷方式吗?</string>
+    <string name="do_you_want_to_remove_this_controller">您要移除此控制器吗?</string>
+    <string name="do_you_want_to_remove_this_wine_version">您要移除此WINE版本吗?</string>
+    <string name="do_you_want_to_remove_this_preset">您要移除此预设吗?</string>
+    <string name="do_you_want_to_end_this_process">您要结束此进程吗?</string>
+    <string name="controls_editor">控制器编辑器</string>
+    <string name="enabled">启用</string>
+    <string name="disabled">禁用</string>
+    <string name="container">容器</string>
+    <string name="screen_size">屏幕尺寸</string>
+    <string name="new_environment_variable">新建环境变量</string>
+    <string name="environment_variables">环境变量</string>
+    <string name="value">值</string>
+    <string name="processor_affinity">处理器关联(64位应用)</string>
+    <string name="processor_affinity_32_bit_apps">处理器关联(32位应用)</string>
+    <string name="cursor_speed">光标速度</string>
+    <string name="relative_mouse_movement">相对鼠标移动</string>
+    <string name="toggle_switch">切换开关</string>
+    <string name="profile_exported_to">配置文件已导出到</string>
+    <string name="unable_to_import_profile">无法导入配置文件</string>
+    <string name="wine_configuration">WINE配置</string>
+    <string name="registry_keys">注册表键</string>
+    <string name="csmt">CSMT(命令流多线程)</string>
+    <string name="gpu_name">GPU名称</string>
+    <string name="offscreen_rendering_mode">离屏渲染模式</string>
+    <string name="strict_shader_math">严格着色器数学</string>
+    <string name="video_memory_size">显存大小</string>
+    <string name="show_fps">显示FPS</string>
+    <string name="none">无</string>
+    <string name="custom_text">自定义文本</string>
+    <string name="icon">图标</string>
+    <string name="import_profile">导入配置文件</string>
+    <string name="export_profile">导出配置文件</string>
+    <string name="touchpad_help">触摸板帮助</string>
+    <string name="touchpad_help_mouse_left_click_title">鼠标左键单击</string>
+    <string name="touchpad_help_mouse_left_click_description">用一根手指轻点</string>
+    <string name="touchpad_help_mouse_right_click_title">鼠标右键单击</string>
+    <string name="touchpad_help_mouse_right_click_description">用一根手指轻点,然后用另一根手指轻点</string>
+    <string name="touchpad_help_mouse_scroll_wheel_title">鼠标滚动条</string>
+    <string name="touchpad_help_mouse_scroll_wheel_description">用两个手指轻点并移动</string>
+    <string name="touchpad_help_main_menu_title">主菜单</string>
+    <string name="touchpad_help_main_menu_description">四指轻点</string>
+    <string name="duplicate">复制</string>
+    <string name="about">关于</string>
+    <string name="credits_and_third_party_apps">鸣谢及第三方应用</string>
+    <string name="external_controllers">外部控制器</string>
+    <string name="graphics_driver">显卡驱动</string>
+    <string name="audio_driver">音频驱动</string>
+    <string name="loading">加载中...</string>
+    <string name="press_any_button_on_your_controller">按下控制器上的任意按钮</string>
+    <string name="bindings">绑定</string>
+    <string name="show_touchscreen_controls">显示触摸屏控制器</string>
+    <string name="dxwrapper">DX转换器</string>
+    <string name="mouse_warp_override">鼠标拖拽覆盖</string>
+    <string name="direct3d">Direct3D</string>
+    <string name="directsound">DirectSound</string>
+    <string name="directmusic">DirectMusic</string>
+    <string name="directplay">DirectPlay</string>
+    <string name="directshow">DirectShow</string>
+    <string name="directx">DirectX</string>
+    <string name="vcrun2010">Visual C++ 2010</string>
+    <string name="wmdecoder">Windows Media 解码器</string>
+    <string name="settings">设置</string>
+    <string name="exec_arguments">执行参数</string>
+    <string name="win_components">Win组件</string>
+    <string name="drives">驱动器</string>
+    <string name="force_fullscreen">强制全屏</string>
+    <string name="range">范围</string>
+    <string name="enable">启用</string>
+    <string name="disable">禁用</string>
+    <string name="force">强制</string>
+    <string name="installed_wine">已安装的WINE</string>
+    <string name="install_wine">安装WINE</string>
+    <string name="arch">架构</string>
+    <string name="version">版本</string>
+    <string name="unable_to_install_wine">无法安装WINE</string>
+    <string name="unable_to_remove_this_wine_version">无法删除此WINE版本</string>
+    <string name="wine_version">WINE版本</string>
+    <string name="removing_wine">移除WINE中...</string>
+    <string name="preparing_installation">准备安装中...</string>
+    <string name="finishing_installation">完成安装中...</string>
+    <string name="storage_info">存储信息</string>
+    <string name="drive_c">C盘</string>
+    <string name="cache">缓存</string>
+    <string name="total">总计</string>
+    <string name="clear_cache">清除缓存</string>
+    <string name="estimated_used_space">估计使用空间</string>
+    <string name="advanced">高级</string>
+    <string name="box86_box64">Box86/Box64</string>
+    <string name="system">系统</string>
+    <string name="box86_preset">Box86预设</string>
+    <string name="box64_preset">Box64预设</string>
+    <string name="box86_version">Box86版本</string>
+    <string name="box64_version">Box64版本</string>
+    <string name="letter">盘符</string>
+    <string name="target_path">目标路径</string>
+    <string name="xserver">X 服务器</string>
+    <string name="use_dri3_extension">使用DRI3扩展</string>
+    <string name="width">宽度</string>
+    <string name="height">高度</string>
+    <string name="old">旧的</string>
+    <string name="_new">新的</string>
+    <string name="task_manager">任务管理器</string>
+    <string name="process_name">进程名称</string>
+    <string name="pid">进程ID</string>
+    <string name="memory">内存</string>
+    <string name="end_process">结束进程</string>
+    <string name="new_task">新建任务</string>
+    <string name="processes">进程</string>
+    <string name="orientation">方向</string>
+    <string name="horizontal">水平</string>
+    <string name="vertical">垂直</string>
+    <string name="open_file">打开文件</string>
+    <string name="download_file">下载文件</string>
+    <string name="do_you_want_to_download_the_selected_profiles">您要下载选定的配置文件吗?</string>
+    <string name="downloading_file">正在下载文件...</string>
+    <string name="unable_to_load_profile_list">无法加载配置文件列表</string>
+    <string name="copy">复制</string>
+    <string name="installed_version">已安装的版本</string>
+    <string name="unable_to_download_file">无法下载文件</string>
+    <string name="stability">稳定性</string>
+    <string name="compatibility">兼容性</string>
+    <string name="intermediate">中间</string>
+    <string name="performance">性能</string>
+    <string name="preset">预设</string>
+    <string name="you_cannot_remove_this_preset">您无法删除此预设</string>
+    <string name="dxwrapper_help_content">
+<![CDATA[
+<i><b>WineD3D</b></i> 是将  DirectX 1-11 转换为 OpenGL的翻译层,更注重兼容<br /><br />
+<i><b>DXVK</b></i> 是将  Direct3D 9-11 转换为 Vulkan的翻译层,更注重性能<br /><br />
+<i><b>VKD3D</b></i> 是将  Direct3D 12 API 转换为 Vulkan的翻译层<br /><br />
+<i><b>CNC DDraw</b></i> 是用于提高经典游戏兼容性的 DirectDraw实现
+    ]]></string>
+    <string name="box86_64_env_var_help__dynarec_safeflags">
+<![CDATA[
+处理CALL/RET操作码上的标志<br /><br />
+<b>0</b>:将CALL/RET视为永远不需要标志(更快,但不稳定)<br />
+<b>1</b>:大多数RET将需要标志大多数,CALL将不需要<br />
+<b>2</b>:所有CALL/RET都将需要标志(更慢)
+    ]]></string>
+    <string name="box86_64_env_var_help__dynarec_fastnan">生成类似于x86上的-NAN</string>
+    <string name="box86_64_env_var_help__dynarec_fastround">生成精确的x86舍入</string>
+    <string name="box86_64_env_var_help__dynarec_x87double">使用Float/Double进行x87仿真</string>
+    <string name="box86_64_env_var_help__dynarec_bigblock">
+<![CDATA[
+Dynarec 构建大块<br /><br />
+<b>0</b>:不尝试构建尽可能大的块<br />
+<b>1</b>:尽可能大地构建Dynarec块<br />
+<b>2</b>:构建更大的Dynarec块(当块重叠时继续,但仅适用于elf内存中的块)<br />
+<b>3</b>:构建更大的Dynarec块(当块重叠时继续,适用于所有类型的内存)
+    ]]></string>
+    <string name="box86_64_env_var_help__dynarec_strongmem">
+<![CDATA[
+模拟强内存模型<br /><br />
+<b>0</b>:什么都不尝试<br />
+<b>1</b>:在写入内存时启用一些内存屏障(在某些MOV操作码上)<br />
+<b>2</b>:所有1加上每个使用MOV写入内存时的内存屏障<br />
+<b>3</b>:所有2加上从内存读取和某些SSE/SSE2操作码时的内存屏障
+    ]]></string>
+    <string name="box86_64_env_var_help__dynarec_forward">构建块时定义允许的最大前瞻值</string>
+    <string name="box86_64_env_var_help__dynarec_callret">CALL/RET操作码的优化</string>
+    <string name="box86_64_env_var_help__dynarec_wait">定义Dynarec是否等待FillBlock准备就绪</string>
+    <string name="columns">列</string>
+    <string name="directinput_mapper_type">DirectInput映射器类型</string>
+    <string name="desktop">桌面</string>
+    <string name="theme">主题</string>
+    <string name="background">背景</string>
+    <string name="max_device_memory">最大设备内存</string>
+    <string name="frame_rate">帧率</string>
+    <string name="configuration">配置</string>
+    <string name="browse">浏览</string>
+    <string name="magnifier">放大镜</string>
+    <string name="bring_to_front">置于顶层</string>
+    <string name="options">选项</string>
+    <string name="enable_experimental_wow64_mode">启用实验性WoW64模式</string>
+    <string name="logs">日志</string>
+    <string name="enable_wine_debug">启用WINE调试</string>
+    <string name="enable_box86_64_logs">启用Box86/Box64日志</string>
+    <string name="export">导出</string>
+    <string name="logs_exported_to">日志导出</string>
+    <string name="general">常规</string>
+    <string name="msg_warning_install_wine">警告:仅建议出于测试目的安装新版本的WINE</string>
+    <string name="startup_selection">启动选择</string>
+    <string name="wine_debug_channel">WINE调试通道</string>
+</resources>
