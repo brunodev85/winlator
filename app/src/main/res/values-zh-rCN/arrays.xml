@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="screen_size_entries">
+        <item>自定义</item>
+        <item>640x480(4:3)</item>
+        <item>800x600(4:3)</item>
+        <item>854x480(16:9)</item>
+        <item>960x544(16:9)</item>
+        <item>1024x768(4:3)</item>
+        <item>1280x720(16:9)</item>
+        <item>1280x800(16:10)</item>
+        <item>1280x1024(5:4)</item>
+        <item>1366x768(16:9)</item>
+        <item>1440x900(16:10)</item>
+        <item>1600x900(16:9)</item>
+        <item>1920x1080(16:9)</item>
+    </string-array>
+    <string-array name="graphics_driver_entries">
+        <item>Turnip(高通/Adreno)</item>
+        <item>VirGL(通用/Universal)</item>
+    </string-array>
+    <string-array name="audio_driver_entries">
+        <item>ALSA</item>
+        <item>PulseAudio</item>
+    </string-array>
+    <string-array name="binding_type_entries">
+        <item>键盘</item>
+        <item>鼠标</item>
+        <item>手柄</item>
+    </string-array>
+    <string-array name="dxwrapper_entries">
+        <item>WineD3D</item>
+        <item>DXVK(推荐)</item>
+        <item>VKD3D</item>
+        <item>CNC DDraw</item>
+    </string-array>
+    <string-array name="dxvk_version_entries">
+        <item>0.96</item>
+        <item>1.10.3(默认)</item>
+        <item>2.3.1(推荐)</item>
+    </string-array>
+    <string-array name="dxvk_max_device_memory_entries">
+        <item>0(默认)</item>
+        <item>512MB</item>
+        <item>1024MB</item>
+        <item>2048MB</item>
+        <item>4096MB</item>
+    </string-array>
+    <string-array name="video_memory_size_entries">
+        <item>32MB</item>
+        <item>64MB</item>
+        <item>128MB</item>
+        <item>256MB</item>
+        <item>512MB</item>
+        <item>1024MB</item>
+        <item>2048MB</item>
+        <item>4096MB</item>
+    </string-array>
+    <string-array name="dxvk_framerate_entries">
+        <item>0(默认)</item>
+        <item>30</item>
+        <item>60</item>
+        <item>120</item>
+    </string-array>
+    <string-array name="wincomponent_entries">
+        <item>内建(Wine)</item>
+        <item>原生(Windows)</item>
+    </string-array>
+    <string-array name="box86_version_entries">
+        <item>0.3.2(默认)</item>
+        <item>0.3.7(推荐)</item>
+    </string-array>
+    <string-array name="box64_version_entries">
+        <item>0.2.8(默认)</item>
+        <item>0.2.9(推荐)</item>
+    </string-array>
+    <string-array name="dinput_mapper_type_entries">
+        <item>标准(适用老手柄)</item>
+        <item>XInput(适用Xbox手柄)</item>
+    </string-array>
+    <string-array name="desktop_theme_entries">
+        <item>亮色</item>
+        <item>暗色</item>
+    </string-array>
+    <string-array name="desktop_background_type_entries">
+        <item>图片</item>
+        <item>纯色</item>
+    </string-array>
+    <string-array name="startup_selection_entries">
+        <item>常规(加载所有服务)</item>
+        <item>基本(仅加载必要服务)</item>
+        <item>严格(启动时停止服务)</item>
+    </string-array>
+</resources>
