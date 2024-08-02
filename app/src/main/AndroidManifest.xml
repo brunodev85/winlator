@@ -10,6 +10,9 @@
         android:name="com.oculus.feature.PASSTHROUGH"
         android:required="false" />
     <uses-feature
+        android:name="oculus.software.handtracking"
+        android:required="false" />
+    <uses-feature
         android:name="oculus.software.overlay_keyboard"
         android:required="false" />
 
@@ -56,6 +59,7 @@
             android:process=":vr_process"
             android:theme="@style/AppThemeFullscreen">
             <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
                 <category android:name="com.oculus.intent.category.VR" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
