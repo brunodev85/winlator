@@ -38,6 +38,9 @@ public class TouchpadView extends View {
     private final XServer xServer;
     private Runnable fourFingersTapCallback;
     private final float[] xform = XForm.getInstance();
+    private boolean cursorDirect = false;
+    private float directStartX = 0;
+    private float directStartY = 0;
 
     public TouchpadView(Context context, XServer xServer) {
         super(context);
@@ -123,16 +126,41 @@ public class TouchpadView extends View {
         switch (actionMasked) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_POINTER_DOWN:
-                if (event.isFromSource(InputDevice.SOURCE_MOUSE)) return true;
-                scrollAccumY = 0;
-                scrolling = false;
-                fingers[pointerId] = new Finger(event.getX(actionIndex), event.getY(actionIndex));
+                if (event.isFromSource(InputDevice.SOURCE_MOUSE)) {
+                    break;
+                }
+                else if (cursorDirect) {
+                    if (numFingers == 0) {
+                        float[] transformedPoint = XForm.transformPoint(xform, event.getX(), event.getY());
+                        if (Math.hypot(transformedPoint[0] - directStartX, transformedPoint[1] - directStartY) > MAX_TAP_TRAVEL_DISTANCE) {
+                            directStartX = transformedPoint[0];
+                            directStartY = transformedPoint[1];
+                        }
+                        xServer.injectPointerMove((int)directStartX, (int)directStartY);
+                        postDelayed(() -> {
+                            xServer.injectPointerButtonPress(Pointer.Button.BUTTON_LEFT);
+                        }, 30);
+                    }
+                    else if (numFingers == 1) {
+                        xServer.injectPointerButtonPress(Pointer.Button.BUTTON_RIGHT);
+                    }
+                }
+                else {
+                    scrollAccumY = 0;
+                    scrolling = false;
+                    fingers[pointerId] = new Finger(event.getX(actionIndex), event.getY(actionIndex));
+                }
                 numFingers++;
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (event.isFromSource(InputDevice.SOURCE_MOUSE)) {
                     float[] transformedPoint = XForm.transformPoint(xform, event.getX(), event.getY());
                     xServer.injectPointerMove((int)transformedPoint[0], (int)transformedPoint[1]);
+                }
+                else if (cursorDirect && numFingers == 1) {
+                    float[] transformedPoint = XForm.transformPoint(xform, event.getX(), event.getY());
+                    if (Math.hypot(transformedPoint[0] - directStartX, transformedPoint[1] - directStartY) > MAX_TAP_TRAVEL_DISTANCE)
+                        xServer.injectPointerMove((int)transformedPoint[0], (int)transformedPoint[1]);
                 }
                 else {
                     for (byte i = 0; i < MAX_FINGERS; i++) {
@@ -153,12 +181,22 @@ public class TouchpadView extends View {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_POINTER_UP:
-                if (fingers[pointerId] != null) {
+                if (cursorDirect) {
+                    if (numFingers == 1) {
+                        postDelayed(() -> {
+                            xServer.injectPointerButtonRelease(Pointer.Button.BUTTON_LEFT);
+                        }, 30);
+                    }
+                    else if (numFingers == 2) {
+                        xServer.injectPointerButtonRelease(Pointer.Button.BUTTON_RIGHT);
+                    }
+                }
+                else if (fingers[pointerId] != null) {
                     fingers[pointerId].update(event.getX(actionIndex), event.getY(actionIndex));
                     handleFingerUp(fingers[pointerId]);
                     fingers[pointerId] = null;
-                    numFingers--;
                 }
+                numFingers--;
                 break;
             case MotionEvent.ACTION_CANCEL:
                 for (byte i = 0; i < MAX_FINGERS; i++) fingers[i] = null;
@@ -275,6 +313,10 @@ public class TouchpadView extends View {
 
     public void setSensitivity(float sensitivity) {
         this.sensitivity = sensitivity;
+    }
+
+    public void setCursorDirect(boolean cursorDirect) {
+        this.cursorDirect = cursorDirect;
     }
 
     public boolean isPointerButtonLeftEnabled() {

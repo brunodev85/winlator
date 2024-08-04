@@ -61,6 +61,7 @@
     <string name="processor_affinity">Processor Affinity</string>
     <string name="processor_affinity_32_bit_apps">Processor Affinity (32-bit apps)</string>
     <string name="cursor_speed">Cursor Speed</string>
+    <string name="map_cursor_directly">Map cursor directly</string>
     <string name="relative_mouse_movement">Relative Mouse Movement</string>
     <string name="toggle_switch">Toggle Switch</string>
     <string name="profile_exported_to">Profile exported to</string>

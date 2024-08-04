@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -117,11 +118,26 @@ public class InputControlsFragment extends Fragment {
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
+        final CheckBox cbCursorDirect = view.findViewById(R.id.CBCursorDirect);
+        cbCursorDirect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (currentProfile != null) {
+                    currentProfile.setCursorDirect(!currentProfile.getCursorDirect());
+                    currentProfile.save();
+                }
+            }
+        });
+
         updateLayout = () -> {
             if (currentProfile != null) {
                 sbCursorSpeed.setProgress((int)(currentProfile.getCursorSpeed() * 100));
+                cbCursorDirect.setChecked(currentProfile.getCursorDirect());
             }
-            else sbCursorSpeed.setProgress(100);
+            else {
+                sbCursorSpeed.setProgress(100);
+                cbCursorDirect.setChecked(false);
+            }
             loadExternalControllers(view);
         };
 

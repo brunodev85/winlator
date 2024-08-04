@@ -107,6 +107,9 @@ public class SettingsFragment extends Fragment {
         final Spinner sBox64Preset = view.findViewById(R.id.SBox64Preset);
         loadBox86_64PresetSpinners(view, sBox86Preset, sBox64Preset);
 
+        final CheckBox cbCursorDirect = view.findViewById(R.id.CBCursorDirect);
+        cbCursorDirect.setChecked(preferences.getBoolean("cursor_direct", false));
+
         final CheckBox cbUseDRI3 = view.findViewById(R.id.CBUseDRI3);
         cbUseDRI3.setChecked(preferences.getBoolean("use_dri3", true));
 
@@ -147,6 +150,7 @@ public class SettingsFragment extends Fragment {
             editor.putString("box64_version", StringUtils.parseIdentifier(sBox64Version.getSelectedItem()));
             editor.putString("box86_preset", Box86_64PresetManager.getSpinnerSelectedId(sBox86Preset));
             editor.putString("box64_preset", Box86_64PresetManager.getSpinnerSelectedId(sBox64Preset));
+            editor.putBoolean("cursor_direct", cbCursorDirect.isChecked());
             editor.putBoolean("use_dri3", cbUseDRI3.isChecked());
             editor.putFloat("cursor_speed", sbCursorSpeed.getProgress() / 100.0f);
             editor.putBoolean("enable_wine_debug", cbEnableWineDebug.isChecked());
