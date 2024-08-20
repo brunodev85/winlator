@@ -55,7 +55,7 @@ void XrEngineInit(struct XrEngine* engine, void* system, const char* name, int v
     strcpy(app_info.engineName, name);
     app_info.applicationVersion = version;
     app_info.engineVersion = version;
-    app_info.apiVersion = XR_CURRENT_API_VERSION;
+    app_info.apiVersion = XR_API_VERSION_1_0;
 
     XrInstanceCreateInfo instance_info;
     memset(&instance_info, 0, sizeof(instance_info));
