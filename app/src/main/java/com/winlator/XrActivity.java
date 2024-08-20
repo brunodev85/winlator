@@ -2,9 +2,7 @@ package com.winlator;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
-import android.content.Context;
 import android.content.Intent;
-import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -180,7 +178,7 @@ public class XrActivity extends XServerDisplayActivity implements TextWatcher {
         }
 
         // 1. Locate the main display ID and add that to the intent
-        final int mainDisplayId = getMainDisplay(context);
+        final int mainDisplayId = Display.DEFAULT_DISPLAY;
         ActivityOptions options = ActivityOptions.makeBasic().setLaunchDisplayId(mainDisplayId);
 
         // 2. Set the flags: start in a new task and replace any existing tasks in the app stack
@@ -296,17 +294,6 @@ public class XrActivity extends XServerDisplayActivity implements TextWatcher {
 
     private static boolean getButtonClicked(boolean[] buttons, ControllerButton button) {
         return buttons[button.ordinal()] && !lastButtons[button.ordinal()];
-    }
-
-    private static int getMainDisplay(Context context) {
-        final DisplayManager displayManager =
-                (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
-        for (Display display : displayManager.getDisplays()) {
-            if (display.getDisplayId() == Display.DEFAULT_DISPLAY) {
-                return display.getDisplayId();
-            }
-        }
-        return -1;
     }
 
     private static void mapKey(ControllerButton xrButton, byte xKeycode) {
