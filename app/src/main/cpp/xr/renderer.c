@@ -321,13 +321,11 @@ void XrRendererFinishFrame(struct XrEngine* engine, struct XrRenderer* renderer)
                 framebuffer = &renderer->Framebuffer[eye];
                 pose = renderer->InvertedViewPose[eye];
             }
-
-            XrVector3f pitch_axis = {1, 0, 0};
-            XrVector3f yaw_axis = {0, 1, 0};
+;
+            XrVector3f roll_axis = {0, 0, 1};
             XrVector3f rotation = XrQuaternionfEulerAngles(pose.orientation);
-            XrQuaternionf pitch = XrQuaternionfCreateFromVectorAngle(pitch_axis, -ToRadians(rotation.x));
-            XrQuaternionf yaw = XrQuaternionfCreateFromVectorAngle(yaw_axis, ToRadians(rotation.y));
-            pose.orientation = XrQuaternionfMultiply(pitch, yaw);
+            XrQuaternionf invRoll = XrQuaternionfCreateFromVectorAngle(roll_axis, ToRadians(rotation.z));
+            pose.orientation = XrQuaternionfMultiply(pose.orientation, invRoll);
 
             memset(&projection_layer_elements[eye], 0, sizeof(XrCompositionLayerProjectionView));
             projection_layer_elements[eye].type = XR_TYPE_COMPOSITION_LAYER_PROJECTION_VIEW;
