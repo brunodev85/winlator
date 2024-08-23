@@ -68,6 +68,12 @@ public class XrActivity extends XServerDisplayActivity implements TextWatcher {
     }
 
     @Override
+    public synchronized void onDestroy() {
+        super.onDestroy();
+        System.exit(0);
+    }
+
+    @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
     @Override
