@@ -631,7 +631,7 @@ public class ContainerDetailFragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
-        byte keycode = container.getControllerMapping(mapping);
+        byte keycode = isEditMode() ? container.getControllerMapping(mapping) : (byte) defaultValue;
         int index = 0;
         for (int i = 0; i < values.length; i++) {
             if (values[i].id == keycode) {
