@@ -46,6 +46,8 @@ import com.winlator.widget.CPUListView;
 import com.winlator.widget.ColorPickerView;
 import com.winlator.widget.EnvVarsView;
 import com.winlator.widget.ImagePickerView;
+import com.winlator.winhandler.WinHandler;
+import com.winlator.xserver.XKeycode;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -167,6 +169,16 @@ public class ContainerDetailFragment extends Fragment {
 
         final Spinner sPrimaryController = view.findViewById(R.id.SPrimaryController);
         sPrimaryController.setSelection(isEditMode() ? container.getPrimaryController() : 1);
+        setControllerMapping(view.findViewById(R.id.SButtonA), Container.XrControllerMapping.BUTTON_A, XKeycode.KEY_A.ordinal());
+        setControllerMapping(view.findViewById(R.id.SButtonB), Container.XrControllerMapping.BUTTON_B, XKeycode.KEY_B.ordinal());
+        setControllerMapping(view.findViewById(R.id.SButtonX), Container.XrControllerMapping.BUTTON_X, XKeycode.KEY_X.ordinal());
+        setControllerMapping(view.findViewById(R.id.SButtonY), Container.XrControllerMapping.BUTTON_Y, XKeycode.KEY_Y.ordinal());
+        setControllerMapping(view.findViewById(R.id.SButtonGrip), Container.XrControllerMapping.BUTTON_GRIP, XKeycode.KEY_SPACE.ordinal());
+        setControllerMapping(view.findViewById(R.id.SButtonTrigger), Container.XrControllerMapping.BUTTON_TRIGGER, XKeycode.KEY_ENTER.ordinal());
+        setControllerMapping(view.findViewById(R.id.SThumbstickUp), Container.XrControllerMapping.THUMBSTICK_UP, XKeycode.KEY_UP.ordinal());
+        setControllerMapping(view.findViewById(R.id.SThumbstickDown), Container.XrControllerMapping.THUMBSTICK_DOWN, XKeycode.KEY_DOWN.ordinal());
+        setControllerMapping(view.findViewById(R.id.SThumbstickLeft), Container.XrControllerMapping.THUMBSTICK_LEFT, XKeycode.KEY_LEFT.ordinal());
+        setControllerMapping(view.findViewById(R.id.SThumbstickRight), Container.XrControllerMapping.THUMBSTICK_RIGHT, XKeycode.KEY_RIGHT.ordinal());
 
         createWineConfigurationTab(view);
         final EnvVarsView envVarsView = createEnvVarsTab(view);
@@ -195,6 +207,7 @@ public class ContainerDetailFragment extends Fragment {
                 String box64Preset = Box86_64PresetManager.getSpinnerSelectedId(sBox64Preset);
                 String desktopTheme = getDesktopTheme(view);
                 int primaryController = sPrimaryController.getSelectedItemPosition();
+                String controllerMapping = getControllerMapping(view);
 
                 if (isEditMode()) {
                     container.setName(name);
@@ -215,6 +228,7 @@ public class ContainerDetailFragment extends Fragment {
                     container.setBox64Preset(box64Preset);
                     container.setDesktopTheme(desktopTheme);
                     container.setPrimaryController(primaryController);
+                    container.setControllerMapping(controllerMapping);
                     container.saveData();
                     saveWineRegistryKeys(view);
                     getActivity().onBackPressed();
@@ -243,6 +257,7 @@ public class ContainerDetailFragment extends Fragment {
                         data.put("wineVersion", wineInfos.get(sWineVersion.getSelectedItemPosition()).identifier());
                     }
                     data.put("primaryController", primaryController);
+                    data.put("controllerMapping", controllerMapping);
 
                     preloaderDialog.show(R.string.creating_container);
                     manager.createContainerAsync(data, (container) -> {
@@ -589,5 +604,41 @@ public class ContainerDetailFragment extends Fragment {
         view.findViewById(R.id.LLWineVersion).setVisibility(View.VISIBLE);
         sWineVersion.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, wineInfos));
         if (isEditMode()) AppUtils.setSpinnerSelectionFromValue(sWineVersion, WineInfo.fromIdentifier(context, container.getWineVersion()).toString());
+    }
+
+    public String getControllerMapping(View view) {
+        //The order has to be the same like Container.XrControllerMapping
+        int[] ids = {
+                R.id.SButtonA, R.id.SButtonB, R.id.SButtonX, R.id.SButtonY, R.id.SButtonGrip, R.id.SButtonTrigger,
+                R.id.SThumbstickUp, R.id.SThumbstickDown, R.id.SThumbstickLeft, R.id.SThumbstickRight
+        };
+        byte[] controllerMapping = new byte[ids.length];
+        for (int i = 0; i < ids.length; i++) {
+            int index =  ((Spinner)view.findViewById(ids[i])).getSelectedItemPosition();
+            byte value = XKeycode.values()[index].id;
+            controllerMapping[i] = value;
+        }
+        return new String(controllerMapping);
+    }
+
+    public void setControllerMapping(Spinner spinner, Container.XrControllerMapping mapping, int defaultValue) {
+        XKeycode[] values = XKeycode.values();
+        ArrayList<String> array = new ArrayList<>();
+        for (XKeycode value : values) {
+            array.add(value.name());
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(spinner.getContext(), android.R.layout.simple_spinner_dropdown_item, array);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        byte keycode = container.getControllerMapping(mapping);
+        int index = 0;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i].id == keycode) {
+                index = i;
+                break;
+            }
+        }
+        spinner.setSelection(isEditMode() && (index != 0) ? index : defaultValue);
     }
 }

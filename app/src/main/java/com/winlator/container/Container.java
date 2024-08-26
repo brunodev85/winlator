@@ -17,6 +17,11 @@ import java.io.File;
 import java.util.Iterator;
 
 public class Container {
+    public enum XrControllerMapping {
+        BUTTON_A, BUTTON_B, BUTTON_X, BUTTON_Y, BUTTON_GRIP, BUTTON_TRIGGER,
+        THUMBSTICK_LEFT, THUMBSTICK_RIGHT, THUMBSTICK_UP, THUMBSTICK_DOWN
+    }
+
     public static final String DEFAULT_ENV_VARS = "ZINK_DESCRIPTORS=lazy ZINK_DEBUG=compact MESA_SHADER_CACHE_DISABLE=false MESA_SHADER_CACHE_MAX_SIZE=512MB mesa_glthread=true WINEESYNC=1 MESA_VK_WSI_PRESENT_MODE=mailbox TU_DEBUG=noconform";
     public static final String DEFAULT_SCREEN_SIZE = "1280x720";
     public static final String DEFAULT_GRAPHICS_DRIVER = "turnip";
@@ -51,6 +56,7 @@ public class Container {
     private File rootDir;
     private JSONObject extraData;
     private int primaryController;
+    private String controllerMapping = new String(new char[10]);
 
     public Container(int id) {
         this.id = id;
@@ -135,6 +141,20 @@ public class Container {
 
     public void setPrimaryController(int primaryController) {
         this.primaryController = primaryController;
+    }
+
+    public byte getControllerMapping(XrControllerMapping input) {
+        return (byte) controllerMapping.charAt(input.ordinal());
+    }
+
+    public void setControllerMapping(XrControllerMapping input, byte value) {
+        byte[] values = controllerMapping.getBytes();
+        values[input.ordinal()] = value;
+        controllerMapping = new String(values);
+    }
+
+    public void setControllerMapping(String controllerMapping) {
+        this.controllerMapping = controllerMapping;
     }
 
     public boolean isShowFPS() {
@@ -316,6 +336,7 @@ public class Container {
             data.put("desktopTheme", desktopTheme);
             data.put("extraData", extraData);
             data.put("primaryController", primaryController);
+            data.put("controllerMapping", controllerMapping);
 
             if (!WineInfo.isMainWineVersion(wineVersion)) data.put("wineVersion", wineVersion);
             FileUtils.writeString(getConfigFile(), data.toString());
@@ -393,6 +414,9 @@ public class Container {
                     break;
                 case "primaryController" :
                     setPrimaryController(data.getInt(key));
+                    break;
+                case "controllerMapping" :
+                    controllerMapping = data.getString(key);
                     break;
             }
         }

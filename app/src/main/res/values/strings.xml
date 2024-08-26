@@ -231,4 +231,14 @@
     <string name="primary_controller">Primary controller</string>
     <string name="left_controller">Left controller</string>
     <string name="right_controller">Right controller</string>
+    <string name="button_a">Button A</string>
+    <string name="button_b">Button B</string>
+    <string name="button_x">Button X</string>
+    <string name="button_y">Button Y</string>
+    <string name="button_grip">Grip button</string>
+    <string name="button_trigger">Trigger button</string>
+    <string name="thumbstick_left">Thumbstick left</string>
+    <string name="thumbstick_right">Thumbstick right</string>
+    <string name="thumbstick_up">Thumbstick up</string>
+    <string name="thumbstick_down">Thumbstick down</string>
 </resources>

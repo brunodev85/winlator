@@ -12,6 +12,7 @@ import android.widget.EditText;
 
 import androidx.preference.PreferenceManager;
 
+import com.winlator.container.Container;
 import com.winlator.core.AppUtils;
 import com.winlator.xserver.Keyboard;
 import com.winlator.xserver.Pointer;
@@ -291,17 +292,17 @@ public class XrActivity extends XServerDisplayActivity implements TextWatcher {
             System.arraycopy(buttons, 0, lastButtons, 0, buttons.length);
 
             // Update keyboard
-            mapKey(ControllerButton.R_A, XKeycode.KEY_A.id);
-            mapKey(ControllerButton.R_B, XKeycode.KEY_B.id);
-            mapKey(ControllerButton.L_X, XKeycode.KEY_X.id);
-            mapKey(ControllerButton.L_Y, XKeycode.KEY_Y.id);
             mapKey(ControllerButton.L_MENU, XKeycode.KEY_ESC.id);
-            mapKey(secondaryGrip, XKeycode.KEY_SPACE.id);
-            mapKey(secondaryTrigger, XKeycode.KEY_ENTER.id);
-            mapKey(secondaryUp, XKeycode.KEY_UP.id);
-            mapKey(secondaryDown, XKeycode.KEY_DOWN.id);
-            mapKey(secondaryLeft, XKeycode.KEY_LEFT.id);
-            mapKey(secondaryRight, XKeycode.KEY_RIGHT.id);
+            mapKey(ControllerButton.R_A, instance.container.getControllerMapping(Container.XrControllerMapping.BUTTON_A));
+            mapKey(ControllerButton.R_B, instance.container.getControllerMapping(Container.XrControllerMapping.BUTTON_B));
+            mapKey(ControllerButton.L_X, instance.container.getControllerMapping(Container.XrControllerMapping.BUTTON_X));
+            mapKey(ControllerButton.L_Y, instance.container.getControllerMapping(Container.XrControllerMapping.BUTTON_Y));
+            mapKey(secondaryGrip, instance.container.getControllerMapping(Container.XrControllerMapping.BUTTON_GRIP));
+            mapKey(secondaryTrigger, instance.container.getControllerMapping(Container.XrControllerMapping.BUTTON_TRIGGER));
+            mapKey(secondaryUp, instance.container.getControllerMapping(Container.XrControllerMapping.THUMBSTICK_UP));
+            mapKey(secondaryDown, instance.container.getControllerMapping(Container.XrControllerMapping.THUMBSTICK_DOWN));
+            mapKey(secondaryLeft, instance.container.getControllerMapping(Container.XrControllerMapping.THUMBSTICK_LEFT));
+            mapKey(secondaryRight, instance.container.getControllerMapping(Container.XrControllerMapping.THUMBSTICK_RIGHT));
         }
     }
 
