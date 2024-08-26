@@ -56,7 +56,7 @@ public class Container {
     private File rootDir;
     private JSONObject extraData;
     private int primaryController = 1;
-    private String controllerMapping = new String(new char[10]);
+    private String controllerMapping = new String(new char[XrControllerMapping.values().length]);
 
     public Container(int id) {
         this.id = id;
@@ -145,12 +145,6 @@ public class Container {
 
     public byte getControllerMapping(XrControllerMapping input) {
         return (byte) controllerMapping.charAt(input.ordinal());
-    }
-
-    public void setControllerMapping(XrControllerMapping input, byte value) {
-        byte[] values = controllerMapping.getBytes();
-        values[input.ordinal()] = value;
-        controllerMapping = new String(values);
     }
 
     public void setControllerMapping(String controllerMapping) {
