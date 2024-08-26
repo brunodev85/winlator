@@ -87,7 +87,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
     private XEnvironment environment;
     private DrawerLayout drawerLayout;
     private ContainerManager containerManager;
-    private Container container;
+    protected Container container;
     private XServer xServer;
     private InputControlsManager inputControlsManager;
     private ImageFs imageFs;

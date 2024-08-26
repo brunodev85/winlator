@@ -203,14 +203,32 @@ public class XrActivity extends XServerDisplayActivity implements TextWatcher {
         // Get OpenXR data
         float[] axes = instance.getAxes();
         boolean[] buttons = instance.getButtons();
+        int primaryController = instance.container.getPrimaryController();
 
+        // Primary controller mapping
+        ControllerAxis mouseAxisX = primaryController == 0 ? ControllerAxis.L_X : ControllerAxis.R_X;
+        ControllerAxis mouseAxisY = primaryController == 0 ? ControllerAxis.L_Y : ControllerAxis.R_Y;
+        ControllerButton primaryGrip = primaryController == 0 ? ControllerButton.L_GRIP : ControllerButton.R_GRIP;
+        ControllerButton primaryTrigger = primaryController == 0 ? ControllerButton.L_TRIGGER : ControllerButton.R_TRIGGER;
+        ControllerButton primaryUp = primaryController == 0 ? ControllerButton.L_THUMBSTICK_UP : ControllerButton.R_THUMBSTICK_UP;
+        ControllerButton primaryDown = primaryController == 0 ? ControllerButton.L_THUMBSTICK_DOWN : ControllerButton.R_THUMBSTICK_DOWN;
+        ControllerButton primaryLeft = primaryController == 0 ? ControllerButton.L_THUMBSTICK_LEFT : ControllerButton.R_THUMBSTICK_LEFT;
+        ControllerButton primaryRight = primaryController == 0 ? ControllerButton.L_THUMBSTICK_RIGHT : ControllerButton.R_THUMBSTICK_RIGHT;
+        ControllerButton primaryPress = primaryController == 0 ? ControllerButton.L_THUMBSTICK_PRESS : ControllerButton.R_THUMBSTICK_PRESS;
+        ControllerButton secondaryGrip = primaryController == 1 ? ControllerButton.L_GRIP : ControllerButton.R_GRIP;
+        ControllerButton secondaryTrigger = primaryController == 1 ? ControllerButton.L_TRIGGER : ControllerButton.R_TRIGGER;
+        ControllerButton secondaryUp = primaryController == 1 ? ControllerButton.L_THUMBSTICK_UP : ControllerButton.R_THUMBSTICK_UP;
+        ControllerButton secondaryDown = primaryController == 1 ? ControllerButton.L_THUMBSTICK_DOWN : ControllerButton.R_THUMBSTICK_DOWN;
+        ControllerButton secondaryLeft = primaryController == 1 ? ControllerButton.L_THUMBSTICK_LEFT : ControllerButton.R_THUMBSTICK_LEFT;
+        ControllerButton secondaryRight = primaryController == 1 ? ControllerButton.L_THUMBSTICK_RIGHT : ControllerButton.R_THUMBSTICK_RIGHT;
+        ControllerButton secondaryPress = primaryController == 1 ? ControllerButton.L_THUMBSTICK_PRESS : ControllerButton.R_THUMBSTICK_PRESS;
 
         try (XLock lock = instance.getXServer().lock(XServer.Lockable.WINDOW_MANAGER, XServer.Lockable.INPUT_DEVICE)) {
             // Mouse control with hand
             float f = 0.75f;
             float meter2px = instance.getXServer().screenInfo.width * 10.0f;
-            float dx = (axes[ControllerAxis.R_X.ordinal()] - lastAxes[ControllerAxis.R_X.ordinal()]) * meter2px;
-            float dy = (axes[ControllerAxis.R_Y.ordinal()] - lastAxes[ControllerAxis.R_Y.ordinal()]) * meter2px;
+            float dx = (axes[mouseAxisX.ordinal()] - lastAxes[mouseAxisX.ordinal()]) * meter2px;
+            float dy = (axes[mouseAxisY.ordinal()] - lastAxes[mouseAxisY.ordinal()]) * meter2px;
 
             // Mouse control with head
             Pointer mouse = instance.getXServer().pointer;
@@ -233,23 +251,23 @@ public class XrActivity extends XServerDisplayActivity implements TextWatcher {
 
             // Mouse "snap turn"
             int snapturn = isImmersive ? 125 : 25;
-            if (getButtonClicked(buttons, ControllerButton.R_THUMBSTICK_LEFT)) {
+            if (getButtonClicked(buttons, primaryLeft)) {
                 smoothedMouse[0] = mouse.getClampedX() - snapturn;
             }
-            if (getButtonClicked(buttons, ControllerButton.R_THUMBSTICK_RIGHT)) {
+            if (getButtonClicked(buttons, primaryRight)) {
                 smoothedMouse[0] = mouse.getClampedX() + snapturn;
             }
 
             // Set mouse status
             mouse.setPosition((int) smoothedMouse[0], (int) smoothedMouse[1]);
-            mouse.setButton(Pointer.Button.BUTTON_LEFT, buttons[ControllerButton.R_TRIGGER.ordinal()]);
-            mouse.setButton(Pointer.Button.BUTTON_RIGHT, buttons[ControllerButton.R_GRIP.ordinal()]);
-            mouse.setButton(Pointer.Button.BUTTON_SCROLL_UP, buttons[ControllerButton.R_THUMBSTICK_UP.ordinal()]);
-            mouse.setButton(Pointer.Button.BUTTON_SCROLL_DOWN, buttons[ControllerButton.R_THUMBSTICK_DOWN.ordinal()]);
+            mouse.setButton(Pointer.Button.BUTTON_LEFT, buttons[primaryTrigger.ordinal()]);
+            mouse.setButton(Pointer.Button.BUTTON_RIGHT, buttons[primaryGrip.ordinal()]);
+            mouse.setButton(Pointer.Button.BUTTON_SCROLL_UP, buttons[primaryUp.ordinal()]);
+            mouse.setButton(Pointer.Button.BUTTON_SCROLL_DOWN, buttons[primaryDown.ordinal()]);
 
             // Switch immersive/SBS mode
-            if (getButtonClicked(buttons, ControllerButton.L_THUMBSTICK_PRESS)) {
-                if (buttons[ControllerButton.R_GRIP.ordinal()]) {
+            if (getButtonClicked(buttons, secondaryPress)) {
+                if (buttons[primaryGrip.ordinal()]) {
                     isSBS = !isSBS;
                 }
                 else {
@@ -258,7 +276,7 @@ public class XrActivity extends XServerDisplayActivity implements TextWatcher {
             }
 
             // Show system keyboard
-            if (getButtonClicked(buttons, ControllerButton.R_THUMBSTICK_PRESS)) {
+            if (getButtonClicked(buttons, primaryPress)) {
                 instance.runOnUiThread(() -> {
                     isSBS = false;
                     isImmersive = false;
@@ -277,13 +295,13 @@ public class XrActivity extends XServerDisplayActivity implements TextWatcher {
             mapKey(ControllerButton.R_B, XKeycode.KEY_B.id);
             mapKey(ControllerButton.L_X, XKeycode.KEY_X.id);
             mapKey(ControllerButton.L_Y, XKeycode.KEY_Y.id);
-            mapKey(ControllerButton.L_GRIP, XKeycode.KEY_SPACE.id);
             mapKey(ControllerButton.L_MENU, XKeycode.KEY_ESC.id);
-            mapKey(ControllerButton.L_TRIGGER, XKeycode.KEY_ENTER.id);
-            mapKey(ControllerButton.L_THUMBSTICK_LEFT, XKeycode.KEY_LEFT.id);
-            mapKey(ControllerButton.L_THUMBSTICK_RIGHT, XKeycode.KEY_RIGHT.id);
-            mapKey(ControllerButton.L_THUMBSTICK_UP, XKeycode.KEY_UP.id);
-            mapKey(ControllerButton.L_THUMBSTICK_DOWN, XKeycode.KEY_DOWN.id);
+            mapKey(secondaryGrip, XKeycode.KEY_SPACE.id);
+            mapKey(secondaryTrigger, XKeycode.KEY_ENTER.id);
+            mapKey(secondaryUp, XKeycode.KEY_UP.id);
+            mapKey(secondaryDown, XKeycode.KEY_DOWN.id);
+            mapKey(secondaryLeft, XKeycode.KEY_LEFT.id);
+            mapKey(secondaryRight, XKeycode.KEY_RIGHT.id);
         }
     }
 

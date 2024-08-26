@@ -91,4 +91,9 @@
         <item>Essential (Load only essential services)</item>
         <item>Aggressive (Stop services on startup)</item>
     </string-array>
+
+    <string-array name="primary_controller">
+        <item>@string/left_controller</item>
+        <item>@string/right_controller</item>
+    </string-array>
 </resources>

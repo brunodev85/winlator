@@ -225,4 +225,10 @@
     <string name="msg_warning_install_wine">Warning: Installing a new version of Wine is recommended for testing purposes only.</string>
     <string name="startup_selection">Startup Selection</string>
     <string name="wine_debug_channel">Wine Debug Channel</string>
+
+    <!-- OpenXR specific text -->
+    <string name="xr">XR</string>
+    <string name="primary_controller">Primary controller</string>
+    <string name="left_controller">Left controller</string>
+    <string name="right_controller">Right controller</string>
 </resources>

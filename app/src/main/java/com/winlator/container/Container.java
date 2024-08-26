@@ -50,6 +50,7 @@ public class Container {
     private String box64Preset = Box86_64Preset.COMPATIBILITY;
     private File rootDir;
     private JSONObject extraData;
+    private int primaryController;
 
     public Container(int id) {
         this.id = id;
@@ -126,6 +127,14 @@ public class Container {
 
     public void setDrives(String drives) {
         this.drives = drives;
+    }
+
+    public int getPrimaryController() {
+        return primaryController;
+    }
+
+    public void setPrimaryController(int primaryController) {
+        this.primaryController = primaryController;
     }
 
     public boolean isShowFPS() {
@@ -306,6 +315,7 @@ public class Container {
             data.put("box64Preset", box64Preset);
             data.put("desktopTheme", desktopTheme);
             data.put("extraData", extraData);
+            data.put("primaryController", primaryController);
 
             if (!WineInfo.isMainWineVersion(wineVersion)) data.put("wineVersion", wineVersion);
             FileUtils.writeString(getConfigFile(), data.toString());
@@ -380,6 +390,9 @@ public class Container {
                     break;
                 case "desktopTheme" :
                     setDesktopTheme(data.getString(key));
+                    break;
+                case "primaryController" :
+                    setPrimaryController(data.getInt(key));
                     break;
             }
         }

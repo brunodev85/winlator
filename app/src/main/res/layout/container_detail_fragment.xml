@@ -217,6 +217,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/advanced" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/xr" />
             </com.google.android.material.tabs.TabLayout>
 
             <LinearLayout
@@ -563,6 +568,37 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/LLTabXR"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp">
+
+                    <LinearLayout style="@style/FieldSet">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/primary_controller" />
+
+                        <Spinner
+                            style="@style/ComboBox"
+                            android:layout_width="match_parent"
+                            android:id="@+id/SPrimaryController"
+                            android:entries="@array/primary_controller" />
+                    </LinearLayout>
+
+                    <TextView
+                        style="@style/FieldSetLabel"
+                        android:text="@string/general" />
+                </FrameLayout>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
