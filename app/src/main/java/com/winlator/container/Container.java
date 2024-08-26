@@ -55,7 +55,7 @@ public class Container {
     private String box64Preset = Box86_64Preset.COMPATIBILITY;
     private File rootDir;
     private JSONObject extraData;
-    private int primaryController;
+    private int primaryController = 1;
     private String controllerMapping = new String(new char[10]);
 
     public Container(int id) {
