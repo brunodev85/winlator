@@ -25,7 +25,7 @@ void GLCheckErrors(const char* file, int line) {
 void OXRCheckErrors(XrResult result, const char* file, int line) {
 	if (XR_FAILED(result)) {
 		char errorBuffer[XR_MAX_RESULT_STRING_SIZE];
-		xrResultToString(xr_module_engine->Instance, result, errorBuffer);
+		xrResultToString(xr_module_engine.Instance, result, errorBuffer);
         ALOGE("OpenXR error on line %s:%d %s", file, line, errorBuffer);
 	}
 }

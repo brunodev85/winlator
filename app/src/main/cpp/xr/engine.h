@@ -8,17 +8,6 @@
 #define ANDROID 1
 #endif
 
-#if defined(_DEBUG)
-void GLCheckErrors(const char* file, int line);
-void OXRCheckErrors(XrResult result, const char* file, int line);
-
-#define GL(func) func; GLCheckErrors(__FILE__ , __LINE__);
-#define OXR(func) OXRCheckErrors(func, __FILE__ , __LINE__);
-#else
-#define GL(func) func;
-#define OXR(func) func;
-#endif
-
 #ifdef ANDROID
 #include <android/log.h>
 #define ALOGE(...) __android_log_print(ANDROID_LOG_ERROR, "OpenXR", __VA_ARGS__);
@@ -37,6 +26,17 @@ void OXRCheckErrors(XrResult result, const char* file, int line);
 
 #include <openxr/openxr.h>
 #include <openxr/openxr_platform.h>
+
+#if defined(_DEBUG)
+void GLCheckErrors(const char* file, int line);
+void OXRCheckErrors(XrResult result, const char* file, int line);
+
+#define GL(func) func; GLCheckErrors(__FILE__ , __LINE__);
+#define OXR(func) OXRCheckErrors(func, __FILE__ , __LINE__);
+#else
+#define GL(func) func;
+#define OXR(func) func;
+#endif
 
 enum
 {
