@@ -1,8 +1,8 @@
 #include "framebuffer.h"
 
 #if XR_USE_GRAPHICS_API_OPENGL_ES
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
+#include <GLES3/gl3.h>
+#include <GLES3/gl3ext.h>
 #endif
 
 #include <stdlib.h>
@@ -65,6 +65,8 @@ void XrFramebufferRelease(struct XrFramebuffer *framebuffer)
 {
     if (framebuffer->Acquired)
     {
+        const GLenum depthAttachment[1] = {GL_DEPTH_ATTACHMENT};
+        glInvalidateFramebuffer(GL_FRAMEBUFFER, 1, depthAttachment);
         XrSwapchainImageReleaseInfo release_info = {XR_TYPE_SWAPCHAIN_IMAGE_RELEASE_INFO, NULL};
         OXR(xrReleaseSwapchainImage(framebuffer->Handle, &release_info));
         framebuffer->Acquired = false;
@@ -95,7 +97,7 @@ bool XrFramebufferCreateGL(struct XrFramebuffer *framebuffer, XrSession session,
     framebuffer->Height = swapchain_info.height;
 
     // Create the color swapchain.
-    swapchain_info.format = GL_SRGB8_ALPHA8_EXT;
+    swapchain_info.format = GL_RGBA8;
     swapchain_info.usageFlags = XR_SWAPCHAIN_USAGE_COLOR_ATTACHMENT_BIT;
     OXR(xrCreateSwapchain(session, &swapchain_info, &framebuffer->Handle));
     OXR(xrEnumerateSwapchainImages(framebuffer->Handle, 0, &framebuffer->SwapchainLength, NULL));
