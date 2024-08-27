@@ -36,7 +36,6 @@ public class Texture {
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, minFilter);
 
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
-        if (XrActivity.isSupported()) XrActivity.getInstance().bindFramebuffer();
     }
 
     public int getWrapS() {
@@ -118,6 +117,7 @@ public class Texture {
         GLES20.glCopyTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, 0, 0, width, height, 0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+        if (XrActivity.isSupported()) XrActivity.getInstance().bindFramebuffer();
     }
 
     public void destroy() {
