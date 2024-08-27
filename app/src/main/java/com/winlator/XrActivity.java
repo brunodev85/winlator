@@ -230,7 +230,7 @@ public class XrActivity extends XServerDisplayActivity implements TextWatcher {
             float meter2px = instance.getXServer().screenInfo.width * 10.0f;
             float dx = (axes[mouseAxisX.ordinal()] - lastAxes[mouseAxisX.ordinal()]) * meter2px;
             float dy = (axes[mouseAxisY.ordinal()] - lastAxes[mouseAxisY.ordinal()]) * meter2px;
-            if ((Math.abs(dx) > 100) || (Math.abs(dy) > 100)) {
+            if ((Math.abs(dx) > 300) || (Math.abs(dy) > 300)) {
                 dx = 0;
                 dy = 0;
             }
