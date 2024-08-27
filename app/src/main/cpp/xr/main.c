@@ -90,7 +90,7 @@ JNIEXPORT jboolean JNICALL Java_com_winlator_XrActivity_beginFrame(JNIEnv *env, 
         xr_module_renderer.ConfigInt[CONFIG_SBS] = sbs;
 
         // Recenter if mode switched
-        static bool last_immersive = false;
+        static int last_immersive = -1;
         if (last_immersive != immersive) {
             XrRendererRecenter(&xr_module_engine, &xr_module_renderer);
             last_immersive = immersive;
