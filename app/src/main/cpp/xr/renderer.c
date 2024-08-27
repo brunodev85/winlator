@@ -471,6 +471,8 @@ void XrRendererRecenter(struct XrEngine* engine, struct XrRenderer* renderer)
     // Create a default stage space to use if SPACE_TYPE_STAGE is not
     // supported, or calls to xrGetReferenceSpaceBoundsRect fail.
     space_info.referenceSpaceType = XR_REFERENCE_SPACE_TYPE_LOCAL;
+    memset(&space_info.poseInReferenceSpace, 0, sizeof(XrPosef));
+    space_info.poseInReferenceSpace.orientation.w = 1.0;
     if (engine->PlatformFlag[PLATFORM_TRACKING_FLOOR])
     {
         space_info.poseInReferenceSpace.position.y = -1.6750f;
@@ -482,7 +484,8 @@ void XrRendererRecenter(struct XrEngine* engine, struct XrRenderer* renderer)
     if (renderer->StageSupported)
     {
         space_info.referenceSpaceType = XR_REFERENCE_SPACE_TYPE_STAGE;
-        space_info.poseInReferenceSpace.position.y = 0.0;
+        memset(&space_info.poseInReferenceSpace, 0, sizeof(XrPosef));
+        space_info.poseInReferenceSpace.orientation.w = 1.0;
         OXR(xrCreateReferenceSpace(engine->Session, &space_info, &engine->StageSpace));
         ALOGV("Created stage space");
         if (engine->PlatformFlag[PLATFORM_TRACKING_FLOOR])
