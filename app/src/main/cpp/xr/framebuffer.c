@@ -21,9 +21,7 @@ bool XrFramebufferCreate(struct XrFramebuffer *framebuffer, XrSession session, i
 void XrFramebufferDestroy(struct XrFramebuffer *framebuffer)
 {
 #if XR_USE_GRAPHICS_API_OPENGL_ES
-    GL(glDeleteRenderbuffers(framebuffer->SwapchainLength, framebuffer->GLDepthBuffers));
     GL(glDeleteFramebuffers(framebuffer->SwapchainLength, framebuffer->GLFrameBuffers));
-    free(framebuffer->GLDepthBuffers);
     free(framebuffer->GLFrameBuffers);
 #endif
     OXR(xrDestroySwapchain(framebuffer->Handle));
@@ -57,7 +55,7 @@ void XrFramebufferAcquire(struct XrFramebuffer *framebuffer)
     GL(glViewport(0, 0, framebuffer->Width, framebuffer->Height));
     GL(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
     GL(glScissor(0, 0, framebuffer->Width, framebuffer->Height));
-    GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+    GL(glClear(GL_COLOR_BUFFER_BIT));
     GL(glScissor(0, 0, 0, 0));
     GL(glDisable(GL_SCISSOR_TEST));
 #endif
@@ -114,24 +112,14 @@ bool XrFramebufferCreateGL(struct XrFramebuffer *framebuffer, XrSession session,
                                    &framebuffer->SwapchainLength,
                                    (XrSwapchainImageBaseHeader*)framebuffer->SwapchainImage));
 
-    framebuffer->GLDepthBuffers = (GLuint*)malloc(framebuffer->SwapchainLength * sizeof(GLuint));
     framebuffer->GLFrameBuffers = (GLuint*)malloc(framebuffer->SwapchainLength * sizeof(GLuint));
     for (uint32_t i = 0; i < framebuffer->SwapchainLength; i++)
     {
-        // Create color and depth buffers.
         GLuint color_texture = ((XrSwapchainImageOpenGLESKHR*)framebuffer->SwapchainImage)[i].image;
-        GL(glGenRenderbuffers(1, &framebuffer->GLDepthBuffers[i]));
-        GL(glBindRenderbuffer(GL_RENDERBUFFER, framebuffer->GLDepthBuffers[i]));
-        GL(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, width, height));
-        GL(glBindRenderbuffer(GL_RENDERBUFFER, 0));
 
         // Create the frame buffer.
         GL(glGenFramebuffers(1, &framebuffer->GLFrameBuffers[i]));
         GL(glBindFramebuffer(GL_FRAMEBUFFER, framebuffer->GLFrameBuffers[i]));
-        GL(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
-                                     framebuffer->GLDepthBuffers[i]));
-        GL(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
-                                     framebuffer->GLDepthBuffers[i]));
         GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
                                   color_texture, 0));
         GL(GLenum renderFramebufferStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER));

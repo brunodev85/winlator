@@ -12,7 +12,6 @@ struct XrFramebuffer {
     uint32_t SwapchainLength;
     void* SwapchainImage;
 
-    unsigned int* GLDepthBuffers;
     unsigned int* GLFrameBuffers;
 };
 
