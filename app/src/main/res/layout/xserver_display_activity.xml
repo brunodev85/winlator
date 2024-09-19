@@ -26,8 +26,7 @@
         android:id="@+id/XRTextInput"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:focusableInTouchMode="true"
-        android:inputType="text"
+        android:inputType="textMultiLine"
         android:autofillHints="no"
         tools:ignore="LabelFor"
         android:visibility="gone" />

@@ -7,6 +7,8 @@ import android.os.Build;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Display;
+import android.view.KeyCharacterMap;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 
@@ -42,6 +44,7 @@ public class XrActivity extends XServerDisplayActivity implements TextWatcher {
     private static boolean isDeviceSupported = false;
     private static boolean isImmersive = false;
     private static boolean isSBS = false;
+    private static final KeyCharacterMap chars = KeyCharacterMap.load(KeyCharacterMap.VIRTUAL_KEYBOARD);
     private static final float[] lastAxes = new float[ControllerAxis.values().length];
     private static final boolean[] lastButtons = new boolean[ControllerButton.values().length];
     private static String lastText = "";
@@ -82,65 +85,27 @@ public class XrActivity extends XServerDisplayActivity implements TextWatcher {
 
     @Override
     public synchronized void afterTextChanged(Editable e) {
+        XServer server = instance.getXServer();
         EditText text = findViewById(R.id.XRTextInput);
         String s = text.getEditableText().toString();
         if (s.length() > lastText.length()) {
             lastText = s;
-            char c = s.charAt(s.length() - 1);
-            boolean uppercase = c >= 'A' && c <= 'Z';
-            if (uppercase) {
-                c = (char)((int)c - (int)'A' + (int)'a');
+            KeyEvent[] events = chars.getEvents(new char[]{s.charAt(s.length() - 1)});
+            if (events != null) {
+                for (KeyEvent keyEvent : events) {
+                    server.keyboard.onKeyEvent(keyEvent);
+                    sleep(50);
+                }
             }
-
-            switch (c) {
-                case '0': setKeyPressed(XKeycode.KEY_0, uppercase); break;
-                case '1': setKeyPressed(XKeycode.KEY_1, uppercase); break;
-                case '2': setKeyPressed(XKeycode.KEY_2, uppercase); break;
-                case '3': setKeyPressed(XKeycode.KEY_3, uppercase); break;
-                case '4': setKeyPressed(XKeycode.KEY_4, uppercase); break;
-                case '5': setKeyPressed(XKeycode.KEY_5, uppercase); break;
-                case '6': setKeyPressed(XKeycode.KEY_6, uppercase); break;
-                case '7': setKeyPressed(XKeycode.KEY_7, uppercase); break;
-                case '8': setKeyPressed(XKeycode.KEY_8, uppercase); break;
-                case '9': setKeyPressed(XKeycode.KEY_9, uppercase); break;
-
-                case 'a': setKeyPressed(XKeycode.KEY_A, uppercase); break;
-                case 'b': setKeyPressed(XKeycode.KEY_B, uppercase); break;
-                case 'c': setKeyPressed(XKeycode.KEY_C, uppercase); break;
-                case 'd': setKeyPressed(XKeycode.KEY_D, uppercase); break;
-                case 'e': setKeyPressed(XKeycode.KEY_E, uppercase); break;
-                case 'f': setKeyPressed(XKeycode.KEY_F, uppercase); break;
-                case 'g': setKeyPressed(XKeycode.KEY_G, uppercase); break;
-                case 'h': setKeyPressed(XKeycode.KEY_H, uppercase); break;
-                case 'i': setKeyPressed(XKeycode.KEY_I, uppercase); break;
-                case 'j': setKeyPressed(XKeycode.KEY_J, uppercase); break;
-                case 'k': setKeyPressed(XKeycode.KEY_K, uppercase); break;
-                case 'l': setKeyPressed(XKeycode.KEY_L, uppercase); break;
-                case 'm': setKeyPressed(XKeycode.KEY_M, uppercase); break;
-                case 'n': setKeyPressed(XKeycode.KEY_N, uppercase); break;
-                case 'o': setKeyPressed(XKeycode.KEY_O, uppercase); break;
-                case 'p': setKeyPressed(XKeycode.KEY_P, uppercase); break;
-                case 'q': setKeyPressed(XKeycode.KEY_Q, uppercase); break;
-                case 'r': setKeyPressed(XKeycode.KEY_R, uppercase); break;
-                case 's': setKeyPressed(XKeycode.KEY_S, uppercase); break;
-                case 't': setKeyPressed(XKeycode.KEY_T, uppercase); break;
-                case 'u': setKeyPressed(XKeycode.KEY_U, uppercase); break;
-                case 'v': setKeyPressed(XKeycode.KEY_V, uppercase); break;
-                case 'w': setKeyPressed(XKeycode.KEY_W, uppercase); break;
-                case 'x': setKeyPressed(XKeycode.KEY_X, uppercase); break;
-                case 'y': setKeyPressed(XKeycode.KEY_Y, uppercase); break;
-                case 'z': setKeyPressed(XKeycode.KEY_Z, uppercase); break;
-
-                case ' ': setKeyPressed(XKeycode.KEY_SPACE, uppercase); break;
-                case '.': setKeyPressed(XKeycode.KEY_PERIOD, uppercase); break;
-                case ',': setKeyPressed(XKeycode.KEY_COMMA, uppercase); break;
-            }
-        }
-        else {
+        } else {
             lastText = s;
-            setKeyPressed(XKeycode.KEY_BKSP, false);
+            server.keyboard.onKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
+            sleep(50);
+            server.keyboard.onKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DEL));
         }
-        resetText();
+        if (s.isEmpty()) {
+            resetText();
+        }
     }
 
     private synchronized void resetText() {
@@ -334,24 +299,11 @@ public class XrActivity extends XServerDisplayActivity implements TextWatcher {
         }
     }
 
-    private static void setKeyPressed(XKeycode xKeycode, boolean uppercase) {
-        XServer server = instance.getXServer();
-        if (uppercase) {
-            server.injectKeyPress(XKeycode.KEY_SHIFT_L);
-        }
-        server.injectKeyPress(xKeycode);
-
-        // Give the system bit of time to notice the key press
+    private static void sleep(int ms) {
         try {
-            Thread.sleep(50);
-        }
-        catch (Exception e) {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
             e.printStackTrace();
-        }
-
-        server.injectKeyRelease(xKeycode);
-        if (uppercase) {
-            server.injectKeyRelease(XKeycode.KEY_SHIFT_L);
         }
     }
 
