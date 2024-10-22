@@ -136,7 +136,7 @@ public class ShortcutsFragment extends Fragment {
         private void runFromShortcut(Shortcut shortcut) {
             Activity activity = getActivity();
 
-            if (!XrActivity.isSupported()) {
+            if (!XrActivity.isEnabled(getContext())) {
                 Intent intent = new Intent(activity, XServerDisplayActivity.class);
                 intent.putExtra("container_id", shortcut.container.id);
                 intent.putExtra("shortcut_path", shortcut.file.getPath());

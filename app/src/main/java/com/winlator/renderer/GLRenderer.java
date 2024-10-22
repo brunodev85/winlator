@@ -85,7 +85,7 @@ public class GLRenderer implements GLSurfaceView.Renderer, WindowManager.OnWindo
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-        if (XrActivity.isSupported()) {
+        if (XrActivity.isEnabled(null)) {
             XrActivity activity = XrActivity.getInstance();
             activity.init();
             width = activity.getWidth();
@@ -112,7 +112,11 @@ public class GLRenderer implements GLSurfaceView.Renderer, WindowManager.OnWindo
 
     private void drawFrame() {
         boolean xrFrame = false;
-        if (XrActivity.isSupported()) xrFrame = XrActivity.getInstance().beginFrame(XrActivity.getImmersive(), XrActivity.getSBS());
+        boolean xrImmersive = false;
+        if (XrActivity.isEnabled(null)) {
+            xrImmersive = XrActivity.getImmersive();
+            xrFrame = XrActivity.getInstance().beginFrame(xrImmersive, XrActivity.getSBS());
+        }
 
         if (viewportNeedsUpdate && magnifierEnabled) {
             if (fullscreen) {

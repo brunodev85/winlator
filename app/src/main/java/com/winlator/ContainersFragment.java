@@ -130,6 +130,15 @@ public class ContainersFragment extends Fragment {
             return data.size();
         }
 
+        private void runContainer(Container container) {
+            if (!XrActivity.isEnabled(getContext())) {
+                Intent intent = new Intent(getContext(), XServerDisplayActivity.class);
+                intent.putExtra("container_id", container.id);
+                requireActivity().startActivity(intent);
+            }
+            else XrActivity.openIntent(getActivity(), container.id, null);
+        }
+
         private void showListItemMenu(View anchorView, Container container) {
             final Context context = getContext();
             PopupMenu listItemMenu = new PopupMenu(context, anchorView);

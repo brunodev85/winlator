@@ -227,7 +227,8 @@
     <string name="wine_debug_channel">Wine Debug Channel</string>
 
     <!-- OpenXR specific text -->
-    <string name="xr">XR</string>
+    <string name="use_xr">Use OpenXR integration</string>
+    <string name="xr" translatable="false">XR</string>
     <string name="primary_controller">Primary controller</string>
     <string name="left_controller">Left controller</string>
     <string name="right_controller">Right controller</string>

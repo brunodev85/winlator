@@ -2,6 +2,7 @@ package com.winlator;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.text.Editable;
@@ -42,6 +43,7 @@ public class XrActivity extends XServerDisplayActivity implements TextWatcher {
 
     private static boolean isDeviceDetectionFinished = false;
     private static boolean isDeviceSupported = false;
+    private static boolean isEnabled = false;
     private static boolean isImmersive = false;
     private static boolean isSBS = false;
     private static final KeyCharacterMap chars = KeyCharacterMap.load(KeyCharacterMap.VIRTUAL_KEYBOARD);
@@ -126,6 +128,13 @@ public class XrActivity extends XServerDisplayActivity implements TextWatcher {
 
     public static boolean getSBS() {
         return isSBS;
+    }
+
+    public static boolean isEnabled(Context context) {
+        if (context != null) {
+            isEnabled = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("use_xr", true);
+        }
+        return isSupported() && isEnabled;
     }
 
     public static boolean isSupported() {

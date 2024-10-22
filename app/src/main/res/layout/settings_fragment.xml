@@ -189,6 +189,13 @@
                         android:layout_height="wrap_content"
                         android:text="@string/use_dri3_extension"
                         android:layout_marginTop="8dp" />
+
+                    <CheckBox
+                        android:id="@+id/CBUseXR"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/use_xr"
+                        android:layout_marginTop="8dp" />
                 </LinearLayout>
 
                 <TextView
