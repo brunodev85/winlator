@@ -43,7 +43,7 @@
         </activity>
 
         <activity android:name="com.winlator.XServerDisplayActivity"
-            android:exported="false"
+            android:exported="true"
             android:theme="@style/AppThemeFullscreen"
             android:launchMode="singleTask"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|density|navigation"

@@ -110,6 +110,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
     private short taskAffinityMask = 0;
     private short taskAffinityMaskWoW64 = 0;
     private int frameRatingWindowId = -1;
+    private String externalCommand = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -139,7 +140,13 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         String screenSize = Container.DEFAULT_SCREEN_SIZE;
         if (!isGenerateWineprefix()) {
             containerManager = new ContainerManager(this);
-            container = containerManager.getContainerById(getIntent().getIntExtra("container_id", 0));
+            Intent intent = getIntent();
+
+            externalCommand = intent.getStringExtra("command");
+            String containerIdStr = intent.getStringExtra("container_id");
+            int containerId = containerIdStr == null ? 0 : Integer.parseInt(containerIdStr);
+
+            container = containerManager.getContainerById(containerId);
             containerManager.activateContainer(container);
 
             boolean wineprefixNeedsUpdate = container.getExtra("wineprefixNeedsUpdate").equals("t");
@@ -240,6 +247,9 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
                 changeWineAudioDriver();
             }
             setupXEnvironment();
+            if (externalCommand != null) {
+                winHandler.exec("cmd /c \"" + externalCommand + "\"");
+            }
         });
     }
 
