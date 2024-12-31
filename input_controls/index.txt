@@ -1,12 +1,15 @@
 Alien Versus Predator.icp
+Alpha Protocol.icp
 Bioshock.icp
 Call of Juarez Gunslinger.icp
 Cyber Shadow.icp
 Dark Souls 2.icp
 Deus Ex Human Revolution.icp
 Divinity 2 DC.icp
+Drakensang.icp
 Driver Parallel Lines.icp
 Fallout 3.icp
+Far Cry 4.icp
 Final Fantasy 8.icp
 Final Fantasy Type-0.icp
 FlatOut 2.icp
@@ -15,12 +18,14 @@ Gravity Circuit.icp
 GTA 5.icp
 Hitman 2.icp
 IGI 2.icp
+Infernal.icp
 La Mulana.icp
 Marvel Ultimate Alliance.icp
 Mass Effect 2.icp
 Metro 2033.icp
 Oblivion.icp
 Prey.icp
+Psychonauts.icp
 Quake 4.icp
 RAGE.icp
 Rayman 3.icp
@@ -28,13 +33,19 @@ Risen 2.icp
 Second Sight.icp
 Shovel Knight.icp
 Singularity.icp
+Skyrim.icp
+Sonic Generations.icp
 Sonic Mania.icp
 Spiderman Shattered Dimensions.icp
 Stalker CS.icp
 Star Wars Jedi Knight 2.icp
 SteamWorld Dig 2.icp
+Sunset Overdrive.icp
+The Alliance Alive.icp
+The Forest.icp
 The Saboteur.icp
 Turok 2.icp
+Turok Evolution.icp
 Ultima Underworld.icp
 Unepic.icp
 Wolfenstein.icp
