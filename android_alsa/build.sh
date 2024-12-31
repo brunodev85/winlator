@@ -1,4 +1,5 @@
 #!/bin/bash
+clear
 
 rm -r build64
 mkdir build64
