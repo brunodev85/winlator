@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="f956e73d-48cd-4d64-bf1f-0bcfda58f042" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/input_controls/Alpha Protocol.icp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/input_controls/Drakensang.icp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/input_controls/Far Cry 4.icp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/input_controls/Infernal.icp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/input_controls/Psychonauts.icp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/input_controls/Skyrim.icp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/input_controls/Sonic Generations.icp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/input_controls/Sunset Overdrive.icp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/input_controls/The Alliance Alive.icp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/input_controls/The Forest.icp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/input_controls/Turok Evolution.icp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/installable_components/box64/box64-0.2.8.tzst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/installable_components/box64/box64-0.2.9.tzst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/installable_components/box64/box64-0.3.1.tzst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/installable_components/box64/box64-0.3.3.tzst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/installable_components/box64/index.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/installable_components/dxvk/dxvk-1.4.2.tzst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/installable_components/dxvk/dxvk-2.3.1.tzst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/installable_components/dxvk/dxvk-2.5.2.tzst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/installable_components/dxvk/index.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/installable_components/turnip/index.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/installable_components/turnip/turnip-23.3.0.tzst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/installable_components/turnip/turnip-24.2.0.tzst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/audio_plugin/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/android_alsa/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/audio_plugin/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/android_alsa/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/audio_plugin/alsa.conf" beforeDir="false" afterPath="$PROJECT_DIR$/android_alsa/alsa.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/audio_plugin/android_aserver.conf" beforeDir="false" afterPath="$PROJECT_DIR$/android_alsa/android_aserver.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/audio_plugin/build.sh" beforeDir="false" afterPath="$PROJECT_DIR$/android_alsa/build.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/audio_plugin/cross-arm64.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/android_alsa/cross-arm64.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/audio_plugin/cross-armhf.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/android_alsa/cross-armhf.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/audio_plugin/module_pcm_android_aserver.c" beforeDir="false" afterPath="$PROJECT_DIR$/android_alsa/module_pcm_android_aserver.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input_controls/index.txt" beforeDir="false" afterPath="$PROJECT_DIR$/input_controls/index.txt" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "Honkonx"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Honkonx/winlator-honkon.git",
+    "accountId": "b3c5648d-596c-470a-bbd4-886648b7abc1"
+  }
+}]]></component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="2" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 5
+}]]></component>
+  <component name="ProjectId" id="2rGYjNEZWzL7e3Y5ub3BAEtLU8B" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "Merging main",
+    "kotlin-language-version-configured": "true",
+    "show.migrate.to.gradle.popup": "false"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f956e73d-48cd-4d64-bf1f-0bcfda58f042" name="Changes" comment="" />
+      <created>1736187018248</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1736187018248</updated>
+    </task>
+    <servers />
+  </component>
+</project>
