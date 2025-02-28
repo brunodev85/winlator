@@ -1,0 +1,2 @@
+vkd3d-2.12.tzst
+vkd3d-2.14.1.tzst
