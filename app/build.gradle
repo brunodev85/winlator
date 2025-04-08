@@ -1,6 +1,17 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.9.0'
+    }
+}
+
 apply plugin: 'com.android.application'
 
 android {
+    namespace 'com.winlator'
     compileSdk 30
 
     defaultConfig {
@@ -17,7 +28,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
             ndk {
-                abiFilters 'arm64-v8a', 'armeabi-v7a'
+                abiFilters 'arm64-v8a'
             }
         }
     }
@@ -34,7 +45,17 @@ android {
             path 'src/main/cpp/CMakeLists.txt'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
 }
+
+repositories {
+    google()
+    mavenCentral()
+}
+
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
