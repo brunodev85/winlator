@@ -287,6 +287,16 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="@string/renderer" />
+
+                        <Spinner
+                            style="@style/ComboBox"
+                            android:id="@+id/SRenderer"
+                            android:layout_width="match_parent" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:text="@string/csmt" />
 
                         <Spinner
