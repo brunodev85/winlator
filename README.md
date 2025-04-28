@@ -2,6 +2,13 @@
 	<img src="logo.png" width="376" height="128" alt="Winlator Logo" />  
 </p>
 
+# Development Paused
+
+<p align="left">
+Hello everyone, I have been working on Winlator for a long time, more precisely since June 2023, and I have decided to pause the development of the project for now.
+I'm a guy who works alone and I do not have the strength to defend myself. In the last 2 days, accusations and attacks against me about viruses in Winlator have started to appear, which has made me very upset, I always check the files before each release and I always work hard to deliver a quality app and I would never put viruses in it. This is a project that I work on with my heart, I do not earn much from it, what I earn from donations is just to cover the costs and I think it is not worth the stress anymore. I thank you all from the bottom of my heart. BrunoSX
+</p>
+
 # Winlator
 
 Winlator is an Android application that lets you to run Windows (x86_64) applications with Wine and Box86/Box64.
