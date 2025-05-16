@@ -257,6 +257,9 @@ public class ContainerDetailFragment extends Fragment {
     private void saveWineRegistryKeys(View view) {
         File userRegFile = new File(container.getRootDir(), ".wine/user.reg");
         try (WineRegistryEditor registryEditor = new WineRegistryEditor(userRegFile)) {
+            Spinner sRenderer = view.findViewById(R.id.SRenderer);
+            registryEditor.setStringValue("Software\\Wine\\Direct3D", "renderer", Arrays.asList("vulkan", "gl", "no3d").get(sRenderer.getSelectedItemPosition()));
+
             Spinner sCSMT = view.findViewById(R.id.SCSMT);
             registryEditor.setDwordValue("Software\\Wine\\Direct3D", "csmt", sCSMT.getSelectedItemPosition() != 0 ? 3 : 0);
 
@@ -320,6 +323,11 @@ public class ContainerDetailFragment extends Fragment {
         File userRegFile = new File(containerDir, ".wine/user.reg");
 
         try (WineRegistryEditor registryEditor = new WineRegistryEditor(userRegFile)) {
+            List<String> rendererList = Arrays.asList("Vulkan", "OpenGL", "GDI (no3d)");
+            Spinner sRenderer = view.findViewById(R.id.SRenderer);
+            sRenderer.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, rendererList));
+            sRenderer.setSelection(Arrays.asList("vulkan", "gl", "no3d").indexOf(registryEditor.getStringValue("Software\\Wine\\Direct3D", "renderer", "gl")));
+
             List<String> stateList = Arrays.asList(context.getString(R.string.disable), context.getString(R.string.enable));
             Spinner sCSMT = view.findViewById(R.id.SCSMT);
             sCSMT.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, stateList));
