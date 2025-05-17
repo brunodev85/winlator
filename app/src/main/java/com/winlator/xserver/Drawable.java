@@ -120,13 +120,15 @@ public class Drawable extends XResource {
         if ((dstX + width) > this.width) width = (short)(this.width - dstX);
         if ((dstY + height) > this.height) height = (short)(this.height - dstY);
 
-        if (gcFunction == GraphicsContext.Function.COPY) {
-            copyArea(srcX, srcY, dstX, dstY, width, height, drawable.getStride(), this.getStride(), drawable.data, this.data);
-        }
-        else copyAreaOp(srcX, srcY, dstX, dstY, width, height, drawable.getStride(), this.getStride(), drawable.data, this.data, gcFunction.ordinal());
+        if (this.data != null && drawable.data != null) {
+            if (gcFunction == GraphicsContext.Function.COPY) {
+                copyArea(srcX, srcY, dstX, dstY, width, height, drawable.getStride(), this.getStride(), drawable.data, this.data);
+            }
+            else copyAreaOp(srcX, srcY, dstX, dstY, width, height, drawable.getStride(), this.getStride(), drawable.data, this.data, gcFunction.ordinal());
 
-        this.data.rewind();
-        drawable.data.rewind();
+            this.data.rewind();
+            drawable.data.rewind();
+        }
 
         texture.setNeedsUpdate(true);
         if (onDrawListener != null) onDrawListener.run();
