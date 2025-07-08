@@ -8,7 +8,7 @@ Winlator is an Android application that lets you to run Windows (x86_64) applica
 
 # Installation
 
-1. Download and install the APK (Winlator_10.0.apk) from [GitHub Releases](https://github.com/brunodev85/winlator/releases)
+1. Download and install the APK (Winlator_10.1.apk) from [GitHub Releases](https://github.com/brunodev85/winlator/releases)
 2. Launch the app and wait for the installation process to finish
 
 ----
@@ -40,10 +40,8 @@ This project has been in constant development since version 1.0, the current app
 - Mesa (Turnip/Zink/VirGL) ([mesa3d.org](https://www.mesa3d.org))
 - DXVK ([github.com/doitsujin/dxvk](https://github.com/doitsujin/dxvk))
 - VKD3D ([gitlab.winehq.org/wine/vkd3d](https://gitlab.winehq.org/wine/vkd3d))
-- D8VK ([github.com/AlpyneDreams/d8vk](https://github.com/AlpyneDreams/d8vk))
 - CNC DDraw ([github.com/FunkyFr3sh/cnc-ddraw](https://github.com/FunkyFr3sh/cnc-ddraw))
-- Ubuntu RootFs ([Focal Fossa](https://releases.ubuntu.com/focal))
-- PRoot ([proot-me.github.io](https://proot-me.github.io))
+- dgVoodoo ([dege.freeweb.hu/dgVoodoo2](https://dege.freeweb.hu/dgVoodoo2))
 
-Many thanks to [ptitSeb](https://github.com/ptitSeb), [Danylo](https://blogs.igalia.com/dpiliaiev/tags/mesa/), [Max Ivan](https://github.com/Maxython), [Twaik Yont](https://github.com/twaik), [alexvorxx](https://github.com/alexvorxx) and others.<br>
+Special thanks to all the developers involved in these projects.<br>
 Thank you to all the people who believe in this project.
