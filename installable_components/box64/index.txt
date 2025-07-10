@@ -1,2 +1,3 @@
 box64-0.3.3.tzst
 box64-0.3.5.tzst
+box64-0.3.7.tzst
