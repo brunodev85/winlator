@@ -41,7 +41,6 @@ This project has been in constant development since version 1.0, the current app
 - DXVK ([github.com/doitsujin/dxvk](https://github.com/doitsujin/dxvk))
 - VKD3D ([gitlab.winehq.org/wine/vkd3d](https://gitlab.winehq.org/wine/vkd3d))
 - CNC DDraw ([github.com/FunkyFr3sh/cnc-ddraw](https://github.com/FunkyFr3sh/cnc-ddraw))
-- dgVoodoo ([dege.freeweb.hu/dgVoodoo2](https://dege.freeweb.hu/dgVoodoo2))
 
 Special thanks to all the developers involved in these projects.<br>
 Thank you to all the people who believe in this project.
