@@ -67,6 +67,7 @@
     <string name="unable_to_import_profile">Unable to import profile</string>
     <string name="wine_configuration">Wine Configuration</string>
     <string name="registry_keys">Registry Keys</string>
+    <string name="renderer">Renderer</string>
     <string name="csmt">CSMT (Command Stream Multi-Thread)</string>
     <string name="gpu_name">GPU Name</string>
     <string name="offscreen_rendering_mode">Offscreen Rendering Mode</string>
