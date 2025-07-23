@@ -12,15 +12,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <!-- Pause/Resume Button -->
+    <Button
+        android:id="@+id/pauseButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pause"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp" />
+
     <com.google.android.material.navigation.NavigationView
+        android:id="@+id/NavigationView"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:id="@+id/NavigationView"
         android:background="#ffffff"
         app:headerLayout="@layout/main_menu_header"
         app:itemIconTint="@color/colorAccent"
-        app:menu="@menu/xserver_menu"/>
+        app:menu="@menu/xserver_menu" />
 
     <EditText
         android:id="@+id/XRTextInput"
@@ -31,4 +40,5 @@
         android:autofillHints="no"
         tools:ignore="LabelFor"
         android:visibility="gone" />
+
 </androidx.drawerlayout.widget.DrawerLayout>

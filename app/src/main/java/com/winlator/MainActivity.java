@@ -1,5 +1,8 @@
 package com.winlator;
 
+private Button pauseButton;
+private boolean isPaused = false;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
@@ -210,4 +213,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         dialog.show();
     }
+}
+
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.your_layout_name); // Replace with your actual layout XML file name
+
+    pauseButton = findViewById(R.id.pauseButton);
+
+pauseButton.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        if (isPaused) {
+            resumeEmulation();    // We'll make this next
+            pauseButton.setText("Pause");
+            isPaused = false;
+        } else {
+            pauseEmulation();     // We'll make this next
+            pauseButton.setText("Resume");
+            isPaused = true;
+        }
+    }
+});
+private void pauseEmulation() {
+    // For now, just show a message or add your pause code here
+    // Example:
+    System.out.println("Paused!");
+}
+
+private void resumeEmulation() {
+    // For now, just show a message or add your resume code here
+    // Example:
+    System.out.println("Resumed!");
 }
