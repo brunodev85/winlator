@@ -13,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,6 +28,11 @@ import com.winlator.container.Shortcut;
 import com.winlator.contentdialog.ContentDialog;
 import com.winlator.contentdialog.ShortcutSettingsDialog;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -128,9 +134,71 @@ public class ShortcutsFragment extends Fragment {
                         loadShortcutsList();
                     });
                 }
+                else if (itemId == R.id.shortcut_export_to_frontend) {
+                    exportShortcutToFrontend(shortcut);
+                }
                 return true;
             });
             listItemMenu.show();
+        }
+
+        private void exportShortcutToFrontend(Shortcut shortcut) {
+            // Attempt to make the frontend dir
+            File frontendDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Winlator/Frontend");
+            if (!frontendDir.exists() && !frontendDir.mkdirs()) {
+                Toast.makeText(getContext(), "Failed to create default frontend directory", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            // Create the export file in the Frontend directory
+            File exportFile = new File(frontendDir, shortcut.file.getName());
+            
+            boolean fileExists = exportFile.exists();
+            boolean containerIdFound = false;
+
+            try {
+                List<String> lines = new ArrayList<>();
+
+                // Read the original file or existing file if it exists
+                try (BufferedReader reader = new BufferedReader(new FileReader(shortcut.file))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        if (line.startsWith("container_id=")) {
+                            // Replace the existing container_id line
+                            lines.add("container_id=" + shortcut.container.id);
+                            containerIdFound = true;
+                        } else {
+                            lines.add(line);
+                        }
+                    }
+                }
+
+                // If no container_id was found, add it
+                if (!containerIdFound) {
+                    lines.add("container_id=" + shortcut.container.id);
+                }
+
+                // Write the contents to the export file
+                try (FileWriter writer = new FileWriter(exportFile, false)) {
+                    for (String line : lines) {
+                        writer.write(line + "\n");
+                    }
+                    writer.flush();
+                }
+
+                // Determine the toast message
+                String message;
+                if (fileExists) {
+                    message = "Frontend Shortcut Updated at " + exportFile.getPath();
+                } else {
+                    message = "Frontend Shortcut Exported to " + exportFile.getPath();
+                }
+
+                // Show a toast message to the user
+                Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+            } catch (IOException e) {
+                Toast.makeText(getContext(), "Failed to export shortcut", Toast.LENGTH_LONG).show();
+            }
         }
 
         private void runFromShortcut(Shortcut shortcut) {
