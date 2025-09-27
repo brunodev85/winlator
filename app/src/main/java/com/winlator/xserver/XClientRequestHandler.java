@@ -312,6 +312,9 @@ public class XClientRequestHandler implements RequestHandler {
                         GraphicsContextRequests.changeGC(client, inputStream, outputStream);
                     }
                     break;
+                case ClientOpcodes.SET_DASHES:
+                    client.skipRequest();
+                    break;
                 case ClientOpcodes.SET_CLIP_RECTANGLES:
                     client.skipRequest();
                     break;
