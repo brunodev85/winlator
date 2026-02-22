@@ -99,6 +99,9 @@ public class Keyboard {
         int action = event.getAction();
         if (action == KeyEvent.ACTION_DOWN || action == KeyEvent.ACTION_UP) {
             int keyCode = event.getKeyCode();
+
+            if (keyCode < 0 || keyCode >= keycodeMap.length) return false; // Ignore unmapped key codes
+ 
             XKeycode xKeycode = keycodeMap[keyCode];
             if (xKeycode == null) return false;
 
