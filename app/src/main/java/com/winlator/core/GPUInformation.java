@@ -109,4 +109,27 @@ public abstract class GPUInformation {
     public static boolean isAdreno6xx(Context context) {
         return getRenderer(context).toLowerCase(Locale.ENGLISH).matches(".*adreno[^6]+6[0-9]{2}.*");
     }
+
+    public static boolean isAdreno(Context context) {
+        return getRenderer(context).toLowerCase(Locale.ENGLISH).contains("adreno");
+    }
+
+    public static boolean isMali(Context context) {
+        return getRenderer(context).toLowerCase(Locale.ENGLISH).contains("mali");
+    }
+
+    public static boolean isPowerVR(Context context) {
+        String renderer = getRenderer(context).toLowerCase(Locale.ENGLISH);
+        return renderer.contains("powervr") || renderer.contains("sgx") || renderer.contains("rogue");
+    }
+
+    public static String getRecommendedGraphicsDriver(Context context) {
+        if (isAdreno(context)) return "turnip";
+        return "virgl";
+    }
+
+    public static String getRecommendedDXWrapper(Context context) {
+        if (isAdreno(context)) return "dxvk";
+        return "wined3d";
+    }
 }
