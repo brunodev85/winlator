@@ -346,6 +346,43 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         AppUtils.restartApplication(this);
     }
 
+    private void showCrashDialog(int exitCode) {
+        String signalName = getSignalName(exitCode);
+        String exitInfo = "Exit code: " + exitCode + (signalName != null ? " (" + signalName + ")" : "");
+
+        ArrayList<String> logLines = ProcessHelper.getCrashLogSnapshot();
+        StringBuilder logText = new StringBuilder();
+        logText.append(exitInfo).append("\n\n");
+        if (logLines.isEmpty()) {
+            logText.append("No debug output captured.\nEnable Wine debug or Box86/64 logs in Settings for more detail.");
+        } else {
+            logText.append("Last ").append(logLines.size()).append(" lines of output:\n\n");
+            for (String line : logLines) logText.append(line).append("\n");
+        }
+
+        ContentDialog dialog = new ContentDialog(this);
+        dialog.setTitle(getString(R.string.process_crashed));
+        dialog.setCancelable(false);
+        dialog.setMessage(logText.toString());
+        dialog.setOnConfirmCallback(this::exit);
+        dialog.show();
+    }
+
+    private static String getSignalName(int exitCode) {
+        if (exitCode < 128) return null;
+        switch (exitCode - 128) {
+            case 4: return "Illegal instruction";
+            case 6: return "Aborted";
+            case 7: return "Bus error";
+            case 8: return "Floating point exception";
+            case 9: return "Killed";
+            case 11: return "Segmentation fault";
+            case 13: return "Broken pipe";
+            case 15: return "Terminated";
+            default: return "Signal " + (exitCode - 128);
+        }
+    }
+
     private void setupWineSystemFiles() {
         String appVersion = String.valueOf(AppUtils.getVersionCode(this));
         String imgVersion = String.valueOf(imageFs.getVersion());
@@ -449,7 +486,13 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         }
 
         guestProgramLauncherComponent.setEnvVars(envVars);
-        guestProgramLauncherComponent.setTerminationCallback((status) -> exit());
+        guestProgramLauncherComponent.setTerminationCallback((status) -> {
+            if (status != 0) {
+                runOnUiThread(() -> showCrashDialog(status));
+            } else {
+                exit();
+            }
+        });
         environment.addComponent(guestProgramLauncherComponent);
 
         if (isGenerateWineprefix()) generateWineprefix();

@@ -16,6 +16,8 @@ public abstract class ProcessHelper {
     private static final ArrayList<Callback<String>> debugCallbacks = new ArrayList<>();
     private static final byte SIGCONT = 18;
     private static final byte SIGSTOP = 19;
+    private static final int CRASH_LOG_BUFFER_SIZE = 200;
+    private static final ArrayList<String> crashLogBuffer = new ArrayList<>();
 
     public static void suspendProcess(int pid) {
         Process.sendSignal(pid, SIGSTOP);
@@ -46,10 +48,8 @@ public abstract class ProcessHelper {
             pid = pidField.getInt(process);
             pidField.setAccessible(false);
 
-            if (!debugCallbacks.isEmpty()) {
-                createDebugThread(process.getInputStream());
-                createDebugThread(process.getErrorStream());
-            }
+            createDebugThread(process.getInputStream());
+            createDebugThread(process.getErrorStream());
 
             if (terminationCallback != null) createWaitForThread(process, terminationCallback);
         }
@@ -63,6 +63,10 @@ public abstract class ProcessHelper {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     if (PRINT_DEBUG) System.out.println(line);
+                    synchronized (crashLogBuffer) {
+                        crashLogBuffer.add(line);
+                        while (crashLogBuffer.size() > CRASH_LOG_BUFFER_SIZE) crashLogBuffer.remove(0);
+                    }
                     synchronized (debugCallbacks) {
                         if (!debugCallbacks.isEmpty()) {
                             for (Callback<String> callback : debugCallbacks) callback.call(line);
@@ -99,6 +103,18 @@ public abstract class ProcessHelper {
     public static void removeDebugCallback(Callback<String> callback) {
         synchronized (debugCallbacks) {
             debugCallbacks.remove(callback);
+        }
+    }
+
+    public static ArrayList<String> getCrashLogSnapshot() {
+        synchronized (crashLogBuffer) {
+            return new ArrayList<>(crashLogBuffer);
+        }
+    }
+
+    public static void clearCrashLog() {
+        synchronized (crashLogBuffer) {
+            crashLogBuffer.clear();
         }
     }
 
