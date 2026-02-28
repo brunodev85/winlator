@@ -1,5 +1,6 @@
 package com.winlator.contentdialog;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -8,11 +9,13 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.winlator.ContainerDetailFragment;
 import com.winlator.R;
 import com.winlator.ShortcutsFragment;
 import com.winlator.box86_64.Box86_64PresetManager;
+import com.winlator.container.GameProfile;
 import com.winlator.container.Shortcut;
 import com.winlator.core.AppUtils;
 import com.winlator.core.EnvVars;
@@ -24,6 +27,7 @@ import com.winlator.winhandler.WinHandler;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ShortcutSettingsDialog extends ContentDialog {
     private final ShortcutsFragment fragment;
@@ -86,6 +90,26 @@ public class ShortcutSettingsDialog extends ContentDialog {
 
         ContainerDetailFragment.createWinComponentsTab(getContentView(), shortcut.getExtra("wincomponents", shortcut.container.getWinComponents()));
         final EnvVarsView envVarsView = createEnvVarsTab();
+
+        findViewById(R.id.BTLoadGameProfile).setOnClickListener((v) -> {
+            final List<GameProfile> gameProfiles = GameProfile.loadAll(context);
+            if (gameProfiles.isEmpty()) return;
+            String[] names = new String[gameProfiles.size()];
+            for (int i = 0; i < gameProfiles.size(); i++) names[i] = gameProfiles.get(i).name;
+            new AlertDialog.Builder(context)
+                .setTitle(R.string.select_game_profile)
+                .setItems(names, (dialog, which) -> {
+                    GameProfile profile = gameProfiles.get(which);
+                    ContainerDetailFragment.loadScreenSizeSpinner(getContentView(), profile.screenSize);
+                    ContainerDetailFragment.loadGraphicsDriverSpinner(sGraphicsDriver, sDXWrapper, profile.graphicsDriver, profile.dxwrapper);
+                    Box86_64PresetManager.loadSpinner("box64", sBox64Preset, profile.box64Preset);
+                    cbForceFullscreen.setChecked(profile.forceFullscreen.equals("1"));
+                    if (!profile.execArgs.isEmpty()) etExecArgs.setText(profile.execArgs);
+                    if (!profile.envVars.isEmpty()) envVarsView.setEnvVars(new EnvVars(profile.envVars));
+                    Toast.makeText(context, context.getString(R.string.game_profile_applied, profile.name), Toast.LENGTH_SHORT).show();
+                })
+                .show();
+        });
 
         AppUtils.setupTabLayout(getContentView(), R.id.TabLayout, R.id.LLTabWinComponents, R.id.LLTabEnvVars, R.id.LLTabAdvanced);
 

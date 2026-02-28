@@ -1,0 +1,223 @@
+[
+  {
+    "name": "Elden Ring",
+    "exe": "eldenring.exe",
+    "screenSize": "1280x720",
+    "graphicsDriver": "turnip",
+    "dxwrapper": "dxvk",
+    "box64Preset": "COMPATIBILITY",
+    "envVars": "DXVK_ASYNC=1 MESA_VK_WSI_PRESENT_MODE=mailbox",
+    "forceFullscreen": "1",
+    "rating": "playable"
+  },
+  {
+    "name": "The Witcher 3",
+    "exe": "witcher3.exe",
+    "screenSize": "1280x720",
+    "graphicsDriver": "turnip",
+    "dxwrapper": "dxvk",
+    "box64Preset": "COMPATIBILITY",
+    "envVars": "DXVK_ASYNC=1 MESA_VK_WSI_PRESENT_MODE=mailbox",
+    "forceFullscreen": "1",
+    "rating": "playable"
+  },
+  {
+    "name": "Skyrim Special Edition",
+    "exe": "SkyrimSE.exe",
+    "screenSize": "1280x720",
+    "graphicsDriver": "turnip",
+    "dxwrapper": "dxvk",
+    "box64Preset": "INTERMEDIATE",
+    "envVars": "DXVK_ASYNC=1",
+    "forceFullscreen": "1",
+    "rating": "playable"
+  },
+  {
+    "name": "Fallout 4",
+    "exe": "Fallout4.exe",
+    "screenSize": "1280x720",
+    "graphicsDriver": "turnip",
+    "dxwrapper": "dxvk",
+    "box64Preset": "COMPATIBILITY",
+    "envVars": "DXVK_ASYNC=1 WINEDLLOVERRIDES=xaudio2_7=n,b",
+    "forceFullscreen": "1",
+    "rating": "playable"
+  },
+  {
+    "name": "Grand Theft Auto V",
+    "exe": "GTA5.exe",
+    "screenSize": "1280x720",
+    "graphicsDriver": "turnip",
+    "dxwrapper": "dxvk",
+    "box64Preset": "INTERMEDIATE",
+    "envVars": "DXVK_ASYNC=1 STAGING_SHARED_MEMORY=1",
+    "forceFullscreen": "1",
+    "rating": "playable"
+  },
+  {
+    "name": "Dark Souls III",
+    "exe": "DarkSoulsIII.exe",
+    "screenSize": "1280x720",
+    "graphicsDriver": "turnip",
+    "dxwrapper": "dxvk",
+    "box64Preset": "COMPATIBILITY",
+    "envVars": "DXVK_ASYNC=1",
+    "forceFullscreen": "1",
+    "rating": "playable"
+  },
+  {
+    "name": "Sekiro",
+    "exe": "sekiro.exe",
+    "screenSize": "1280x720",
+    "graphicsDriver": "turnip",
+    "dxwrapper": "dxvk",
+    "box64Preset": "COMPATIBILITY",
+    "envVars": "DXVK_ASYNC=1",
+    "forceFullscreen": "1",
+    "rating": "playable"
+  },
+  {
+    "name": "Hollow Knight",
+    "exe": "hollow_knight.exe",
+    "screenSize": "1280x720",
+    "graphicsDriver": "turnip",
+    "dxwrapper": "dxvk",
+    "box64Preset": "PERFORMANCE",
+    "envVars": "",
+    "forceFullscreen": "1",
+    "rating": "playable"
+  },
+  {
+    "name": "Stardew Valley",
+    "exe": "Stardew Valley.exe",
+    "screenSize": "1280x720",
+    "graphicsDriver": "turnip",
+    "dxwrapper": "wined3d",
+    "box64Preset": "PERFORMANCE",
+    "envVars": "",
+    "forceFullscreen": "0",
+    "rating": "playable"
+  },
+  {
+    "name": "Cuphead",
+    "exe": "Cuphead.exe",
+    "screenSize": "1280x720",
+    "graphicsDriver": "turnip",
+    "dxwrapper": "dxvk",
+    "box64Preset": "PERFORMANCE",
+    "envVars": "",
+    "forceFullscreen": "1",
+    "rating": "playable"
+  },
+  {
+    "name": "Resident Evil 4 (2005)",
+    "exe": "bio4.exe",
+    "screenSize": "1280x720",
+    "graphicsDriver": "turnip",
+    "dxwrapper": "dxvk",
+    "box64Preset": "INTERMEDIATE",
+    "envVars": "DXVK_ASYNC=1",
+    "forceFullscreen": "1",
+    "rating": "playable"
+  },
+  {
+    "name": "Need for Speed Most Wanted (2005)",
+    "exe": "speed.exe",
+    "screenSize": "1280x720",
+    "graphicsDriver": "turnip",
+    "dxwrapper": "wined3d",
+    "box64Preset": "PERFORMANCE",
+    "envVars": "",
+    "forceFullscreen": "1",
+    "rating": "playable"
+  },
+  {
+    "name": "Counter-Strike: Global Offensive",
+    "exe": "csgo.exe",
+    "screenSize": "1280x720",
+    "graphicsDriver": "turnip",
+    "dxwrapper": "dxvk",
+    "box64Preset": "INTERMEDIATE",
+    "envVars": "DXVK_ASYNC=1",
+    "forceFullscreen": "1",
+    "execArgs": "-nojoy -novid",
+    "rating": "playable"
+  },
+  {
+    "name": "Red Dead Redemption 2",
+    "exe": "RDR2.exe",
+    "screenSize": "1280x720",
+    "graphicsDriver": "turnip",
+    "dxwrapper": "dxvk",
+    "box64Preset": "COMPATIBILITY",
+    "envVars": "DXVK_ASYNC=1 STAGING_SHARED_MEMORY=1",
+    "forceFullscreen": "1",
+    "rating": "runs"
+  },
+  {
+    "name": "Cyberpunk 2077",
+    "exe": "Cyberpunk2077.exe",
+    "screenSize": "1280x720",
+    "graphicsDriver": "turnip",
+    "dxwrapper": "dxvk",
+    "box64Preset": "COMPATIBILITY",
+    "envVars": "DXVK_ASYNC=1 WINE_FULLSCREEN_FSR=1",
+    "forceFullscreen": "1",
+    "rating": "runs"
+  },
+  {
+    "name": "Devil May Cry 5",
+    "exe": "DevilMayCry5.exe",
+    "screenSize": "1280x720",
+    "graphicsDriver": "turnip",
+    "dxwrapper": "dxvk",
+    "box64Preset": "INTERMEDIATE",
+    "envVars": "DXVK_ASYNC=1",
+    "forceFullscreen": "1",
+    "rating": "playable"
+  },
+  {
+    "name": "Metal Gear Solid V: The Phantom Pain",
+    "exe": "mgsvtpp.exe",
+    "screenSize": "1280x720",
+    "graphicsDriver": "turnip",
+    "dxwrapper": "dxvk",
+    "box64Preset": "INTERMEDIATE",
+    "envVars": "DXVK_ASYNC=1",
+    "forceFullscreen": "1",
+    "rating": "playable"
+  },
+  {
+    "name": "Undertale",
+    "exe": "UNDERTALE.exe",
+    "screenSize": "640x480",
+    "graphicsDriver": "turnip",
+    "dxwrapper": "wined3d",
+    "box64Preset": "PERFORMANCE",
+    "envVars": "",
+    "forceFullscreen": "0",
+    "rating": "playable"
+  },
+  {
+    "name": "Terraria",
+    "exe": "Terraria.exe",
+    "screenSize": "1280x720",
+    "graphicsDriver": "turnip",
+    "dxwrapper": "dxvk",
+    "box64Preset": "PERFORMANCE",
+    "envVars": "",
+    "forceFullscreen": "0",
+    "rating": "playable"
+  },
+  {
+    "name": "Celeste",
+    "exe": "Celeste.exe",
+    "screenSize": "1280x720",
+    "graphicsDriver": "turnip",
+    "dxwrapper": "dxvk",
+    "box64Preset": "PERFORMANCE",
+    "envVars": "",
+    "forceFullscreen": "1",
+    "rating": "playable"
+  }
+]
