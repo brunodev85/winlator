@@ -1,0 +1,147 @@
+name: Compilar Box64 (aarch64)
+
+on:
+  workflow_dispatch:
+    inputs:
+      box64_version:
+        description: 'Versión de Box64 (rama, etiqueta o hash de commit)'
+        required: true
+        default: 'main'
+        type: string
+  pull_request:
+
+permissions:
+  contents: write  # Permite que GITHUB_TOKEN cree un Release
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+    - name: Clonar repositorio
+      uses: actions/checkout@v4
+
+    - name: Instalar dependencias
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          cmake build-essential \
+          gcc git patchelf xz-utils
+
+    - name: Configurar versión de Box64
+      id: set_version
+      run: |
+        # Si es un evento workflow_dispatch, usar el parámetro de entrada
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          echo "BOX64_REF=${{ github.event.inputs.box64_version }}" >> $GITHUB_ENV
+        else
+          # Para eventos PR, usar la versión por defecto
+          echo "BOX64_REF=main" >> $GITHUB_ENV
+        fi
+        echo "Versión de Box64 a usar: $BOX64_REF"
+
+    - name: Clonar la versión especificada de Box64
+      uses: actions/checkout@v4
+      with:
+        repository: ptitSeb/box64
+        path: box64 # Clona el repo en un subdirectorio 'box64'
+        ref: ${{ env.BOX64_REF }} # Usa la versión de la variable de entorno
+        fetch-depth: 0 # Descarga todo el historial, etiquetas y ramas
+
+    - name: Obtener información de versión y fecha
+      id: version_info
+      run: |
+        cd box64
+        # Obtener información detallada de la versión
+        BOX64_VERSION=$(git describe --tags --always 2>/dev/null || git rev-parse --short HEAD)
+        BUILD_DATE=$(date +%Y%m%d)
+        COMMIT_HASH=$(git rev-parse --short HEAD)
+        BRANCH_OR_TAG=$(git symbolic-ref -q --short HEAD || git describe --tags --exact-match 2>/dev/null || echo "detached-$COMMIT_HASH")
+        
+        echo "BOX64_VERSION=$BOX64_VERSION" >> $GITHUB_ENV
+        echo "BUILD_DATE=$BUILD_DATE" >> $GITHUB_ENV
+        echo "COMMIT_HASH=$COMMIT_HASH" >> $GITHUB_ENV
+        echo "BRANCH_OR_TAG=$BRANCH_OR_TAG" >> $GITHUB_ENV
+        
+        # También establecer como salida del paso para uso futuro
+        echo "BOX64_VERSION=$BOX64_VERSION" >> $GITHUB_OUTPUT
+        echo "BUILD_DATE=$BUILD_DATE" >> $GITHUB_OUTPUT
+        echo "COMMIT_HASH=$COMMIT_HASH" >> $GITHUB_OUTPUT
+        echo "BRANCH_OR_TAG=$BRANCH_OR_TAG" >> $GITHUB_OUTPUT
+        
+        echo "Versión: $BOX64_VERSION"
+        echo "Fecha: $BUILD_DATE"
+        echo "Commit: $COMMIT_HASH"
+        echo "Rama/Etiqueta: $BRANCH_OR_TAG"
+        echo "Versión solicitada: $BOX64_REF"
+
+    - name: Compilar Box64
+      run: |
+        cd box64
+        mkdir build && cd build
+        cmake .. \
+            -DARM_DYNAREC=ON \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DWINLATOR_GLIBC=ON \
+            -DARM64=ON \
+            -DBAD_SIGN=ON \
+            -DSD8G2=ON
+
+        make -j4
+        patchelf --set-interpreter /data/data/com.termux/files/usr/glibc/lib/ld-linux-aarch64.so.1 box64 || true
+
+        # Empaquetar solo el ejecutable, usando compresión xz
+        tar -cJf box64-${BOX64_VERSION}-${BUILD_DATE}.tar.xz box64
+
+    - name: Verificar existencia del archivo
+      run: |
+        cd box64/build
+        ls -la box64-*.tar.xz
+        echo "Tamaño del archivo: $(du -h box64-${BOX64_VERSION}-${BUILD_DATE}.tar.xz)"
+
+    - name: Subir artefacto de compilación
+      uses: actions/upload-artifact@v4
+      with:
+        name: box64-${{ env.BOX64_VERSION }}-${{ env.BUILD_DATE }}
+        path: box64/build/box64-${{ env.BOX64_VERSION }}-${{ env.BUILD_DATE }}.tar.xz
+
+    - name: Crear etiqueta de Release
+      id: create_tag
+      run: |
+        # Crear una etiqueta significativa para el Release
+        if [[ "$BRANCH_OR_TAG" == "detached-"* ]]; then
+          RELEASE_TAG="build-${COMMIT_HASH}-${BUILD_DATE}"
+        else
+          RELEASE_TAG="${BRANCH_OR_TAG}-${BUILD_DATE}"
+        fi
+        echo "RELEASE_TAG=$RELEASE_TAG" >> $GITHUB_ENV
+        echo "Etiqueta de Release: $RELEASE_TAG"
+
+    - name: Publicar en GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ env.RELEASE_TAG }}
+        name: Box64 ${{ env.BOX64_VERSION }} (aarch64, Termux glibc)
+        body: |
+          ### Información de Compilación de Box64
+          - **Versión**: ${{ env.BOX64_VERSION }}
+          - **Fecha de compilación**: ${{ env.BUILD_DATE }}
+          - **Hash del Commit**: ${{ env.COMMIT_HASH }}
+          - **Rama/Etiqueta**: ${{ env.BRANCH_OR_TAG }}
+          - **Versión solicitada**: ${{ env.BOX64_REF }}
+          
+          Esta compilación está optimizada para el entorno Termux glibc.
+        files: box64/build/box64-${{ env.BOX64_VERSION }}-${{ env.BUILD_DATE }}.tar.xz
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Mostrar información de finalización
+      run: |
+        echo "✅ Compilación de Box64 completada y Release publicado"
+        echo "Nombre del archivo: box64-$BOX64_VERSION-$BUILD_DATE.tar.xz"
+        echo "Etiqueta de Release: $RELEASE_TAG"
+        echo "Versión de compilación: $BOX64_VERSION"
+        echo "Commit: $COMMIT_HASH"
+        

@@ -99,15 +99,29 @@
                 android:orientation="horizontal"
                 android:visibility="gone" />
 
-            <Button
-                style="@style/ButtonNeutral"
-                android:text="@string/cancel"
-                android:id="@+id/BTCancel" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-            <Button
-                style="@style/ButtonNeutral"
-                android:text="@string/ok"
-                android:id="@+id/BTConfirm" />
+                <Button
+                    android:id="@id/BTReset"
+                    android:visibility="gone"
+                    android:text="@string/reset"
+                    style="@style/ButtonNeutral" />
+
+                <Button
+                    style="@style/ButtonNeutral"
+                    android:layout_weight="1"
+                    android:text="@string/cancel"
+                    android:id="@+id/BTCancel" />
+
+                <Button
+                    style="@style/ButtonNeutral"
+                    android:layout_weight="1"
+                    android:text="@string/ok"
+                    android:id="@+id/BTConfirm" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

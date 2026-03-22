@@ -1,0 +1,17 @@
+[
+    {"name" : "FEX_TSOENABLED", "values" : ["0", "1"], "toggleSwitch" : true, "defaultValue" : "1"},
+    {"name" : "FEX_VECTORTSOENABLED", "values" : ["0", "1"], "toggleSwitch" : true, "defaultValue" : "0"},
+    {"name" : "FEX_HALFBARRIERTSOENABLED", "values" : ["0", "1"], "toggleSwitch" : true, "defaultValue" : "1"},
+    {"name" : "FEX_MEMCPYSETTSOENABLED", "values" : ["0", "1"], "toggleSwitch" : true, "defaultValue" : "0"},
+    {"name" : "FEX_X87REDUCEDPRECISION", "values" : ["0", "1"], "toggleSwitch" : true, "defaultValue" : "0"},
+    {"name" : "FEX_MULTIBLOCK", "values" : ["0", "1"], "toggleSwitch" : true, "defaultValue" : "1"},
+    {"name" : "FEX_MAXINST", "values" : ["5000"], "editText" : true, "defaultValue" : "5000"},
+    {"name" : "FEX_HOSTFEATURES", "values" : ["enablesve", "disablesve", "enableavx", "disableavx", "off"], "defaultValue" : "off"},
+    {"name" : "FEX_SMALLTSCSCALE", "values" : ["0", "1"], "toggleswitch" : true, "defaultValue" : "1"},
+    {"name" : "FEX_SMC_CHECKS", "values" : ["none", "mtrack", "full"], "defaultValue" : "mtrack"},
+    {"name" : "FEX_VOLATILEMETADATA", "values" : ["0", "1"], "toggleswitch" : true, "defaultValue" : "1"},
+    {"name" : "FEX_MONOHACKS", "values" : ["0", "1"], "toggleswitch" : true, "defaultValue" : "1"},
+    {"name" : "FEX_HIDEHYPERVISORBIT", "values" : ["0", "1"], "toggleswitch" : true, "defaultValue" : "0"},
+    {"name" : "FEX_DISABLEL2CACHE", "values" : ["0", "1"], "toggleswitch" : true, "defaultValue" : "0"},
+    {"name" : "FEX_DYNAMICL1CACHE", "values" : ["0", "1"], "toggleswitch" : true, "defaultValue" : "0"}
+]

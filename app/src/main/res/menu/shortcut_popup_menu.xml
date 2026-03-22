@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/shortcut_settings" android:title="@string/settings" android:icon="@drawable/icon_popup_menu_settings" android:iconTint="@color/colorAccent" />
+    <item android:id="@+id/shortcut_add_to_home_screen" android:title="@string/add_to_home_screen" android:icon="@drawable/icon_shortcut" android:iconTint="@color/colorAccent" />
     <item android:id="@+id/shortcut_remove" android:title="@string/remove" android:icon="@drawable/icon_popup_menu_remove" android:iconTint="@color/colorAccent" />
+    <item android:id="@+id/shortcut_export" android:title="Export" android:icon="@android:drawable/ic_menu_share" android:iconTint="@color/colorAccent" />
+    <item android:id="@+id/shortcut_clone_to_container" android:title="Clone" android:icon="@drawable/icon_popup_menu_transfer" android:iconTint="@color/colorAccent" />
+    <item android:id="@+id/shortcut_properties" android:title="Properties" android:icon="@android:drawable/ic_menu_info_details" android:iconTint="@color/colorAccent" />
 </menu>

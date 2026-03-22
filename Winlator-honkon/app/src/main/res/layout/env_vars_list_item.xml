@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/TextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:maxLines="1" />
+
+    <LinearLayout
+        android:layout_width="100dp"
+        android:layout_height="42dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Spinner
+            style="@style/ComboBox"
+            android:layout_width="match_parent"
+            android:id="@+id/Spinner"
+            android:visibility="gone" />
+
+        <com.winlator.widget.MultiSelectionComboBox
+            style="@style/MultiSelectionComboBox"
+            android:id="@+id/MultiSelectionComboBox"
+            android:layout_width="match_parent"
+            android:visibility="gone" />
+
+        <ToggleButton
+            android:id="@+id/ToggleButton"
+            android:layout_width="64dp"
+            android:layout_height="32dp"
+            android:background="@drawable/toggle_button_selector"
+            android:visibility="gone"
+            android:textOn=""
+            android:textOff="" />
+
+        <EditText
+            style="@style/EditText"
+            android:id="@+id/EditText"
+            android:layout_width="match_parent"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <ImageButton
+        style="@style/ListMenuButton"
+        android:id="@+id/BTRemove"
+        android:src="@drawable/icon_remove" />
+</LinearLayout>

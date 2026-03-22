@@ -4,6 +4,6 @@
     "directmusic" : ["dmband", "dmcompos", "dmime", "dmloader", "dmscript", "dmstyle", "dmsynth", "dmusic", "dmusic32", "dswave"],
     "directshow" : ["amstream", "qasf", "qcap", "qdvd", "qedit", "quartz"],
     "directplay" : ["dplaysvr.exe", "dplayx", "dpmodemx", "dpnet", "dpnhpast", "dpnhupnp", "dpnsvr.exe", "dpwsockx"],
-    "vcrun2010" : ["msvcp100", "msvcr100", "vcomp100", "atl100"],
-    "wmdecoder" : ["wmvcore", "wmasf", "wmadmod", "wmvdecod"]
+    "xaudio" : ["x3daudio1_0", "x3daudio1_1", "x3daudio1_2", "x3daudio1_3", "x3daudio1_4", "x3daudio1_5", "x3daudio1_6", "x3daudio1_7", "xactengine2_0", "xactengine2_1", "xactengine2_2", "xactengine2_3", "xactengine2_4", "xactengine2_5", "xactengine2_6", "xactengine2_7", "xactengine2_8", "xactengine2_9", "xactengine2_10", "xactengine3_0", "xactengine3_1", "xactengine3_2", "xactengine3_3", "xactengine3_4", "xactengine3_5", "xactengine3_6", "xactengine3_7", "xapofx1_0", "xapofx1_1", "xapofx1_2", "xapofx1_3", "xapofx1_4", "xapofx1_5", "xaudio2_0", "xaudio2_1", "xaudio2_2", "xaudio2_3", "xaudio2_4", "xaudio2_5", "xaudio2_6", "xaudio2_7"],
+    "vcrun2010" : ["msvcp100", "msvcr100", "vcomp100", "atl100"]
 }

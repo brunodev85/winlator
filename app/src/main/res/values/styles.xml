@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Light Theme -->
     <style name="AppTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -15,12 +16,41 @@
         <item name="android:popupMenuStyle">@style/PopupMenu</item>
         <item name="popupMenuStyle">@style/PopupMenu</item>
     </style>
+
+    <!-- Dark Theme -->
+    <style name="AppTheme.Dark" parent="@style/Theme.AppCompat.NoActionBar">
+        <item name="colorAccent">@color/colorAccentDark</item>
+        <item name="colorPrimary">@color/colorPrimaryDarkMode</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkModeDark</item>
+        <item name="android:windowBackground">@color/window_background_color_dark</item>
+        <item name="android:colorBackground">@color/window_background_color_dark</item>
+        <item name="android:textViewStyle">@style/TextView.Dark</item>
+        <item name="android:checkboxStyle">@style/CheckBox.Dark</item>
+        <item name="android:listPopupWindowStyle">@style/ListPopupWindow.Dark</item>
+        <item name="listPopupWindowStyle">@style/ListPopupWindow.Dark</item>
+        <item name="android:popupWindowStyle">@style/PopupWindow.Dark</item>
+        <item name="popupWindowStyle">@style/PopupWindow.Dark</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu.Dark</item>
+        <item name="popupMenuStyle">@style/PopupMenu.Dark</item>
+    </style>
+
+    <!-- Light Theme Fullscreen -->
     <style name="AppThemeFullscreen" parent="@style/AppTheme">
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowBackground">#000000</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
     </style>
+
+    <!-- Dark Theme Fullscreen -->
+    <style name="AppThemeFullscreen.Dark" parent="@style/AppTheme.Dark">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowBackground">#000000</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+
+    <!-- Base ComboBox Styles -->
     <style name="ComboBox">
         <item name="android:layout_width">192dp</item>
         <item name="android:layout_height">42dp</item>
@@ -38,36 +68,58 @@
         <item name="android:background">@drawable/combo_box</item>
         <item name="android:popupBackground">@drawable/content_dialog_background</item>
     </style>
-    <style name="MultiSelectionComboBox">
-        <item name="android:layout_width">192dp</item>
-        <item name="android:layout_height">42dp</item>
-        <item name="android:focusable">true</item>
-        <item name="android:clickable">true</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:gravity">left|center_vertical</item>
-        <item name="android:paddingLeft">12dp</item>
-        <item name="android:paddingRight">36dp</item>
-        <item name="android:paddingTop">0dp</item>
-        <item name="android:paddingBottom">0dp</item>
-        <item name="android:maxLines">1</item>
-        <item name="android:background">@drawable/combo_box</item>
+
+    <!-- Dark ComboBox Styles -->
+    <style name="ComboBox.Dark" parent="ComboBox">
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:background">@drawable/combo_box_dark</item>
+        <item name="android:popupBackground">@drawable/content_dialog_background_dark</item>
     </style>
+
+    <style name="MultiSelectionComboBox" parent="ComboBox"/>
+    <style name="MultiSelectionComboBox.Dark" parent="ComboBox.Dark"/>
+
+    <!-- Popup Styles -->
     <style name="ListPopupWindow" parent="@android:style/Widget.ListPopupWindow">
         <item name="android:popupBackground">@drawable/content_dialog_background</item>
         <item name="android:dropDownHorizontalOffset">-4dp</item>
     </style>
+
+
+    <style name="ListPopupWindow.Dark" parent="ListPopupWindow">
+        <item name="android:popupBackground">@drawable/content_dialog_background_dark</item>
+    </style>
+
     <style name="PopupWindow" parent="@android:style/Widget.PopupWindow">
         <item name="android:popupBackground">@drawable/content_dialog_background</item>
         <item name="android:dropDownHorizontalOffset">-4dp</item>
     </style>
+
+    <style name="PopupWindow.Dark" parent="PopupWindow">
+        <item name="android:popupBackground">@drawable/content_dialog_background_dark</item>
+    </style>
+
     <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
         <item name="android:popupBackground">@drawable/content_dialog_background</item>
     </style>
+
+    <style name="PopupMenu.Dark" parent="PopupMenu">
+        <item name="android:popupBackground">@drawable/content_dialog_background_dark</item>
+    </style>
+
     <style name="ContentDialog" parent="@android:style/Theme.Dialog">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowBackground">@drawable/content_dialog_background</item>
     </style>
+
+
+
+    <style name="ContentDialog.Dark" parent="ContentDialog">
+        <item name="android:windowBackground">@drawable/content_dialog_background_dark</item>
+    </style>
+
+    <!-- EditText Styles -->
     <style name="EditText">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">42dp</item>
@@ -81,12 +133,37 @@
         <item name="android:inputType">text</item>
         <item name="android:background">@drawable/edit_text</item>
     </style>
+
+    <style name="EditText.Dark" parent="EditText">
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:background">@drawable/edit_text_dark</item>
+    </style>
+
+    <!-- TextView Styles -->
     <style name="TextView" parent="@android:style/Widget.TextView">
         <item name="android:textSize">16sp</item>
     </style>
+
+    <style name="TextView.Dark" parent="TextView">
+        <item name="android:textColor">#ffffff</item>
+    </style>
+
+    <!-- CheckBox Styles -->
     <style name="CheckBox" parent="@android:style/Widget.CompoundButton.CheckBox">
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorSecondary">@color/colorPrimary</item>
+        <item name="android:textColor">#000000</item>
         <item name="android:textSize">16sp</item>
     </style>
+
+    <style name="CheckBox.Dark" parent="CheckBox">
+        <item name="colorAccent">@color/colorAccentDark</item>
+        <item name="android:textColorSecondary">@color/colorPrimaryDark</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <!-- Button Styles -->
     <style name="BaseButton">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">42dp</item>
@@ -99,14 +176,30 @@
         <item name="android:paddingRight">24dp</item>
         <item name="android:textAllCaps">false</item>
     </style>
+
+    <style name="BaseButton.Dark" parent="BaseButton">
+        <item name="android:textColor">#ffffff</item>
+    </style>
+
     <style name="ButtonNeutral" parent="BaseButton">
         <item name="android:background">@drawable/button_neutral</item>
         <item name="android:textColor">#ffffff</item>
     </style>
+
+    <style name="ButtonNeutral.Dark" parent="BaseButton.Dark">
+        <item name="android:background">@drawable/button_neutral</item>
+    </style>
+
     <style name="ButtonPositive" parent="BaseButton">
         <item name="android:background">@drawable/button_positive</item>
         <item name="android:textColor">#ffffff</item>
     </style>
+
+    <style name="ButtonPositive.Dark" parent="BaseButton.Dark">
+        <item name="android:background">@drawable/button_positive</item>
+    </style>
+
+    <!-- Base ImageButton Styles -->
     <style name="BaseImageButton">
         <item name="android:layout_width">42dp</item>
         <item name="android:layout_height">42dp</item>
@@ -117,11 +210,17 @@
         <item name="android:background">?selectableItemBackgroundBorderless</item>
         <item name="android:padding">4dp</item>
     </style>
+
     <style name="ToolButton" parent="BaseImageButton">
         <item name="android:layout_marginLeft">2dp</item>
         <item name="android:layout_marginRight">2dp</item>
         <item name="android:tint">@color/colorPrimary</item>
     </style>
+
+    <style name="ToolButton.Dark" parent="BaseImageButton">
+        <item name="android:tint">@color/colorPrimaryDarkMode</item>
+    </style>
+
     <style name="ListMenuButton" parent="BaseImageButton">
         <item name="android:layout_width">34dp</item>
         <item name="android:layout_height">34dp</item>
@@ -129,6 +228,12 @@
         <item name="android:layout_marginLeft">2dp</item>
         <item name="android:layout_marginRight">2dp</item>
     </style>
+
+    <style name="ListMenuButton.Dark" parent="ListMenuButton">
+        <item name="android:tint">@color/colorPrimaryDarkModeDark</item>
+    </style>
+
+    <!-- Line Styles -->
     <style name="VerticalLine">
         <item name="android:layout_width">2dp</item>
         <item name="android:layout_height">match_parent</item>
@@ -138,6 +243,11 @@
         <item name="android:layout_marginLeft">4dp</item>
         <item name="android:layout_marginRight">4dp</item>
     </style>
+
+    <style name="VerticalLine.Dark" parent="VerticalLine">
+        <item name="android:background">#707070</item>
+    </style>
+
     <style name="HorizontalLine">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">2dp</item>
@@ -145,6 +255,11 @@
         <item name="android:layout_marginTop">8dp</item>
         <item name="android:layout_marginBottom">8dp</item>
     </style>
+
+    <style name="HorizontalLine.Dark" parent="HorizontalLine">
+        <item name="android:background">@color/colorPrimaryDarkMode</item>
+    </style>
+
     <style name="FieldSeparator">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1dp</item>
@@ -152,6 +267,11 @@
         <item name="android:layout_marginTop">8dp</item>
         <item name="android:layout_marginBottom">8dp</item>
     </style>
+
+    <style name="FieldSeparator.Dark" parent="FieldSeparator">
+        <item name="android:background">#444444</item>
+    </style>
+
     <style name="FieldSet">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -163,6 +283,11 @@
         <item name="android:paddingTop">16dp</item>
         <item name="android:layout_marginTop">10dp</item>
     </style>
+
+    <style name="FieldSet.Dark" parent="FieldSet">
+        <item name="android:background">@drawable/bordered_panel_dark</item>
+    </style>
+
     <style name="FieldSetLabel">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -173,6 +298,13 @@
         <item name="android:layout_marginLeft">8dp</item>
         <item name="android:textColor">#bdbdbd</item>
     </style>
+
+    <style name="FieldSetLabel.Dark" parent="FieldSetLabel">
+        <item name="android:background">@color/window_background_color_dark</item>
+        <item name="android:textColor">#cccccc</item>
+    </style>
+
+    <!-- Table Header Styles -->
     <style name="TableHeadBackground">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">28dp</item>
@@ -182,6 +314,12 @@
         <item name="android:paddingLeft">4dp</item>
         <item name="android:gravity">center_vertical</item>
     </style>
+
+    <style name="TableHeadBackground.Dark" parent="TableHeadBackground">
+        <item name="android:background">@drawable/table_head_background</item>
+    </style>
+
+    <!-- Help Button Styles -->
     <style name="HelpButton">
         <item name="android:layout_width">22dp</item>
         <item name="android:layout_height">22dp</item>
@@ -189,4 +327,556 @@
         <item name="android:src">@drawable/icon_help</item>
         <item name="tint">#e0e0e0</item>
     </style>
+
+    <style name="HelpButton.Dark" parent="HelpButton">
+        <item name="tint">#f0f0f0</item>
+    </style>
+
+    <style name="TabLayoutBackground" >
+        <item name="android:background">@drawable/tab_layout_background</item>
+    </style>
+
+    <style name="TabLayoutBackground.Dark" >
+        <item name="android:background">@drawable/tab_layout_background_dark</item>
+    </style>
+
+    <style name="SpinnerDialogDark" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:background">@color/content_dialog_background_dark</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="Base.Widget.AppCompat.SeekBar" parent="@android:style/Widget.Material.SeekBar" />
+    <style name="Base.Widget.AppCompat.SeekBar.Discrete" parent="@style/Base.Widget.AppCompat.SeekBar">
+        <item name="tickMark">@drawable/abc_seekbar_tick_mark_material</item>
+    </style>
+
+    <style name="Preference.SeekBarPreference" parent="@style/Preference">
+        <item name="android:layout">@layout/preference_widget_seekbar</item>
+        <item name="adjustable">true</item>
+        <item name="showSeekBarValue">true</item>
+        <item name="updatesContinuously">false</item>
+    </style>
+    <style name="Preference.SeekBarPreference.Material" parent="@style/Preference.SeekBarPreference">
+        <item name="android:layout">@layout/preference_widget_seekbar_material</item>
+        <item name="adjustable">true</item>
+        <item name="allowDividerAbove">false</item>
+        <item name="allowDividerBelow">true</item>
+        <item name="iconSpaceReserved">@bool/config_materialPreferenceIconSpaceReserved</item>
+        <item name="showSeekBarValue">false</item>
+    </style>
+
+    <style name="Preference">
+        <item name="android:layout">@layout/preference</item>
+    </style>
+    <style name="Preference.Category" parent="@style/Preference">
+        <item name="android:layout">@layout/preference_category</item>
+        <item name="android:selectable">false</item>
+        <item name="android:shouldDisableView">false</item>
+    </style>
+    <style name="Preference.Category.Material" parent="@style/Preference.Category">
+        <item name="android:layout">@layout/preference_category_material</item>
+        <item name="allowDividerAbove">true</item>
+        <item name="allowDividerBelow">true</item>
+        <item name="iconSpaceReserved">@bool/config_materialPreferenceIconSpaceReserved</item>
+    </style>
+    <style name="Preference.CheckBoxPreference" parent="@style/Preference">
+        <item name="android:widgetLayout">@layout/preference_widget_checkbox</item>
+    </style>
+    <style name="Preference.CheckBoxPreference.Material" parent="@style/Preference.CheckBoxPreference">
+        <item name="android:layout">@layout/preference_material</item>
+        <item name="allowDividerAbove">false</item>
+        <item name="allowDividerBelow">true</item>
+        <item name="iconSpaceReserved">@bool/config_materialPreferenceIconSpaceReserved</item>
+    </style>
+    <style name="Preference.DialogPreference" parent="@style/Preference">
+        <item name="android:positiveButtonText">@android:string/ok</item>
+        <item name="android:negativeButtonText">@android:string/cancel</item>
+    </style>
+    <style name="Preference.DialogPreference.EditTextPreference" parent="@style/Preference.DialogPreference">
+        <item name="android:dialogLayout">@layout/preference_dialog_edittext</item>
+    </style>
+    <style name="Preference.DialogPreference.EditTextPreference.Material" parent="@style/Preference.DialogPreference.EditTextPreference">
+        <item name="android:layout">@layout/preference_material</item>
+        <item name="allowDividerAbove">false</item>
+        <item name="allowDividerBelow">true</item>
+        <item name="iconSpaceReserved">@bool/config_materialPreferenceIconSpaceReserved</item>
+        <item name="singleLineTitle">false</item>
+    </style>
+    <style name="Preference.DialogPreference.Material" parent="@style/Preference.DialogPreference">
+        <item name="android:layout">@layout/preference_material</item>
+        <item name="allowDividerAbove">false</item>
+        <item name="allowDividerBelow">true</item>
+        <item name="iconSpaceReserved">@bool/config_materialPreferenceIconSpaceReserved</item>
+    </style>
+    <style name="Preference.DropDown" parent="@style/Preference">
+        <item name="android:layout">@layout/preference_dropdown</item>
+    </style>
+    <style name="Preference.DropDown.Material" parent="@style/Preference.DropDown">
+        <item name="android:layout">@layout/preference_dropdown_material</item>
+        <item name="allowDividerAbove">false</item>
+        <item name="allowDividerBelow">true</item>
+        <item name="iconSpaceReserved">@bool/config_materialPreferenceIconSpaceReserved</item>
+    </style>
+    <style name="Preference.Information" parent="@style/Preference">
+        <item name="android:enabled">false</item>
+        <item name="android:layout">@layout/preference_information</item>
+        <item name="android:shouldDisableView">false</item>
+    </style>
+    <style name="Preference.Information.Material" parent="@style/Preference.Information">
+        <item name="android:enabled">false</item>
+        <item name="android:layout">@layout/preference_information_material</item>
+        <item name="android:shouldDisableView">false</item>
+    </style>
+    <style name="Preference.Material" parent="@style/Preference">
+        <item name="android:layout">@layout/preference_material</item>
+        <item name="allowDividerAbove">false</item>
+        <item name="allowDividerBelow">true</item>
+        <item name="iconSpaceReserved">@bool/config_materialPreferenceIconSpaceReserved</item>
+        <item name="singleLineTitle">false</item>
+    </style>
+    <style name="Preference.PreferenceScreen" parent="@style/Preference" />
+    <style name="Preference.PreferenceScreen.Material" parent="@style/Preference.PreferenceScreen">
+        <item name="android:layout">@layout/preference_material</item>
+        <item name="allowDividerAbove">false</item>
+        <item name="allowDividerBelow">true</item>
+        <item name="iconSpaceReserved">@bool/config_materialPreferenceIconSpaceReserved</item>
+    </style>
+    <style name="Preference.SwitchPreference" parent="@style/Preference">
+        <item name="android:widgetLayout">@layout/preference_widget_switch</item>
+        <item name="android:switchTextOn">@string/v7_preference_on</item>
+        <item name="android:switchTextOff">@string/v7_preference_off</item>
+    </style>
+    <style name="Preference.SwitchPreference.Material" parent="@style/Preference.SwitchPreference">
+        <item name="android:layout">@layout/preference_material</item>
+        <item name="allowDividerAbove">false</item>
+        <item name="allowDividerBelow">true</item>
+        <item name="iconSpaceReserved">@bool/config_materialPreferenceIconSpaceReserved</item>
+        <item name="singleLineTitle">false</item>
+    </style>
+    <style name="Preference.SwitchPreferenceCompat" parent="@style/Preference">
+        <item name="android:widgetLayout">@layout/preference_widget_switch_compat</item>
+        <item name="android:switchTextOn">@string/v7_preference_on</item>
+        <item name="android:switchTextOff">@string/v7_preference_off</item>
+    </style>
+    <style name="Preference.SwitchPreferenceCompat.Material" parent="@style/Preference.SwitchPreferenceCompat">
+        <item name="android:layout">@layout/preference_material</item>
+        <item name="allowDividerAbove">false</item>
+        <item name="allowDividerBelow">true</item>
+        <item name="iconSpaceReserved">@bool/config_materialPreferenceIconSpaceReserved</item>
+    </style>
+    <style name="PreferenceCategoryTitleTextStyle">
+        <item name="android:textAppearance">?preferenceCategoryTitleTextAppearance</item>
+        <item name="android:textColor">?android:colorAccent</item>
+    </style>
+    <style name="PreferenceFragment">
+        <item name="android:paddingLeft">0.0dip</item>
+        <item name="android:paddingRight">0.0dip</item>
+        <item name="android:divider">?android:listDivider</item>
+        <item name="android:paddingStart">0.0dip</item>
+        <item name="android:paddingEnd">0.0dip</item>
+    </style>
+    <style name="PreferenceFragment.Material" parent="@style/PreferenceFragment">
+        <item name="android:divider">@drawable/preference_list_divider_material</item>
+        <item name="allowDividerAfterLastItem">false</item>
+    </style>
+    <style name="PreferenceFragmentList">
+        <item name="android:paddingLeft">16.0dip</item>
+        <item name="android:paddingRight">16.0dip</item>
+        <item name="android:paddingStart">16.0dip</item>
+        <item name="android:paddingEnd">16.0dip</item>
+    </style>
+    <style name="PreferenceFragmentList.Material" parent="@style/PreferenceFragmentList">
+        <item name="android:paddingLeft">0.0dip</item>
+        <item name="android:paddingRight">0.0dip</item>
+        <item name="android:paddingStart">0.0dip</item>
+        <item name="android:paddingEnd">0.0dip</item>
+    </style>
+    <style name="PreferenceSummaryTextStyle">
+        <item name="android:textAppearance">?android:textAppearanceListItemSecondary</item>
+    </style>
+    <style name="PreferenceThemeOverlay">
+        <item name="android:scrollbars">vertical</item>
+        <item name="checkBoxPreferenceStyle">@style/Preference.CheckBoxPreference.Material</item>
+        <item name="dialogPreferenceStyle">@style/Preference.DialogPreference.Material</item>
+        <item name="dropdownPreferenceStyle">@style/Preference.DropDown.Material</item>
+        <item name="editTextPreferenceStyle">@style/Preference.DialogPreference.EditTextPreference.Material</item>
+        <item name="preferenceCategoryStyle">@style/Preference.Category.Material</item>
+        <item name="preferenceCategoryTitleTextAppearance">@style/TextAppearance.AppCompat.Body2</item>
+        <item name="preferenceFragmentCompatStyle">@style/PreferenceFragment.Material</item>
+        <item name="preferenceFragmentListStyle">@style/PreferenceFragmentList.Material</item>
+        <item name="preferenceFragmentStyle">@style/PreferenceFragment.Material</item>
+        <item name="preferenceScreenStyle">@style/Preference.PreferenceScreen.Material</item>
+        <item name="preferenceStyle">@style/Preference.Material</item>
+        <item name="seekBarPreferenceStyle">@style/Preference.SeekBarPreference.Material</item>
+        <item name="switchPreferenceCompatStyle">@style/Preference.SwitchPreferenceCompat.Material</item>
+        <item name="switchPreferenceStyle">@style/Preference.SwitchPreference.Material</item>
+    </style>
+    <style name="PreferenceThemeOverlay.v14" parent="@style/PreferenceThemeOverlay" />
+    <style name="PreferenceThemeOverlay.v14.Material" parent="@style/PreferenceThemeOverlay.v14" />
+
+    <style name="Widget.AppCompat.SeekBar" parent="@style/Base.Widget.AppCompat.SeekBar" />
+    <style name="Widget.AppCompat.SeekBar.Discrete" parent="@style/Base.Widget.AppCompat.SeekBar.Discrete" />
+
+    <style name="Base.V7.Theme.AppCompat" parent="@style/Platform.AppCompat">
+        <item name="android:panelBackground">@android:color/transparent</item>
+        <item name="android:dropDownListViewStyle">@style/Widget.AppCompat.ListView.DropDown</item>
+        <item name="android:textViewStyle">@style/Widget.AppCompat.TextView</item>
+        <item name="android:dropDownItemStyle">@style/Widget.AppCompat.DropDownItem.Spinner</item>
+        <item name="android:spinnerItemStyle">@style/Widget.AppCompat.TextView.SpinnerItem</item>
+        <item name="android:textAppearanceButton">@style/TextAppearance.AppCompat.Widget.Button</item>
+        <item name="actionBarDivider">?dividerVertical</item>
+        <item name="actionBarItemBackground">?selectableItemBackgroundBorderless</item>
+        <item name="actionBarPopupTheme">@null</item>
+        <item name="actionBarSize">@dimen/abc_action_bar_default_height_material</item>
+        <item name="actionBarSplitStyle">?actionBarStyle</item>
+        <item name="actionBarStyle">@style/Widget.AppCompat.ActionBar.Solid</item>
+        <item name="actionBarTabBarStyle">@style/Widget.AppCompat.ActionBar.TabBar</item>
+        <item name="actionBarTabStyle">@style/Widget.AppCompat.ActionBar.TabView</item>
+        <item name="actionBarTabTextStyle">@style/Widget.AppCompat.ActionBar.TabText</item>
+        <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.ActionBar</item>
+        <item name="actionBarWidgetTheme">@null</item>
+        <item name="actionButtonStyle">@style/Widget.AppCompat.ActionButton</item>
+        <item name="actionDropDownStyle">@style/Widget.AppCompat.Spinner.DropDown.ActionBar</item>
+        <item name="actionMenuTextAppearance">@style/TextAppearance.AppCompat.Widget.ActionBar.Menu</item>
+        <item name="actionMenuTextColor">?android:textColorPrimaryDisableOnly</item>
+        <item name="actionModeBackground">@drawable/abc_cab_background_top_material</item>
+        <item name="actionModeCloseButtonStyle">@style/Widget.AppCompat.ActionButton.CloseMode</item>
+        <item name="actionModeCloseDrawable">@drawable/abc_ic_ab_back_material</item>
+        <item name="actionModeCopyDrawable">@drawable/abc_ic_menu_copy_mtrl_am_alpha</item>
+        <item name="actionModeCutDrawable">@drawable/abc_ic_menu_cut_mtrl_alpha</item>
+        <item name="actionModePasteDrawable">@drawable/abc_ic_menu_paste_mtrl_am_alpha</item>
+        <item name="actionModeSelectAllDrawable">@drawable/abc_ic_menu_selectall_mtrl_alpha</item>
+        <item name="actionModeShareDrawable">@drawable/abc_ic_menu_share_mtrl_alpha</item>
+        <item name="actionModeSplitBackground">?colorPrimaryDark</item>
+        <item name="actionModeStyle">@style/Widget.AppCompat.ActionMode</item>
+        <item name="actionOverflowButtonStyle">@style/Widget.AppCompat.ActionButton.Overflow</item>
+        <item name="actionOverflowMenuStyle">@style/Widget.AppCompat.PopupMenu.Overflow</item>
+        <item name="activityChooserViewStyle">@style/Widget.AppCompat.ActivityChooserView</item>
+        <item name="alertDialogCenterButtons">false</item>
+        <item name="alertDialogStyle">@style/AlertDialog.AppCompat</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.AppCompat.Dialog.Alert</item>
+        <item name="autoCompleteTextViewStyle">@style/Widget.AppCompat.AutoCompleteTextView</item>
+        <item name="borderlessButtonStyle">@style/Widget.AppCompat.Button.Borderless</item>
+        <item name="buttonBarButtonStyle">@style/Widget.AppCompat.Button.ButtonBar.AlertDialog</item>
+        <item name="buttonBarNegativeButtonStyle">?buttonBarButtonStyle</item>
+        <item name="buttonBarNeutralButtonStyle">?buttonBarButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">?buttonBarButtonStyle</item>
+        <item name="buttonBarStyle">@style/Widget.AppCompat.ButtonBar</item>
+        <item name="buttonStyle">@style/Widget.AppCompat.Button</item>
+        <item name="buttonStyleSmall">@style/Widget.AppCompat.Button.Small</item>
+        <item name="checkboxStyle">@style/Widget.AppCompat.CompoundButton.CheckBox</item>
+        <item name="colorAccent">@color/accent_material_dark</item>
+        <item name="colorBackgroundFloating">@color/background_floating_material_dark</item>
+        <item name="colorButtonNormal">@color/button_material_dark</item>
+        <item name="colorControlActivated">?colorAccent</item>
+        <item name="colorControlHighlight">@color/ripple_material_dark</item>
+        <item name="colorControlNormal">?android:textColorSecondary</item>
+        <item name="colorError">@color/error_color_material_dark</item>
+        <item name="colorPrimary">@color/primary_material_dark</item>
+        <item name="colorPrimaryDark">@color/primary_dark_material_dark</item>
+        <item name="colorSwitchThumbNormal">@color/switch_thumb_material_dark</item>
+        <item name="controlBackground">?selectableItemBackgroundBorderless</item>
+        <item name="dialogCornerRadius">@dimen/abc_dialog_corner_radius_material</item>
+        <item name="dialogPreferredPadding">@dimen/abc_dialog_padding_material</item>
+        <item name="dialogTheme">@style/ThemeOverlay.AppCompat.Dialog</item>
+        <item name="dividerHorizontal">@drawable/abc_list_divider_mtrl_alpha</item>
+        <item name="dividerVertical">@drawable/abc_list_divider_mtrl_alpha</item>
+        <item name="drawerArrowStyle">@style/Widget.AppCompat.DrawerArrowToggle</item>
+        <item name="dropDownListViewStyle">?android:dropDownListViewStyle</item>
+        <item name="dropdownListPreferredItemHeight">?listPreferredItemHeightSmall</item>
+        <item name="editTextBackground">@drawable/abc_edit_text_material</item>
+        <item name="editTextColor">?android:textColorPrimary</item>
+        <item name="editTextStyle">@style/Widget.AppCompat.EditText</item>
+        <item name="homeAsUpIndicator">@drawable/abc_ic_ab_back_material</item>
+        <item name="imageButtonStyle">@style/Widget.AppCompat.ImageButton</item>
+        <item name="isLightTheme">false</item>
+        <item name="listChoiceBackgroundIndicator">@drawable/abc_list_selector_holo_dark</item>
+        <item name="listDividerAlertDialog">@null</item>
+        <item name="listMenuViewStyle">@style/Widget.AppCompat.ListMenuView</item>
+        <item name="listPopupWindowStyle">@style/Widget.AppCompat.ListPopupWindow</item>
+        <item name="listPreferredItemHeight">@dimen/abc_list_item_height_material</item>
+        <item name="listPreferredItemHeightLarge">@dimen/abc_list_item_height_large_material</item>
+        <item name="listPreferredItemHeightSmall">@dimen/abc_list_item_height_small_material</item>
+        <item name="listPreferredItemPaddingEnd">@dimen/abc_list_item_padding_horizontal_material</item>
+        <item name="listPreferredItemPaddingLeft">@dimen/abc_list_item_padding_horizontal_material</item>
+        <item name="listPreferredItemPaddingRight">@dimen/abc_list_item_padding_horizontal_material</item>
+        <item name="listPreferredItemPaddingStart">@dimen/abc_list_item_padding_horizontal_material</item>
+        <item name="panelBackground">@drawable/abc_menu_hardkey_panel_mtrl_mult</item>
+        <item name="panelMenuListTheme">@style/Theme.AppCompat.CompactMenu</item>
+        <item name="panelMenuListWidth">@dimen/abc_panel_menu_list_width</item>
+        <item name="popupMenuStyle">@style/Widget.AppCompat.PopupMenu</item>
+        <item name="radioButtonStyle">@style/Widget.AppCompat.CompoundButton.RadioButton</item>
+        <item name="ratingBarStyle">@style/Widget.AppCompat.RatingBar</item>
+        <item name="ratingBarStyleIndicator">@style/Widget.AppCompat.RatingBar.Indicator</item>
+        <item name="ratingBarStyleSmall">@style/Widget.AppCompat.RatingBar.Small</item>
+        <item name="searchViewStyle">@style/Widget.AppCompat.SearchView</item>
+        <item name="seekBarStyle">@style/Widget.AppCompat.SeekBar</item>
+        <item name="selectableItemBackground">@drawable/abc_item_background_holo_dark</item>
+        <item name="selectableItemBackgroundBorderless">?selectableItemBackground</item>
+        <item name="spinnerDropDownItemStyle">@style/Widget.AppCompat.DropDownItem.Spinner</item>
+        <item name="spinnerStyle">@style/Widget.AppCompat.Spinner</item>
+        <item name="switchStyle">@style/Widget.AppCompat.CompoundButton.Switch</item>
+        <item name="textAppearanceLargePopupMenu">@style/TextAppearance.AppCompat.Widget.PopupMenu.Large</item>
+        <item name="textAppearanceListItem">@style/TextAppearance.AppCompat.Subhead</item>
+        <item name="textAppearanceListItemSecondary">@style/TextAppearance.AppCompat.Body1</item>
+        <item name="textAppearanceListItemSmall">@style/TextAppearance.AppCompat.Subhead</item>
+        <item name="textAppearancePopupMenuHeader">@style/TextAppearance.AppCompat.Widget.PopupMenu.Header</item>
+        <item name="textAppearanceSearchResultSubtitle">@style/TextAppearance.AppCompat.SearchResult.Subtitle</item>
+        <item name="textAppearanceSearchResultTitle">@style/TextAppearance.AppCompat.SearchResult.Title</item>
+        <item name="textAppearanceSmallPopupMenu">@style/TextAppearance.AppCompat.Widget.PopupMenu.Small</item>
+        <item name="textColorAlertDialogListItem">@color/abc_primary_text_material_dark</item>
+        <item name="textColorSearchUrl">@color/abc_search_url_text</item>
+        <item name="toolbarNavigationButtonStyle">@style/Widget.AppCompat.Toolbar.Button.Navigation</item>
+        <item name="toolbarStyle">@style/Widget.AppCompat.Toolbar</item>
+        <item name="tooltipForegroundColor">@color/foreground_material_light</item>
+        <item name="tooltipFrameBackground">@drawable/tooltip_frame_light</item>
+        <item name="windowActionBar">true</item>
+        <item name="windowActionBarOverlay">false</item>
+        <item name="windowActionModeOverlay">false</item>
+        <item name="windowFixedHeightMajor">@null</item>
+        <item name="windowFixedHeightMinor">@null</item>
+        <item name="windowFixedWidthMajor">@null</item>
+        <item name="windowFixedWidthMinor">@null</item>
+        <item name="windowNoTitle">false</item>
+    </style>
+
+    <style name="Toolbox">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:background">@drawable/toolbox</item>
+        <item name="android:paddingLeft">8.0dip</item>
+        <item name="android:paddingTop">2.0dip</item>
+        <item name="android:paddingRight">8.0dip</item>
+        <item name="android:paddingBottom">2.0dip</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">40.0dip</item>
+    </style>
+
+    <style name="LeftSideButton">
+        <item name="android:background">@drawable/left_side_button</item>
+        <item name="android:padding">6.0dip</item>
+        <item name="android:layout_width">40.0dip</item>
+        <item name="android:layout_height">36.0dip</item>
+        <item name="tint">@color/colorPrimary</item>
+    </style>
+
+    <style name="RightSideButton">
+        <item name="android:background">@drawable/right_side_button</item>
+        <item name="android:padding">6.0dip</item>
+        <item name="android:layout_width">40.0dip</item>
+        <item name="android:layout_height">36.0dip</item>
+        <item name="tint">@color/colorPrimary</item>
+    </style>
+
+
 </resources>
+    <!--
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <resources>
+        <style name="AppTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+            <item name="colorAccent">@color/colorAccent</item>
+            <item name="colorPrimary">@color/colorPrimary</item>
+            <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+            <item name="android:windowBackground">@color/window_background_color</item>
+            <item name="android:colorBackground">@color/window_background_color</item>
+            <item name="android:textViewStyle">@style/TextView</item>
+            <item name="android:checkboxStyle">@style/CheckBox</item>
+            <item name="android:listPopupWindowStyle">@style/ListPopupWindow</item>
+            <item name="listPopupWindowStyle">@style/ListPopupWindow</item>
+            <item name="android:popupWindowStyle">@style/PopupWindow</item>
+            <item name="popupWindowStyle">@style/PopupWindow</item>
+            <item name="android:popupMenuStyle">@style/PopupMenu</item>
+            <item name="popupMenuStyle">@style/PopupMenu</item>
+        </style>
+        <style name="AppThemeFullscreen" parent="@style/AppTheme">
+            <item name="android:windowFullscreen">true</item>
+            <item name="android:windowBackground">#000000</item>
+            <item name="android:windowTranslucentStatus">true</item>
+            <item name="android:windowTranslucentNavigation">true</item>
+        </style>
+        <style name="ComboBox">
+            <item name="android:layout_width">192dp</item>
+            <item name="android:layout_height">42dp</item>
+            <item name="android:focusable">true</item>
+            <item name="android:clickable">true</item>
+            <item name="android:textSize">16sp</item>
+            <item name="android:gravity">left|center_vertical</item>
+            <item name="android:paddingLeft">12dp</item>
+            <item name="android:paddingRight">36dp</item>
+            <item name="android:paddingTop">0dp</item>
+            <item name="android:paddingBottom">0dp</item>
+            <item name="android:maxLines">1</item>
+            <item name="android:ellipsize">end</item>
+            <item name="android:spinnerMode">dropdown</item>
+            <item name="android:background">@drawable/combo_box</item>
+            <item name="android:popupBackground">@drawable/content_dialog_background</item>
+        </style>
+        <style name="MultiSelectionComboBox">
+            <item name="android:layout_width">192dp</item>
+            <item name="android:layout_height">42dp</item>
+            <item name="android:focusable">true</item>
+            <item name="android:clickable">true</item>
+            <item name="android:textSize">16sp</item>
+            <item name="android:gravity">left|center_vertical</item>
+            <item name="android:paddingLeft">12dp</item>
+            <item name="android:paddingRight">36dp</item>
+            <item name="android:paddingTop">0dp</item>
+            <item name="android:paddingBottom">0dp</item>
+            <item name="android:maxLines">1</item>
+            <item name="android:background">@drawable/combo_box</item>
+        </style>
+        <style name="ListPopupWindow" parent="@android:style/Widget.ListPopupWindow">
+            <item name="android:popupBackground">@drawable/content_dialog_background</item>
+            <item name="android:dropDownHorizontalOffset">-4dp</item>
+        </style>
+        <style name="PopupWindow" parent="@android:style/Widget.PopupWindow">
+            <item name="android:popupBackground">@drawable/content_dialog_background</item>
+            <item name="android:dropDownHorizontalOffset">-4dp</item>
+        </style>
+        <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
+            <item name="android:popupBackground">@drawable/content_dialog_background</item>
+        </style>
+        <style name="ContentDialog" parent="@android:style/Theme.Dialog">
+            <item name="android:windowNoTitle">true</item>
+            <item name="android:windowFullscreen">true</item>
+            <item name="android:windowBackground">@drawable/content_dialog_background</item>
+        </style>
+        <style name="EditText">
+            <item name="android:layout_width">match_parent</item>
+            <item name="android:layout_height">42dp</item>
+            <item name="android:textSize">16sp</item>
+            <item name="android:gravity">left|center_vertical</item>
+            <item name="android:paddingLeft">12dp</item>
+            <item name="android:paddingRight">12dp</item>
+            <item name="android:paddingTop">0dp</item>
+            <item name="android:paddingBottom">0dp</item>
+            <item name="android:maxLines">1</item>
+            <item name="android:inputType">text</item>
+            <item name="android:background">@drawable/edit_text</item>
+        </style>
+        <style name="EditText_Error">
+            <item name="android:layout_width">match_parent</item>
+            <item name="android:layout_height">42dp</item>
+            <item name="android:textSize">16sp</item>
+            <item name="android:gravity">left|center_vertical</item>
+            <item name="android:paddingLeft">12dp</item>
+            <item name="android:paddingRight">12dp</item>
+            <item name="android:paddingTop">0dp</item>
+            <item name="android:paddingBottom">0dp</item>
+            <item name="android:maxLines">1</item>
+            <item name="android:inputType">text</item>
+            <item name="android:background">@drawable/edit_text</item>
+        </style>
+        <style name="TextView" parent="@android:style/Widget.TextView">
+            <item name="android:textSize">16sp</item>
+        </style>
+        <style name="CheckBox" parent="@android:style/Widget.CompoundButton.CheckBox">
+            <item name="android:textSize">16sp</item>
+        </style>
+        <style name="BaseButton">
+            <item name="android:layout_width">wrap_content</item>
+            <item name="android:layout_height">42dp</item>
+            <item name="android:focusable">true</item>
+            <item name="android:clickable">true</item>
+            <item name="android:textSize">16sp</item>
+            <item name="android:lines">1</item>
+            <item name="android:gravity">center</item>
+            <item name="android:paddingLeft">24dp</item>
+            <item name="android:paddingRight">24dp</item>
+            <item name="android:textAllCaps">false</item>
+        </style>
+        <style name="ButtonNeutral" parent="BaseButton">
+            <item name="android:background">@drawable/button_neutral</item>
+            <item name="android:textColor">#ffffff</item>
+        </style>
+        <style name="ButtonPositive" parent="BaseButton">
+            <item name="android:background">@drawable/button_positive</item>
+            <item name="android:textColor">#ffffff</item>
+        </style>
+        <style name="BaseImageButton">
+            <item name="android:layout_width">42dp</item>
+            <item name="android:layout_height">42dp</item>
+            <item name="android:focusable">true</item>
+            <item name="android:clickable">true</item>
+            <item name="android:gravity">center</item>
+            <item name="android:scaleType">centerInside</item>
+            <item name="android:background">?selectableItemBackgroundBorderless</item>
+            <item name="android:padding">4dp</item>
+        </style>
+        <style name="ToolButton" parent="BaseImageButton">
+            <item name="android:layout_marginLeft">2dp</item>
+            <item name="android:layout_marginRight">2dp</item>
+            <item name="android:tint">@color/colorPrimary</item>
+        </style>
+        <style name="ListMenuButton" parent="BaseImageButton">
+            <item name="android:layout_width">34dp</item>
+            <item name="android:layout_height">34dp</item>
+            <item name="android:tint">@color/colorPrimaryDark</item>
+            <item name="android:layout_marginLeft">2dp</item>
+            <item name="android:layout_marginRight">2dp</item>
+        </style>
+        <style name="VerticalLine">
+            <item name="android:layout_width">2dp</item>
+            <item name="android:layout_height">match_parent</item>
+            <item name="android:background">#303030</item>
+            <item name="android:layout_marginTop">2dp</item>
+            <item name="android:layout_marginBottom">2dp</item>
+            <item name="android:layout_marginLeft">4dp</item>
+            <item name="android:layout_marginRight">4dp</item>
+        </style>
+        <style name="HorizontalLine">
+            <item name="android:layout_width">match_parent</item>
+            <item name="android:layout_height">2dp</item>
+            <item name="android:background">@color/colorPrimary</item>
+            <item name="android:layout_marginTop">8dp</item>
+            <item name="android:layout_marginBottom">8dp</item>
+        </style>
+        <style name="FieldSeparator">
+            <item name="android:layout_width">match_parent</item>
+            <item name="android:layout_height">1dp</item>
+            <item name="android:background">#eeeeee</item>
+            <item name="android:layout_marginTop">8dp</item>
+            <item name="android:layout_marginBottom">8dp</item>
+        </style>
+        <style name="FieldSet">
+            <item name="android:layout_width">match_parent</item>
+            <item name="android:layout_height">wrap_content</item>
+            <item name="android:background">@drawable/bordered_panel</item>
+            <item name="android:orientation">vertical</item>
+            <item name="android:paddingLeft">8dp</item>
+            <item name="android:paddingRight">8dp</item>
+            <item name="android:paddingBottom">8dp</item>
+            <item name="android:paddingTop">16dp</item>
+            <item name="android:layout_marginTop">10dp</item>
+        </style>
+        <style name="FieldSetLabel">
+            <item name="android:layout_width">wrap_content</item>
+            <item name="android:layout_height">wrap_content</item>
+            <item name="android:background">@color/window_background_color</item>
+            <item name="android:orientation">vertical</item>
+            <item name="android:paddingLeft">4dp</item>
+            <item name="android:paddingRight">4dp</item>
+            <item name="android:layout_marginLeft">8dp</item>
+            <item name="android:textColor">#bdbdbd</item>
+        </style>
+        <style name="TableHeadBackground">
+            <item name="android:layout_width">wrap_content</item>
+            <item name="android:layout_height">28dp</item>
+            <item name="android:background">@drawable/table_head_background</item>
+            <item name="android:textStyle">bold</item>
+            <item name="android:textColor">#ffffff</item>
+            <item name="android:paddingLeft">4dp</item>
+            <item name="android:gravity">center_vertical</item>
+        </style>
+        <style name="HelpButton">
+            <item name="android:layout_width">22dp</item>
+            <item name="android:layout_height">22dp</item>
+            <item name="android:layout_marginLeft">4dp</item>
+            <item name="android:src">@drawable/icon_help</item>
+            <item name="tint">#e0e0e0</item>
+        </style>
+    </resources>
+
+-->
+

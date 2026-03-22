@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    <LinearLayout
+        style="@style/AppTheme.Dark"
+        android:id="@+id/LLContent"
+        android:layout_width="340dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="(Experimental)"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingBottom="8dp" />
+
+        <!-- Profile Selector -->
+        <Spinner
+            android:id="@+id/spinner_profile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:prompt="@string/default_profile" />
+
+        <!-- Profile Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingTop="8dp">
+
+            <Button
+                android:id="@+id/btn_save_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Save Profile" />
+
+            <Button
+                android:id="@+id/btn_load_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Load Profile" />
+
+        </LinearLayout>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Gamepad Button Configurations -->
+
+                <!-- Row for each button mapping -->
+                <!-- Button A -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Button A"
+                        android:layout_weight="1" />
+                    <Spinner
+                        android:id="@+id/spinner_button_a"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:spinnerMode="dialog" />
+                </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Button B" android:layout_weight="1"/>
+            <Spinner android:id="@+id/spinner_button_b" android:layout_width="150dp" android:layout_height="wrap_content" android:spinnerMode="dialog" />
+        </LinearLayout>
+
+        <!-- Repeat for each button: X, Y, L1, R1, Select, Start, L2, R2, L3, R3 -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Button X" android:layout_weight="1"/>
+            <Spinner android:id="@+id/spinner_button_x" android:layout_width="150dp" android:layout_height="wrap_content" android:spinnerMode="dialog" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Button Y" android:layout_weight="1"/>
+            <Spinner android:id="@+id/spinner_button_y" android:layout_width="150dp" android:layout_height="wrap_content" android:spinnerMode="dialog" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Button Start" android:layout_weight="1"/>
+            <Spinner android:id="@+id/spinner_button_start" android:layout_width="150dp" android:layout_height="wrap_content" android:spinnerMode="dialog" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Button Select" android:layout_weight="1"/>
+            <Spinner android:id="@+id/spinner_button_select" android:layout_width="150dp" android:layout_height="wrap_content" android:spinnerMode="dialog" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Button L1" android:layout_weight="1"/>
+            <Spinner android:id="@+id/spinner_button_l1" android:layout_width="150dp" android:layout_height="wrap_content" android:spinnerMode="dialog" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Button R1" android:layout_weight="1"/>
+            <Spinner android:id="@+id/spinner_button_r1" android:layout_width="150dp" android:layout_height="wrap_content" android:spinnerMode="dialog" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Button L2" android:layout_weight="1"/>
+            <Spinner android:id="@+id/spinner_button_l2" android:layout_width="150dp" android:layout_height="wrap_content" android:spinnerMode="dialog" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Button R2" android:layout_weight="1"/>
+            <Spinner android:id="@+id/spinner_button_r2" android:layout_width="150dp" android:layout_height="wrap_content" android:spinnerMode="dialog" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Button L3" android:layout_weight="1"/>
+            <Spinner android:id="@+id/spinner_button_l3" android:layout_width="150dp" android:layout_height="wrap_content" android:spinnerMode="dialog" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Button R3" android:layout_weight="1"/>
+            <Spinner android:id="@+id/spinner_button_r3" android:layout_width="150dp" android:layout_height="wrap_content" android:spinnerMode="dialog" />
+        </LinearLayout>
+
+        <!-- D-pad directions --> <!--
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="D-pad Up" android:layout_weight="1"/>
+            <Spinner android:id="@+id/spinner_dpad_up" android:layout_width="150dp" android:layout_height="wrap_content" android:spinnerMode="dialog" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="D-pad Down" android:layout_weight="1"/>
+            <Spinner android:id="@+id/spinner_dpad_down" android:layout_width="150dp" android:layout_height="wrap_content" android:spinnerMode="dialog" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="D-pad Left" android:layout_weight="1"/>
+            <Spinner android:id="@+id/spinner_dpad_left" android:layout_width="150dp" android:layout_height="wrap_content" android:spinnerMode="dialog" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="D-pad Right" android:layout_weight="1"/>
+            <Spinner android:id="@+id/spinner_dpad_right" android:layout_width="150dp" android:layout_height="wrap_content" android:spinnerMode="dialog" />
+        </LinearLayout> -->
+            </LinearLayout>
+
+
+
+
+        <!-- Save and Cancel buttons -->
+        <!--
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="start"
+            android:paddingTop="8dp">
+
+            <Button
+                android:id="@+id/btn_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Apply" />
+
+            <Button
+                android:id="@+id/btn_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cancel"
+                android:layout_marginLeft="8dp" />
+        </LinearLayout>-->
+
+    </LinearLayout>
+
+</LinearLayout>
+</ScrollView>

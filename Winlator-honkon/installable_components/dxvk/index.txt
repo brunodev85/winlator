@@ -1,0 +1,11 @@
+dxvk-1.4.2.tzst
+dxvk-1.9.tzst
+dxvk-1.10.3.0.tzst
+dxvk-1.7.3.tzst
+dxvk-2.2.4.tzst
+dxvk-2.3.1.tzst
+dxvk-2.4.1.1.tzst
+dxvk-2.4.24.tzst
+dxvk-2.5.0.tzst
+dxvk-2.5.1.tzst
+dxvk-2.5.2.tzst

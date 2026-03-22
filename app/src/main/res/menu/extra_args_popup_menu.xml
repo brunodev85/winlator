@@ -5,5 +5,10 @@
     <item android:title="-force-dx9" />
     <item android:title="-force-d3d9" />
     <item android:title="-force-d3d11" />
+    <item android:title="--force-gfx-direct" />
+    <item android:title="--force-d3d11-singlethreaded" />
+    <item android:title="--force-dx9" />
+    <item android:title="--force-d3d9" />
+    <item android:title="--force-d3d11" />
     <item android:title="/d3d9" />
 </menu>

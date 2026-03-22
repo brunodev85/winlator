@@ -9,7 +9,7 @@
         android:orientation="vertical"
         android:padding="8dp">
 
-        <com.winlator.widget.LogView
+        <com.winlator.cmod.widget.LogView
             android:id="@+id/LogView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

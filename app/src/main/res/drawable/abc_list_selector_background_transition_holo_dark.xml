@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<transition
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/abc_list_pressed_holo_dark" />
+    <item android:drawable="@drawable/abc_list_longpressed_holo" />
+</transition>

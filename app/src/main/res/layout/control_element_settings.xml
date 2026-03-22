@@ -18,7 +18,8 @@
         <Spinner
             style="@style/ComboBox"
             android:id="@+id/SType"
-            android:layout_width="match_parent" />
+            android:layout_width="match_parent"
+            android:spinnerMode="dialog" />
 
         <LinearLayout
             android:id="@+id/LLShape"
@@ -34,7 +35,8 @@
             <Spinner
                 style="@style/ComboBox"
                 android:id="@+id/SShape"
-                android:layout_width="match_parent" />
+                android:layout_width="match_parent"
+                android:spinnerMode="dialog" />
         </LinearLayout>
 
         <LinearLayout
@@ -75,7 +77,8 @@
             <Spinner
                 style="@style/ComboBox"
                 android:id="@+id/SRange"
-                android:layout_width="match_parent" />
+                android:layout_width="match_parent"
+                android:spinnerMode="dialog" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -106,7 +109,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/columns" />
 
-            <com.winlator.widget.NumberPicker
+            <com.winlator.cmod.widget.NumberPicker
                 android:id="@+id/NPColumns"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -135,7 +138,8 @@
             <Spinner
                 style="@style/ComboBox"
                 android:id="@+id/SBindingUp"
-                android:layout_width="match_parent" />
+                android:layout_width="match_parent"
+                android:spinnerMode="dialog" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -145,7 +149,8 @@
             <Spinner
                 style="@style/ComboBox"
                 android:id="@+id/SBindingRight"
-                android:layout_width="match_parent" />
+                android:layout_width="match_parent"
+                android:spinnerMode="dialog" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -155,7 +160,8 @@
             <Spinner
                 style="@style/ComboBox"
                 android:id="@+id/SBindingDown"
-                android:layout_width="match_parent" />
+                android:layout_width="match_parent"
+                android:spinnerMode="dialog" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -165,7 +171,8 @@
             <Spinner
                 style="@style/ComboBox"
                 android:id="@+id/SBindingLeft"
-                android:layout_width="match_parent" />
+                android:layout_width="match_parent"
+                android:spinnerMode="dialog" />
         </LinearLayout>
 
         <CheckBox

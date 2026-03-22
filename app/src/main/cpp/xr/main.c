@@ -25,7 +25,7 @@ void GLCheckErrors(const char* file, int line) {
 void OXRCheckErrors(XrResult result, const char* file, int line) {
 	if (XR_FAILED(result)) {
 		char errorBuffer[XR_MAX_RESULT_STRING_SIZE];
-		xrResultToString(xr_module_engine->Instance, result, errorBuffer);
+		xrResultToString(xr_module_engine.Instance, result, errorBuffer);
         ALOGE("OpenXR error on line %s:%d %s", file, line, errorBuffer);
 	}
 }
@@ -90,7 +90,7 @@ JNIEXPORT jboolean JNICALL Java_com_winlator_XrActivity_beginFrame(JNIEnv *env, 
         xr_module_renderer.ConfigInt[CONFIG_SBS] = sbs;
 
         // Recenter if mode switched
-        static bool last_immersive = false;
+        static int last_immersive = -1;
         if (last_immersive != immersive) {
             XrRendererRecenter(&xr_module_engine, &xr_module_renderer);
             last_immersive = immersive;

@@ -20,9 +20,11 @@
                 android:text="@string/name" />
 
             <EditText
-                style="@style/EditText"
+                style="@style/AppTheme"
                 android:id="@+id/ETName"
-                android:inputType="textCapSentences" />
+                android:inputType="textCapSentences"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -44,7 +46,11 @@
                         style="@style/ComboBox"
                         android:layout_width="match_parent"
                         android:id="@+id/SScreenSize"
-                        android:entries="@array/screen_size_entries" />
+                        android:entries="@array/screen_size_entries"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:clickable="true"
+                        android:spinnerMode="dialog" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -65,8 +71,9 @@
                             android:text="@string/width" />
 
                         <EditText
-                            style="@style/EditText"
+                            style="@style/AppTheme"
                             android:layout_width="78dp"
+                            android:layout_height="wrap_content"
                             android:id="@+id/ETScreenWidth"
                             android:inputType="number" />
                     </LinearLayout>
@@ -93,13 +100,15 @@
                             android:text="@string/height" />
 
                         <EditText
-                            style="@style/EditText"
+                            style="@style/AppTheme"
                             android:layout_width="78dp"
+                            android:layout_height="wrap_content"
                             android:id="@+id/ETScreenHeight"
                             android:inputType="number" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
+
 
             <LinearLayout
                 android:id="@+id/LLWineVersion"
@@ -124,11 +133,25 @@
                 android:layout_height="wrap_content"
                 android:text="@string/graphics_driver" />
 
-            <Spinner
-                style="@style/ComboBox"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:id="@+id/SGraphicsDriver"
-                android:entries="@array/graphics_driver_entries" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <Spinner
+                    style="@style/ComboBox"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:id="@+id/SGraphicsDriver"
+                    android:entries="@array/graphics_driver_entries" />
+
+                <ImageButton
+                    style="@style/ListMenuButton"
+                    android:id="@+id/BTGraphicsDriverConfig"
+                    android:src="@drawable/icon_settings"
+                    android:visibility="gone" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -152,10 +175,10 @@
                 android:gravity="center_vertical">
 
                 <Spinner
+                    android:id="@+id/SDXWrapper"
                     style="@style/ComboBox"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:id="@+id/SDXWrapper"
                     android:entries="@array/dxwrapper_entries" />
 
                 <ImageButton
@@ -176,11 +199,80 @@
                 android:id="@+id/SAudioDriver"
                 android:entries="@array/audio_driver_entries" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/LLEmulator">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="64bit Emulator" />
+
+                <Spinner
+                    style="@style/ComboBox"
+                    android:layout_width="match_parent"
+                    android:id="@+id/SEmulator64"
+                    android:entries="@array/emulator_entries"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dll_emulator" />
+
+                <Spinner
+                    style="@style/ComboBox"
+                    android:layout_width="match_parent"
+                    android:id="@+id/SEmulator"
+                    android:entries="@array/emulator_entries"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/midi_sound_font" />
+
+            <Spinner
+                style="@style/ComboBox"
+                android:layout_width="match_parent"
+                android:id="@+id/SMIDISoundFont" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lc_all" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    style="@style/AppTheme"
+                    android:layout_gravity="center"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/ETlcall" />
+
+                <ImageButton
+                    style="@style/ListMenuButton"
+                    android:id="@+id/BTShowLCALL"
+                    android:layout_gravity="center"
+                    android:src="@drawable/icon_menu" />
+            </LinearLayout>
+
             <CheckBox
                 android:id="@+id/CBShowFPS"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/show_fps"
+                android:layout_marginTop="8dp" />
+
+            <CheckBox
+                android:id="@+id/CBFullscreenStretched"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fullscreen_stretched"
                 android:layout_marginTop="8dp" />
 
             <com.google.android.material.tabs.TabLayout
@@ -217,6 +309,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/advanced" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/xr" />
             </com.google.android.material.tabs.TabLayout>
 
             <LinearLayout
@@ -260,13 +357,13 @@
                                 android:layout_weight="1"
                                 android:entries="@array/desktop_background_type_entries" />
 
-                            <com.winlator.widget.ColorPickerView
+                            <com.winlator.cmod.widget.ColorPickerView
                                 android:id="@+id/CPVDesktopBackgroundColor"
                                 android:layout_width="84dp"
                                 android:layout_height="wrap_content"
                                 android:visibility="gone" />
 
-                            <com.winlator.widget.ImagePickerView
+                            <com.winlator.cmod.widget.ImagePickerView
                                 android:id="@+id/IPVDesktopBackgroundImage"
                                 android:layout_width="84dp"
                                 android:layout_height="wrap_content"
@@ -276,6 +373,7 @@
 
                     <TextView
                         style="@style/FieldSetLabel"
+                        android:id="@+id/TVDesktop"
                         android:text="@string/desktop" />
                 </FrameLayout>
 
@@ -284,58 +382,6 @@
                     android:layout_height="wrap_content">
 
                     <LinearLayout style="@style/FieldSet">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/csmt" />
-
-                        <Spinner
-                            style="@style/ComboBox"
-                            android:id="@+id/SCSMT"
-                            android:layout_width="match_parent" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/gpu_name" />
-
-                        <Spinner
-                            style="@style/ComboBox"
-                            android:id="@+id/SGPUName"
-                            android:layout_width="match_parent" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/offscreen_rendering_mode" />
-
-                        <Spinner
-                            style="@style/ComboBox"
-                            android:id="@+id/SOffscreenRenderingMode"
-                            android:layout_width="match_parent" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/strict_shader_math" />
-
-                        <Spinner
-                            style="@style/ComboBox"
-                            android:id="@+id/SStrictShaderMath"
-                            android:layout_width="match_parent" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/video_memory_size" />
-
-                        <Spinner
-                            style="@style/ComboBox"
-                            android:id="@+id/SVideoMemorySize"
-                            android:layout_width="match_parent"
-                            android:entries="@array/video_memory_size_entries" />
-
-                        <View style="@style/FieldSeparator" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -349,8 +395,9 @@
                     </LinearLayout>
 
                     <TextView
+                        android:id="@+id/TVDirectInput"
                         style="@style/FieldSetLabel"
-                        android:text="@string/registry_keys" />
+                        android:text="DirectInput" />
                 </FrameLayout>
             </LinearLayout>
 
@@ -371,6 +418,7 @@
                         android:id="@+id/LLWinComponentsDirectX" />
 
                     <TextView
+                        android:id="@+id/TVDirectX"
                         style="@style/FieldSetLabel"
                         android:text="@string/directx" />
                 </FrameLayout>
@@ -385,6 +433,7 @@
                         android:id="@+id/LLWinComponentsGeneral" />
 
                     <TextView
+                        android:id="@+id/TVGeneral"
                         style="@style/FieldSetLabel"
                         android:text="@string/general" />
                 </FrameLayout>
@@ -397,7 +446,7 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <com.winlator.widget.EnvVarsView
+                <com.winlator.cmod.widget.EnvVarsView
                     android:id="@+id/EnvVarsView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -479,18 +528,20 @@
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp">
+                    android:layout_marginTop="8dp"
+                    android:id="@+id/box64Frame">
 
                     <LinearLayout style="@style/FieldSet">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/box86_preset" />
+                            android:text="@string/box64_version" />
 
                         <Spinner
                             style="@style/ComboBox"
-                            android:id="@+id/SBox86Preset"
-                            android:layout_width="match_parent" />
+                            android:id="@+id/SBox64Version"
+                            android:layout_width="match_parent"
+                            android:spinnerMode="dialog" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -500,14 +551,53 @@
                         <Spinner
                             style="@style/ComboBox"
                             android:id="@+id/SBox64Preset"
-                            android:layout_width="match_parent" />
+                            android:layout_width="match_parent"
+                            android:spinnerMode="dialog" />
+
                     </LinearLayout>
 
                     <TextView
+                        android:id="@+id/TVBox64"
                         style="@style/FieldSetLabel"
-                        android:text="@string/box86_box64" />
+                        android:text="@string/box64" />
                 </FrameLayout>
+                
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/fexcoreFrame"
+                    android:layout_marginTop="8dp">
+                
+                    <LinearLayout style="@style/FieldSet">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/fexcore_version" />
 
+                        <Spinner
+                            style="@style/ComboBox"
+                            android:id="@+id/SFEXCoreVersion"
+                            android:layout_width="match_parent" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/fexcore_preset" />
+
+                        <Spinner
+                            style="@style/ComboBox"
+                            android:id="@+id/SFEXCorePreset"
+                            android:layout_width="match_parent"
+                            android:spinnerMode="dialog" />
+                    </LinearLayout>
+                    
+                    <TextView
+                        android:id="@+id/TVFEXCore"
+                        style="@style/FieldSetLabel"
+                        android:text="@string/fexcore_config" />
+                    
+                </FrameLayout>
+                
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -525,17 +615,91 @@
                             android:id="@+id/SStartupSelection"
                             android:entries="@array/startup_selection_entries" />
 
-                        <CheckBox
-                            android:id="@+id/CBWoW64Mode"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/enable_experimental_wow64_mode"
-                            android:layout_marginTop="8dp" />
                     </LinearLayout>
 
                     <TextView
+                        android:id="@+id/TVSystem"
                         style="@style/FieldSetLabel"
                         android:text="@string/system" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp">
+
+                    <LinearLayout style="@style/FieldSet">
+
+                        <LinearLayout
+                            android:id="@+id/LLDinputMapperType"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/directinput_mapper_type" />
+
+                            <Spinner
+                                style="@style/ComboBox"
+                                android:id="@+id/SDInputType"
+                                android:layout_width="match_parent"
+                                android:entries="@array/dinput_mapper_type_entries" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="8dp">
+
+                            <CheckBox
+                                android:id="@+id/CBEnableXInput"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="@string/enable_xinput_for_wine_game" />
+
+                            <ImageView
+                                android:id="@+id/BTXInputHelp"
+                                style="@style/HelpButton"
+                                android:layout_gravity="center" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="8dp">
+
+                            <CheckBox
+                                android:id="@+id/CBEnableDInput"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/enable_dinput_for_wine_game" />
+
+
+
+                            <ImageView
+                                android:id="@+id/BTDInputHelp"
+                                style="@style/HelpButton"
+                                android:layout_gravity="center" />
+                        </LinearLayout>
+
+                        <CheckBox
+                            android:id="@+id/CBSdl2Toggle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Enable SDL2 Compatibility" />
+
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/TVGameController"
+                        style="@style/FieldSetLabel"
+                        android:text="@string/game_controller" />
                 </FrameLayout>
 
                 <TextView
@@ -544,7 +708,7 @@
                     android:text="@string/processor_affinity"
                     android:layout_marginTop="8dp" />
 
-                <com.winlator.widget.CPUListView
+                <com.winlator.cmod.widget.CPUListView
                     android:id="@+id/CPUListView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -557,12 +721,120 @@
                     android:text="@string/processor_affinity_32_bit_apps"
                     android:layout_marginTop="8dp" />
 
-                <com.winlator.widget.CPUListView
+                <com.winlator.cmod.widget.CPUListView
                     android:id="@+id/CPUListViewWoW64"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/LLTabXR"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/primary_controller" />
+                <Spinner
+                    style="@style/ComboBox"
+                    android:layout_width="match_parent"
+                    android:id="@+id/SPrimaryController"
+                    android:entries="@array/xr_controllers" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/button_a" />
+                <Spinner
+                    style="@style/ComboBox"
+                    android:layout_width="match_parent"
+                    android:id="@+id/SButtonA" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/button_b" />
+                <Spinner
+                    style="@style/ComboBox"
+                    android:layout_width="match_parent"
+                    android:id="@+id/SButtonB" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/button_x" />
+                <Spinner
+                    style="@style/ComboBox"
+                    android:layout_width="match_parent"
+                    android:id="@+id/SButtonX" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/button_y" />
+                <Spinner
+                    style="@style/ComboBox"
+                    android:layout_width="match_parent"
+                    android:id="@+id/SButtonY" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/button_grip" />
+                <Spinner
+                    style="@style/ComboBox"
+                    android:layout_width="match_parent"
+                    android:id="@+id/SButtonGrip" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/button_trigger" />
+                <Spinner
+                    style="@style/ComboBox"
+                    android:layout_width="match_parent"
+                    android:id="@+id/SButtonTrigger" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/thumbstick_left" />
+                <Spinner
+                    style="@style/ComboBox"
+                    android:layout_width="match_parent"
+                    android:id="@+id/SThumbstickLeft" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/thumbstick_right" />
+                <Spinner
+                    style="@style/ComboBox"
+                    android:layout_width="match_parent"
+                    android:id="@+id/SThumbstickRight" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/thumbstick_up" />
+                <Spinner
+                    style="@style/ComboBox"
+                    android:layout_width="match_parent"
+                    android:id="@+id/SThumbstickUp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/thumbstick_down" />
+                <Spinner
+                    style="@style/ComboBox"
+                    android:layout_width="match_parent"
+                    android:id="@+id/SThumbstickDown" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

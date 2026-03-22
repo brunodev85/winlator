@@ -1,0 +1,98 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true"
+    android:padding="16dp">
+
+    <!-- Single LinearLayout as the child of the ScrollView -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Gyroscope settings -->
+        <SeekBar
+            android:id="@+id/SBGyroXSensitivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="200" />
+
+        <TextView
+            android:id="@+id/TVGyroXSensitivity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="X Sensitivity: 100%"
+            android:layout_marginBottom="16dp" />
+
+        <SeekBar
+            android:id="@+id/SBGyroYSensitivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="200" />
+
+        <TextView
+            android:id="@+id/TVGyroYSensitivity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Y Sensitivity: 100%"
+            android:layout_marginBottom="16dp" />
+
+        <SeekBar
+            android:id="@+id/SBGyroSmoothing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100" />
+
+        <TextView
+            android:id="@+id/TVGyroSmoothing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Smoothing: 90%"
+            android:layout_marginBottom="16dp" />
+
+        <SeekBar
+            android:id="@+id/SBGyroDeadzone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100" />
+
+        <TextView
+            android:id="@+id/TVGyroDeadzone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Deadzone: 5%"
+            android:layout_marginBottom="16dp" />
+
+        <CheckBox
+            android:id="@+id/CBInvertGyroX"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Invert X Axis"
+            android:layout_marginBottom="16dp" />
+
+        <CheckBox
+            android:id="@+id/CBInvertGyroY"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Invert Y Axis"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Placeholder for the stick control with black background -->
+        <FrameLayout
+            android:id="@+id/stick_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="16dp"
+            android:background="#000000" />
+
+        <!-- Button to reset the center of the stick -->
+        <Button
+            android:id="@+id/btnResetCenter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reset Stick to Center"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp" />
+
+    </LinearLayout>
+</ScrollView>

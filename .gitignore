@@ -1,0 +1,13 @@
+*.iml
+.gradle
+/local.properties
+/.idea/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+app/src/main/assets/imagefs.txz
+app/src/main/assets/proton-9.0-arm64ec.txz
+app/src/main/assets/proton-9.0-x86_64.txz
+

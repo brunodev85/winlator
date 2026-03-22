@@ -16,4 +16,4 @@
 #   public *;
 #}
 
--dontobfuscate
+#-dontobfuscate

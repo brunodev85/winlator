@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/analogStickConfigScrollView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:id="@+id/LLAnalogStickConfig"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Left Analog Stick Settings -->
+        <TextView
+            android:id="@+id/TVBoxLeftStick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Left Analog Stick Settings"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Left Deadzone -->
+        <TextView
+            android:id="@+id/TVLeftDeadzone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Deadzone: 10%"
+            android:layout_marginTop="8dp" />
+
+        <SeekBar
+            android:id="@+id/SBLeftDeadzone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="10" />
+
+        <!-- Left Sensitivity -->
+        <TextView
+            android:id="@+id/TVLeftSensitivity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sensitivity: 100%"
+            android:layout_marginTop="16dp" />
+
+        <SeekBar
+            android:id="@+id/SBLeftSensitivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="100" />
+
+        <CheckBox
+            android:id="@+id/CBLeftStickSquareDeadzone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Use Square Deadzone (Left Stick)" />
+
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#CCCCCC"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Right Analog Stick Settings -->
+        <TextView
+            android:id="@+id/TVBoxRightStick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Right Analog Stick Settings"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Right Deadzone -->
+        <TextView
+            android:id="@+id/TVRightDeadzone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Deadzone: 10%"
+            android:layout_marginTop="8dp" />
+
+        <SeekBar
+            android:id="@+id/SBRightDeadzone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="10" />
+
+        <!-- Right Sensitivity -->
+        <TextView
+            android:id="@+id/TVRightSensitivity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sensitivity: 100%"
+            android:layout_marginTop="16dp" />
+
+        <SeekBar
+            android:id="@+id/SBRightSensitivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="100" />
+
+        <!-- Optional: Invert Axes -->
+        <CheckBox
+            android:id="@+id/CBInvertLeftStickX"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Invert X Axis (Left Stick)"
+            android:layout_marginTop="24dp" />
+
+        <CheckBox
+            android:id="@+id/CBInvertLeftStickY"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Invert Y Axis (Left Stick)"
+            android:layout_marginTop="8dp" />
+
+        <CheckBox
+            android:id="@+id/CBInvertRightStickX"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Invert X Axis (Right Stick)"
+            android:layout_marginTop="24dp" />
+
+        <CheckBox
+            android:id="@+id/CBInvertRightStickY"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Invert Y Axis (Right Stick)"
+            android:layout_marginTop="8dp" />
+
+    </LinearLayout>
+</ScrollView>

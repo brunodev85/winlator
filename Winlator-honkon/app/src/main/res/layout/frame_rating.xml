@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="2dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="10dp"
+        android:gravity="center_vertical"
+        android:background="#33000000">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:textSize="12dp"
+            android:text="FPS:"
+            android:textColor="#0277bd"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:layout_marginRight="5dp" />
+
+        <TextView
+            android:id="@+id/TVFPS"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:textSize="12dp"
+            android:text="0"
+            android:textColor="#ffffff"
+            android:includeFontPadding="false"
+            android:maxLines="1" />
+    </LinearLayout>
+</LinearLayout>

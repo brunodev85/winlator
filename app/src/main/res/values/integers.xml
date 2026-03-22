@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="keycode_button_a">96</integer> <!-- KeyEvent.KEYCODE_BUTTON_A -->
+    <integer name="keycode_button_b">97</integer> <!-- KeyEvent.KEYCODE_BUTTON_B -->
+    <integer name="keycode_button_x">99</integer> <!-- KeyEvent.KEYCODE_BUTTON_X -->
+    <integer name="keycode_button_y">100</integer> <!-- KeyEvent.KEYCODE_BUTTON_Y -->
+    <integer name="keycode_button_r1">103</integer> <!-- KeyEvent.KEYCODE_BUTTON_R1 -->
+    <integer name="keycode_button_r2">105</integer> <!-- KeyEvent.KEYCODE_BUTTON_R2 -->
+    <integer name="keycode_button_l1">102</integer> <!-- KeyEvent.KEYCODE_BUTTON_L1 -->
+    <integer name="keycode_button_l2">104</integer> <!-- KeyEvent.KEYCODE_BUTTON_L2 -->
+    <integer name="keycode_button_start">108</integer> <!-- KeyEvent.KEYCODE_BUTTON_START -->
+    <integer name="keycode_button_select">109</integer> <!-- KeyEvent.KEYCODE_BUTTON_SELECT -->
+    <integer name="keycode_button_r3">106</integer> <!-- KeyEvent.KEYCODE_BUTTON_R3 -->
+    <integer name="keycode_button_l3">107</integer> <!-- KeyEvent.KEYCODE_BUTTON_L3 -->
+</resources>

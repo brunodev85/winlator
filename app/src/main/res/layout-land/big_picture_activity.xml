@@ -1,0 +1,664 @@
+
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <com.winlator.cmod.bigpicture.TiledBackgroundView
+        android:id="@+id/parallaxBackgroundView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+
+<LinearLayout
+    android:id="@+id/mainLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+
+    <!-- Horizontal layout for cover art and game details -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"
+        android:orientation="horizontal"
+        android:weightSum="5">
+
+        <!-- Large ImageView for cover art with fixed aspect ratio -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:orientation="vertical">
+
+            <!-- Cover Art -->
+            <ImageView
+                android:id="@+id/IVCoverArt"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="4"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:padding="16dp"
+                android:src="@drawable/icon_gamepad"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:nextFocusRight="@id/playButton"
+                android:nextFocusDown="@id/RecyclerView"
+                android:elevation="8dp"
+            />
+
+            <!-- Upload Custom Cover Art prompt (fixed to be below the cover art) -->
+            <TextView
+                android:id="@+id/uploadText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click to upload custom cover art"
+                android:textColor="@android:color/white"
+                android:gravity="center"
+                android:visibility="gone"
+                android:padding="8dp"
+                android:layout_gravity="center_horizontal" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/darkBackgroundContainer"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:orientation="vertical"
+            android:background="@drawable/bg_transparent_dark"
+            android:padding="8dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- Settings Button -->
+                <ImageButton
+                    android:id="@+id/settingsButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/icon_rb"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginTop="8dp"
+                    android:contentDescription="Settings"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:nextFocusDown="@id/IVCoverArt"
+                    android:nextFocusLeft="@id/IVCoverArt"
+                    />
+
+                <!-- TextView for Settings label, below the button -->
+                <TextView
+                    android:id="@+id/settingsLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Settings"
+                    android:textColor="@android:color/white"
+                    android:gravity="center"
+                    android:layout_below="@id/settingsButton"
+                    android:layout_alignEnd="@id/settingsButton"
+                    android:layout_marginTop="-12dp"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="6sp"
+                    android:autoSizeMaxTextSize="12sp"
+                    android:autoSizeStepGranularity="1sp"
+                    android:adjustViewBounds="true" />
+
+
+                <!-- Title section aligned to the top -->
+                <TextView
+                    android:id="@+id/TVGameTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@id/settingsButton"
+                android:layout_marginTop="8dp"
+                android:paddingBottom="16dp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="10sp"
+                android:autoSizeMaxTextSize="24sp"
+                android:autoSizeStepGranularity="1sp"
+                android:adjustViewBounds="true" />
+            </RelativeLayout>
+
+
+
+        <!-- NestedScrollView for game details -->
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fillViewport="true">
+
+                <!-- Extras Information with labels bold and values indented -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+
+                    <!-- Graphics Driver -->
+                    <TextView
+                        android:id="@+id/TVGraphicsDriverLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Graphics Driver:"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/white" />
+                    <TextView
+                        android:id="@+id/TVGraphicsDriver"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="16dp"
+                        android:textColor="@android:color/white"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:nextFocusUp="@id/playButton"
+                    />
+
+                    <!-- Graphics Driver Version -->
+                    <TextView
+                        android:id="@+id/TVGraphicsDriverVersionLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Driver Version:"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/white" />
+                    <TextView
+                        android:id="@+id/TVGraphicsDriverVersion"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="16dp"
+                        android:textColor="@android:color/white" />
+
+                    <!-- DX Wrapper -->
+                    <TextView
+                        android:id="@+id/TVDXWrapperLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="DX Wrapper:"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/white" />
+                    <TextView
+                        android:id="@+id/TVDXWrapper"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="16dp"
+                        android:textColor="@android:color/white" />
+
+                    <!-- DXVK/VKD3D Config -->
+                    <TextView
+                        android:id="@+id/TVDXWrapperConfigLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="DXVK/VKD3D Config:"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/white" />
+                    <TextView
+                        android:id="@+id/TVDXWrapperConfig"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="16dp"
+                        android:textColor="@android:color/white" />
+
+                    <!-- Audio Driver -->
+                    <TextView
+                        android:id="@+id/TVAudioDriverLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Audio Driver:"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/white" />
+                    <TextView
+                        android:id="@+id/TVAudioDriver"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="16dp"
+                        android:textColor="@android:color/white" />
+
+                    <!-- Box64 Preset -->
+                    <TextView
+                        android:id="@+id/TVBox64PresetLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Box64 Preset:"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/white" />
+                    <TextView
+                        android:id="@+id/TVBox64Preset"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="16dp"
+                        android:textColor="@android:color/white" />
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+
+            <!-- Play Button and Playtime Details -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                android:gravity="bottom">
+
+                <ImageButton
+                    android:id="@+id/playButton"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:src="@drawable/icon_play"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:nextFocusLeft="@id/IVCoverArt"
+                    android:nextFocusUp="@id/TVGraphicsDriver"
+                    android:nextFocusDown="@id/RecyclerView"
+                />
+
+                <!-- Space between play button and play details -->
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="bottom">
+
+                    <TextView
+                        android:id="@+id/TVPlayCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="16dp"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@android:color/white" />
+
+                    <TextView
+                        android:id="@+id/TVPlaytime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@android:color/white"
+                        android:paddingRight="16dp"
+                        android:paddingBottom="32dp"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- RecyclerView for carousel -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/RecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:layout_marginTop="8dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:nextFocusUp="@id/playButton"
+        android:background="@drawable/bg_transparent_dark"
+    />
+
+    <!-- TextView for displaying the empty state message -->
+    <TextView
+        android:id="@+id/TVEmptyState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="Nothing here. Launch your container and create a Shortcut to get started!"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:visibility="gone"
+        android:padding="16dp" />
+
+</LinearLayout>
+
+    <!-- Settings View (Initially hidden, off-screen) -->
+    <!-- ScrollView wrapped in a container LinearLayout, with settings hidden by default -->
+    <LinearLayout
+        android:id="@+id/settingsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">  <!-- Ensure the entire settings container is hidden by default -->
+
+    <!-- New container for the settings section with dark transparent background -->
+        <LinearLayout
+            android:id="@+id/settingsDarkBackgroundContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_transparent_dark"
+            android:padding="16dp"
+            android:layout_gravity="center"
+            android:layout_margin="16dp">
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+                    <ImageButton
+                        android:id="@+id/backButton"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/icon_rb"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginTop="8dp"
+                        android:contentDescription="Back"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        />
+
+                    <TextView
+                        android:id="@+id/backLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Back"
+                        android:textColor="@android:color/white"
+                        android:gravity="center"
+                        android:layout_below="@id/backButton"
+                        android:layout_alignEnd="@id/backButton"
+                        android:layout_marginTop="-12dp"
+                        android:autoSizeTextType="uniform"
+                        android:autoSizeMinTextSize="6sp"
+                        android:autoSizeMaxTextSize="12sp"
+                        android:autoSizeStepGranularity="1sp"
+                        android:adjustViewBounds="true" />
+
+                <!-- Field label for Settings -->
+                <TextView
+                    android:id="@+id/TVSettingsLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Settings"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:paddingBottom="8dp" />
+
+                </RelativeLayout>
+
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+
+            <!-- Single LinearLayout as a direct child of ScrollView -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+
+                <!-- Settings Group (FieldSet) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="8dp">
+
+                    <!-- YouTube URL Setting -->
+                    <TextView
+                        android:id="@+id/youtubeUrlLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="YouTube Video URL (Not all YouTube Videos are supported):"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        android:padding="8dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="16dp">
+
+                        <EditText
+                            android:id="@+id/youtubeUrlInput"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:inputType="text"
+                            android:hint="Enter YouTube URL"
+                            android:background="@android:drawable/edit_text"
+                            android:textColor="@android:color/black" />
+
+                        <Button
+                            android:id="@+id/loadVideoButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Set BG Music"
+                            android:layout_marginStart="8dp" />
+                    </LinearLayout>
+
+                    <!-- MP3 Selection -->
+                    <Button
+                        android:id="@+id/selectMp3Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Select MP3"
+                        android:layout_marginBottom="16dp" />
+
+                    <!-- Reset MP3 Button -->
+                    <Button
+                        android:id="@+id/resetMp3Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Reset MP3"
+                        android:layout_marginBottom="16dp" />
+
+                    <!-- Music Source Selection -->
+                    <TextView
+                        android:id="@+id/musicSourceLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Select Music Source:"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        android:padding="8dp" />
+
+                    <RadioGroup
+                        android:id="@+id/musicSourceGroup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="16dp">
+
+                        <RadioButton
+                            android:id="@+id/youtubeRadioButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="YouTube"
+                            android:checked="true" />
+
+                        <RadioButton
+                            android:id="@+id/mp3RadioButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="MP3" />
+                    </RadioGroup>
+
+                    <!-- Disable BG Music Button -->
+                    <Button
+                        android:id="@+id/disableBgMusicButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Disable BG Music"
+                        android:layout_marginTop="16dp" />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/themeLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Background settings:"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    android:padding="8dp" />
+
+                <RadioGroup
+                    android:id="@+id/animationSelectorGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp">
+
+                    <RadioButton
+                        android:id="@+id/rbCustomWallpaper"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Custom Wallpaper" />
+
+                    <Button
+                        android:id="@+id/selectWallpaperButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Select Wallpaper"
+                        android:visibility="gone" />
+
+                    <RadioButton
+                        android:id="@+id/rbNoAnimation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No Background" />
+
+
+                    <RadioButton
+                        android:id="@+id/rbDefaultAnimation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Wave" />
+
+                    <RadioButton
+                        android:id="@+id/rbGearAnimation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Gear" />
+
+                    <RadioButton
+                        android:id="@+id/rbQuiltAnimation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Quilt" />
+
+                    <RadioButton
+                        android:id="@+id/rbFolderAnimation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Folder" />
+
+                </RadioGroup>
+
+                    <Button
+                        android:id="@+id/selectPngFolderButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Select Animation (*.png) Folder" />
+
+                    <TextView
+                        android:id="@+id/parallaxModeLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Parallax Mode:"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        android:padding="8dp" />
+
+                    <RadioGroup
+                        android:id="@+id/parallaxModeGroup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="16dp">
+
+                        <RadioButton
+                            android:id="@+id/rbParallaxOff"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Off" />
+
+                        <RadioButton
+                            android:id="@+id/rbParallaxSlow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Slow" />
+
+                        <RadioButton
+                            android:id="@+id/rbParallaxDefault"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Default"
+                            android:checked="true" />
+
+                        <RadioButton
+                            android:id="@+id/rbParallaxFast"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Fast" />
+                    </RadioGroup>
+
+                    <TextView
+                        android:id="@+id/frameSpeedLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Animation Speed:"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        android:padding="8dp" />
+
+                    <SeekBar
+                        android:id="@+id/frameSpeedSeekBar"
+                        android:layout_width="300dp"
+                        android:layout_height="wrap_content"
+                        android:max="100"
+                        android:progress="66" />
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
+            </LinearLayout>
+        </LinearLayout>
+
+
+
+
+    <!-- WebView for playing YouTube video, on top of all elements, invisible but present -->
+    <WebView
+        android:id="@+id/webView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:clickable="false" />
+</FrameLayout>

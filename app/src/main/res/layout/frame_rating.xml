@@ -38,4 +38,103 @@
             android:includeFontPadding="false"
             android:maxLines="1" />
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="2dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="10dp"
+        android:gravity="center_vertical"
+        android:background="#33000000">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:textSize="12dp"
+            android:text="Renderer:"
+            android:textColor="#fc0303"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:layout_marginRight="5dp" />
+
+        <TextView
+            android:id="@+id/TVRenderer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:textSize="12dp"
+            android:textColor="#ffffff"
+            android:includeFontPadding="false"
+            android:maxLines="1" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="2dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="10dp"
+        android:gravity="center_vertical"
+        android:background="#33000000">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:textSize="12dp"
+            android:text="GPU:"
+            android:textColor="#5c23a6"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:layout_marginRight="5dp" />
+
+        <TextView
+            android:id="@+id/TVGPU"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:textSize="12dp"
+            android:textColor="#ffffff"
+            android:includeFontPadding="false"
+            android:maxLines="1" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="2dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="10dp"
+        android:gravity="center_vertical"
+        android:background="#33000000">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:textSize="12dp"
+            android:text="RAM:"
+            android:textColor="#23a6a4"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:layout_marginRight="5dp" />
+
+        <TextView
+            android:id="@+id/TVRAM"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:textSize="12dp"
+            android:textColor="#ffffff"
+            android:includeFontPadding="false"
+            android:maxLines="1" />
+    </LinearLayout>
 </LinearLayout>

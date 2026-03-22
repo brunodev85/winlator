@@ -1,11 +1,21 @@
 [
-    {"name" : "BOX64_DYNAREC_SAFEFLAGS", "values" : ["0", "1", "2"], "defaultValue" : "2"},
+    {"name" : "BOX64_DYNAREC_SAFEFLAGS", "values" : ["0", "1", "2"], "defaultValue" : "1"},
     {"name" : "BOX64_DYNAREC_FASTNAN", "values" : ["0", "1"], "toggleSwitch" : true, "defaultValue" : "1"},
-    {"name" : "BOX64_DYNAREC_FASTROUND", "values" : ["0", "1"], "toggleSwitch" : true, "defaultValue" : "1"},
-    {"name" : "BOX64_DYNAREC_X87DOUBLE", "values" : ["0", "1"], "toggleSwitch" : true, "defaultValue" : "0"},
-    {"name" : "BOX64_DYNAREC_BIGBLOCK", "values" : ["0", "1", "2", "3"], "defaultValue" : "1"},
+    {"name" : "BOX64_DYNAREC_FASTROUND", "values" : ["0", "1", "2"], "toggleSwitch" : false, "defaultValue" : "1"},
+    {"name" : "BOX64_DYNAREC_X87DOUBLE", "values" : ["0", "1", "2"], "toggleSwitch" : false, "defaultValue" : "0"},
+    {"name" : "BOX64_DYNAREC_BIGBLOCK", "values" : ["0", "1", "2", "3"], "defaultValue" : "2"},
     {"name" : "BOX64_DYNAREC_STRONGMEM", "values" : ["0", "1", "2", "3"], "defaultValue" : "0"},
-    {"name" : "BOX64_DYNAREC_FORWARD", "values" : ["0", "128", "256", "512", "1024"], "defaultValue" : "128"},
-    {"name" : "BOX64_DYNAREC_CALLRET", "values" : ["0", "1"], "toggleSwitch" : true, "defaultValue" : "1"},
-    {"name" : "BOX64_DYNAREC_WAIT", "values" : ["0", "1"], "toggleSwitch" : true, "defaultValue" : "1"}
+    {"name" : "BOX64_DYNAREC_FORWARD", "values" : ["0", "128", "256", "512", "1024"], "defaultValue" : "512"},
+    {"name" : "BOX64_DYNAREC_CALLRET", "values" : ["0", "1"], "toggleSwitch" : true, "defaultValue" : "0"},
+    {"name" : "BOX64_DYNAREC_WAIT", "values" : ["0", "1"], "toggleSwitch" : true, "defaultValue" : "1"},
+    {"name" : "BOX64_AVX", "values" : ["0", "1", "2"], "defaultValue" : "1"},
+    {"name" : "BOX64_MAXCPU", "values" : ["0", "4", "8", "16", "32", "64"], "defaultValue" : "0"},
+    {"name" : "BOX64_UNITYPLAYER", "values" : ["0", "1"], "toggleSwitch" : true, "defaultValue" : "1"},
+    {"name" : "BOX64_DYNAREC_WEAKBARRIER", "values" : ["0", "1", "2"], "defaultValue" : "0"},
+    {"name" : "BOX64_DYNAREC_ALIGNED_ATOMICS", "values" : ["0", "1"], "toggleSwitch" : "true", "defaultValue" : "0"},
+    {"name" : "BOX64_DYNAREC_DF", "values" : ["0", "1"], "toggleSwitch" : "true", "defaultValue" : "1"},
+    {"name" : "BOX64_DYNAREC_DIRTY", "values" : ["0", "1", "2"], "toggleSwitch" : "false", "defaultValue" : "0"},
+    {"name" : "BOX64_DYNAREC_NATIVEFLAGS", "values" : ["0", "1"], "toggleSwitch" : "true", "defaultValue" : "1"},
+    {"name" : "BOX64_DYNAREC_PAUSE", "values" : ["0", "1", "2", "3"], "toggleSwitch" : "false", "defaultValue" : "0"},
+    {"name" : "BOX64_MMAP32", "values" :  ["0", "1"], "toggleSwitch" : true, "defaultValue" :  "1"}
 ]

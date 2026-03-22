@@ -18,6 +18,9 @@
         android:layout_gravity="start"
         android:id="@+id/NavigationView"
         android:background="#ffffff"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:pointerIcon="arrow"
         app:headerLayout="@layout/main_menu_header"
         app:itemIconTint="@color/colorAccent"
         app:menu="@menu/xserver_menu"/>
@@ -26,8 +29,7 @@
         android:id="@+id/XRTextInput"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:focusableInTouchMode="true"
-        android:inputType="text"
+        android:inputType="textMultiLine"
         android:autofillHints="no"
         tools:ignore="LabelFor"
         android:visibility="gone" />

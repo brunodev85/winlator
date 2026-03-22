@@ -1,14 +1,49 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu
-  xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="none">
-        <item android:icon="@drawable/icon_keyboard" android:id="@+id/main_menu_keyboard" android:title="@string/keyboard" />
-        <item android:icon="@drawable/icon_input_controls" android:id="@+id/main_menu_input_controls" android:title="@string/input_controls" />
-        <item android:icon="@drawable/icon_fullscreen" android:id="@+id/main_menu_toggle_fullscreen" android:title="@string/toggle_fullscreen" />
-        <item android:icon="@drawable/icon_task_manager" android:id="@+id/main_menu_task_manager" android:title="@string/task_manager" />
-        <item android:icon="@drawable/icon_magnifier" android:id="@+id/main_menu_magnifier" android:title="@string/magnifier" />
-        <item android:icon="@drawable/icon_debug" android:id="@+id/main_menu_logs" android:title="@string/logs" />
-        <item android:icon="@drawable/icon_help" android:id="@+id/main_menu_touchpad_help" android:title="@string/touchpad_help" />
-        <item android:icon="@drawable/icon_exit" android:id="@+id/main_menu_exit" android:title="@string/exit" />
+        <!-- Existing menu items -->
+        <item
+            android:icon="@drawable/icon_keyboard"
+            android:id="@+id/main_menu_keyboard"
+            android:title="@string/keyboard" />
+        <item
+            android:icon="@drawable/icon_input_controls"
+            android:id="@+id/main_menu_input_controls"
+            android:title="@string/input_controls" />
+        <item
+            android:id="@+id/main_menu_relative_mouse_movement"
+            android:title="Toggle Relative Mouse Movement" />
+        <item
+            android:icon="@drawable/icon_screen_effect"
+            android:id="@+id/main_menu_screen_effects"
+            android:title="@string/screen_effect" />
+        <item
+            android:icon="@drawable/icon_fullscreen"
+            android:id="@+id/main_menu_toggle_fullscreen"
+            android:title="@string/toggle_fullscreen" />
+        <item
+            android:icon="@drawable/icon_pause"
+            android:id="@+id/main_menu_pause"
+            android:title="Pause/Resume" />
+        <item
+            android:icon="@drawable/ic_picture_in_picture_alt"
+            android:id="@+id/main_menu_pip_mode"
+            android:title="@string/pip_mode" />
+        <item
+            android:icon="@drawable/icon_task_manager"
+            android:id="@+id/main_menu_task_manager"
+            android:title="@string/task_manager" />
+        <item
+            android:icon="@drawable/icon_magnifier"
+            android:id="@+id/main_menu_magnifier"
+            android:title="@string/magnifier" />
+        <item
+            android:icon="@drawable/icon_debug"
+            android:id="@+id/main_menu_logs"
+            android:title="@string/logs" />
+        <item
+            android:icon="@drawable/icon_exit"
+            android:id="@+id/main_menu_exit"
+            android:title="@string/exit" />
+
     </group>
 </menu>

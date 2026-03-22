@@ -22,13 +22,15 @@
             style="@style/ComboBox"
             android:layout_width="match_parent"
             android:id="@+id/Spinner"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:spinnerMode="dialog"/>
 
-        <com.winlator.widget.MultiSelectionComboBox
+        <com.winlator.cmod.widget.MultiSelectionComboBox
             style="@style/MultiSelectionComboBox"
             android:id="@+id/MultiSelectionComboBox"
             android:layout_width="match_parent"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:spinnerMode="dialog"/>
 
         <ToggleButton
             android:id="@+id/ToggleButton"

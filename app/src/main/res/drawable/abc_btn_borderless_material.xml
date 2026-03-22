@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true" android:drawable="@drawable/abc_btn_default_mtrl_shape" />
+    <item android:state_pressed="true" android:drawable="@drawable/abc_btn_default_mtrl_shape" />
+    <item android:drawable="@android:color/transparent" />
+</selector>

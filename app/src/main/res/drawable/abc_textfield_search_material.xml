@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true" android:state_enabled="true" android:drawable="@drawable/abc_textfield_search_activated_mtrl_alpha" />
+    <item android:state_enabled="true" android:drawable="@drawable/abc_textfield_search_activated_mtrl_alpha" android:state_activated="true" />
+    <item android:state_enabled="true" android:drawable="@drawable/abc_textfield_search_default_mtrl_alpha" />
+    <item android:drawable="@drawable/abc_textfield_search_default_mtrl_alpha" />
+</selector>

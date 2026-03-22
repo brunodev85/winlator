@@ -18,7 +18,7 @@
 struct epoll_event events[MAX_EVENTS];
 
 JNIEXPORT jint JNICALL
-Java_com_winlator_xconnector_XConnectorEpoll_createAFUnixSocket(JNIEnv *env, jobject obj,
+Java_com_winlator_cmod_xconnector_XConnectorEpoll_createAFUnixSocket(JNIEnv *env, jobject obj,
                                                                 jstring path) {
     int fd = socket(AF_UNIX, SOCK_STREAM, 0);
     if (fd < 0) return -1;
@@ -45,17 +45,17 @@ Java_com_winlator_xconnector_XConnectorEpoll_createAFUnixSocket(JNIEnv *env, job
 }
 
 JNIEXPORT jint JNICALL
-Java_com_winlator_xconnector_XConnectorEpoll_createEpollFd(JNIEnv *env, jobject obj) {
+Java_com_winlator_cmod_xconnector_XConnectorEpoll_createEpollFd(JNIEnv *env, jobject obj) {
     return epoll_create(MAX_EVENTS);
 }
 
 JNIEXPORT void JNICALL
-Java_com_winlator_xconnector_XConnectorEpoll_closeFd(JNIEnv *env, jobject obj, jint fd) {
+Java_com_winlator_cmod_xconnector_XConnectorEpoll_closeFd(JNIEnv *env, jobject obj, jint fd) {
     close(fd);
 }
 
 JNIEXPORT jboolean JNICALL
-Java_com_winlator_xconnector_XConnectorEpoll_doEpollIndefinitely(JNIEnv *env, jobject obj,
+Java_com_winlator_cmod_xconnector_XConnectorEpoll_doEpollIndefinitely(JNIEnv *env, jobject obj,
                                                                  jint epollFd, jint serverFd,
                                                                  jboolean addClientToEpoll) {
     jclass cls = (*env)->GetObjectClass(env, obj);
@@ -88,7 +88,7 @@ Java_com_winlator_xconnector_XConnectorEpoll_doEpollIndefinitely(JNIEnv *env, jo
 }
 
 JNIEXPORT jboolean JNICALL
-Java_com_winlator_xconnector_XConnectorEpoll_addFdToEpoll(JNIEnv *env, jobject obj,
+Java_com_winlator_cmod_xconnector_XConnectorEpoll_addFdToEpoll(JNIEnv *env, jobject obj,
                                                           jint epollFd,
                                                           jint fd) {
     struct epoll_event event;
@@ -99,32 +99,32 @@ Java_com_winlator_xconnector_XConnectorEpoll_addFdToEpoll(JNIEnv *env, jobject o
 }
 
 JNIEXPORT void JNICALL
-Java_com_winlator_xconnector_XConnectorEpoll_removeFdFromEpoll(JNIEnv *env, jobject obj,
+Java_com_winlator_cmod_xconnector_XConnectorEpoll_removeFdFromEpoll(JNIEnv *env, jobject obj,
                                                                jint epollFd, jint fd) {
     epoll_ctl(epollFd, EPOLL_CTL_DEL, fd, NULL);
 }
 
 JNIEXPORT jint JNICALL
-Java_com_winlator_xconnector_ClientSocket_read(JNIEnv *env, jobject obj, jint fd, jobject data,
+Java_com_winlator_cmod_xconnector_ClientSocket_read(JNIEnv *env, jobject obj, jint fd, jobject data,
                                                jint offset, jint length) {
     char *dataAddr = (*env)->GetDirectBufferAddress(env, data);
     return read(fd, dataAddr + offset, length);
 }
 
 JNIEXPORT jint JNICALL
-Java_com_winlator_xconnector_ClientSocket_write(JNIEnv *env, jobject obj, jint fd, jobject data,
+Java_com_winlator_cmod_xconnector_ClientSocket_write(JNIEnv *env, jobject obj, jint fd, jobject data,
                                                 jint length) {
     char *dataAddr = (*env)->GetDirectBufferAddress(env, data);
     return write(fd, dataAddr, length);
 }
 
 JNIEXPORT jint JNICALL
-Java_com_winlator_xconnector_XConnectorEpoll_createEventFd(JNIEnv *env, jobject obj) {
+Java_com_winlator_cmod_xconnector_XConnectorEpoll_createEventFd(JNIEnv *env, jobject obj) {
     return eventfd(0, EFD_NONBLOCK);
 }
 
 JNIEXPORT jint JNICALL
-Java_com_winlator_xconnector_ClientSocket_recvAncillaryMsg(JNIEnv *env, jobject obj, jint clientFd, jobject data,
+Java_com_winlator_cmod_xconnector_ClientSocket_recvAncillaryMsg(JNIEnv *env, jobject obj, jint clientFd, jobject data,
                                                            jint offset, jint length) {
     char *dataAddr = (*env)->GetDirectBufferAddress(env, data);
 
@@ -165,7 +165,7 @@ Java_com_winlator_xconnector_ClientSocket_recvAncillaryMsg(JNIEnv *env, jobject 
 }
 
 JNIEXPORT jint JNICALL
-Java_com_winlator_xconnector_ClientSocket_sendAncillaryMsg(JNIEnv *env, jobject obj, jint clientFd,
+Java_com_winlator_cmod_xconnector_ClientSocket_sendAncillaryMsg(JNIEnv *env, jobject obj, jint clientFd,
                                                            jobject data, jint length, jint ancillaryFd) {
     char *dataAddr = (*env)->GetDirectBufferAddress(env, data);
 
@@ -195,7 +195,7 @@ Java_com_winlator_xconnector_ClientSocket_sendAncillaryMsg(JNIEnv *env, jobject 
 }
 
 JNIEXPORT jboolean JNICALL
-Java_com_winlator_xconnector_XConnectorEpoll_waitForSocketRead(JNIEnv *env, jobject obj, jint clientFd, jint shutdownFd) {
+Java_com_winlator_cmod_xconnector_XConnectorEpoll_waitForSocketRead(JNIEnv *env, jobject obj, jint clientFd, jint shutdownFd) {
     struct pollfd pfds[2];
     pfds[0].fd = clientFd;
     pfds[0].events = POLLIN;
@@ -212,4 +212,25 @@ Java_com_winlator_xconnector_XConnectorEpoll_waitForSocketRead(JNIEnv *env, jobj
         (*env)->CallVoidMethod(env, obj, handleExistingConnection, clientFd);
     }
     return JNI_TRUE;
+}
+
+JNIEXPORT jintArray JNICALL
+Java_com_winlator_cmod_xconnector_XConnectorEpoll_pollEpollEvents(JNIEnv *env, jobject obj,
+                                                             jint epollFd, jint maxEvents) {
+    struct epoll_event events[maxEvents];
+    int numFds = epoll_wait(epollFd, events, maxEvents, -1); // Wait indefinitely
+
+    if (numFds < 0) return NULL;
+
+    jintArray result = (*env)->NewIntArray(env, numFds);
+    if (result == NULL) return NULL;
+
+    jint *r = (*env)->GetIntArrayElements(env, result, 0);
+
+    for (int i = 0; i < numFds; i++) {
+        r[i] = events[i].data.fd; // Store file descriptor
+    }
+
+    (*env)->ReleaseIntArrayElements(env, result, r, 0);
+    return result;
 }

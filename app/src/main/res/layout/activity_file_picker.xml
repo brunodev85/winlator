@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Title or Instruction for the File Picker -->
+    <TextView
+        android:id="@+id/TVPickerTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/select_directory"
+        android:textSize="18sp"
+        android:paddingBottom="8dp"/>
+
+    <!-- Button to move up a directory -->
+    <Button
+        android:id="@+id/upButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/up_directory"
+        android:enabled="true"/> <!-- Enabled by default -->
+
+    <!-- RecyclerView to display files and directories -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="vertical"/>
+
+    <!-- Button to confirm the directory selection -->
+    <Button
+        android:id="@+id/confirmButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/confirm_selection"
+        android:enabled="false" /> <!-- Initially disabled until a directory is selected -->
+
+</LinearLayout>

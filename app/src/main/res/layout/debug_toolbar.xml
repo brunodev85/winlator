@@ -16,8 +16,4 @@
         android:src="@drawable/icon_pause"
         android:layout_marginRight="8dp" />
 
-    <ImageButton
-        style="@style/ListMenuButton"
-        android:id="@+id/BTExport"
-        android:src="@drawable/icon_export" />
 </LinearLayout>

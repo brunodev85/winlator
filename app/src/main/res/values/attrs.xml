@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <declare-styleable name="NumberPicker">
         <attr name="value" format="integer" />
-        <attr name="minValue" format="integer" />
-        <attr name="maxValue" format="integer" />
-        <attr name="step" format="integer" />
+        <attr name="minValue" format="integer|float" />
+        <attr name="maxValue" format="integer|float" />
+        <attr name="step" format="integer|float" />
         <attr name="textSize" format="dimension" />
     </declare-styleable>
+    <declare-styleable name="SeekBar">
+        <attr name="sbMinValue" format="float" /> <!-- Defines minValue attribute -->
+        <attr name="sbMaxValue" format="float" /> <!-- Defines maxValue attribute -->
+        <attr name="sbStep" format="float" /> <!-- Defines step attribute -->
+        <attr name="sbValue" format="float" /> <!-- Defines value attribute -->
+        <attr name="suffix" format="string" /> <!-- Defines suffix attribute -->
+        <attr name="sbTextSize" format="dimension" /> <!-- Defines textSize attribute -->
+        <attr name="colorSecondary" format="color" /> <!-- Defines colorSecondary attribute -->
+    </declare-styleable>
+
+    <attr name="extraKeysButtonTextColor" format="reference" />
+    <attr name="extraKeysButtonActiveTextColor" format="reference" />
+    <attr name="extraKeysButtonBackgroundColor" format="reference" />
+    <attr name="extraKeysButtonActiveBackgroundColor" format="reference" />
 </resources>

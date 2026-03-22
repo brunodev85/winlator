@@ -1,0 +1,43 @@
+<!-- res/drawable/animated_background.xml -->
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false">
+    <item android:drawable="@drawable/ab_0001" android:duration="66" android:tileMode="repeat" />
+    <item android:drawable="@drawable/ab_0002" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0003" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0004" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0005" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0006" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0007" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0008" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0009" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0010" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0011" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0012" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0013" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0014" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0015" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0016" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0017" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0018" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0019" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0020" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0021" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0022" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0023" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0024" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0025" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0026" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0027" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0028" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0029" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0030" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0031" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0032" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0033" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0034" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0035" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0036" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0037" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0038" android:duration="66" android:tileMode="repeat"/>
+    <item android:drawable="@drawable/ab_0039" android:duration="66" android:tileMode="repeat"/>
+</animation-list>

@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE resources [
+    <!ENTITY TERMUX_PACKAGE_NAME "com.winlator">
+    <!ENTITY TERMUX_X11_APP_NAME "Winlator:X11">
+    ]>
 <resources>
     <string name="app_name">Winlator</string>
     <string name="run">Run</string>
@@ -11,12 +15,12 @@
     <string name="no_items_to_display">No items to display</string>
     <string name="new_container">New Container</string>
     <string name="edit_container">Edit Container</string>
-    <string name="creating_container">Creating Container...</string>
-    <string name="removing_container">Removing Container...</string>
-    <string name="duplicating_container">Duplicating Container...</string>
-    <string name="installing_system_files">Installing System Files...</string>
-    <string name="updating_system_files">Updating System Files...</string>
-    <string name="starting_up">Starting up...</string>
+    <string name="creating_container">Creating Container…</string>
+    <string name="removing_container">Removing Container…</string>
+    <string name="duplicating_container">Duplicating Container…</string>
+    <string name="installing_system_files">Installing System Files…</string>
+    <string name="updating_system_files">Updating System Files…</string>
+    <string name="starting_up">Starting up…</string>
     <string name="unable_to_install_system_files">Unable to install system files</string>
     <string name="keyboard">Keyboard</string>
     <string name="toggle_fullscreen">Toggle Fullscreen</string>
@@ -93,7 +97,7 @@
     <string name="external_controllers">External Controllers</string>
     <string name="graphics_driver">Graphics Driver</string>
     <string name="audio_driver">Audio Driver</string>
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading…</string>
     <string name="press_any_button_on_your_controller">Press any button on your controller</string>
     <string name="bindings">bindings</string>
     <string name="show_touchscreen_controls">Show Touchscreen Controls</string>
@@ -105,13 +109,13 @@
     <string name="directplay">DirectPlay</string>
     <string name="directshow">DirectShow</string>
     <string name="directx">DirectX</string>
+    <string name="xaudio">XAudio</string>
     <string name="vcrun2010">Visual C++ 2010</string>
-    <string name="wmdecoder">Windows Media Decoder</string>
+    <string name="opengl">OpenGL</string>
     <string name="settings">Settings</string>
     <string name="exec_arguments">Exec Arguments</string>
     <string name="win_components">Win Components</string>
     <string name="drives">Drives</string>
-    <string name="force_fullscreen">Force Fullscreen</string>
     <string name="range">Range</string>
     <string name="enable">Enable</string>
     <string name="disable">Disable</string>
@@ -120,12 +124,14 @@
     <string name="install_wine">Install Wine</string>
     <string name="arch">Arch</string>
     <string name="version">Version</string>
+    <string name="dxvk_version">DXVK Version</string>
+    <string name="vkd3d_version">VKD3D Version</string>
     <string name="unable_to_install_wine">Unable to install Wine</string>
     <string name="unable_to_remove_this_wine_version">Unable to remove this wine version</string>
     <string name="wine_version">Wine Version</string>
-    <string name="removing_wine">Removing Wine...</string>
-    <string name="preparing_installation">Preparing installation...</string>
-    <string name="finishing_installation">Finishing installation...</string>
+    <string name="removing_wine">Removing Wine…</string>
+    <string name="preparing_installation">Preparing installation…</string>
+    <string name="finishing_installation">Finishing installation…</string>
     <string name="storage_info">Storage Info</string>
     <string name="drive_c">Drive C:</string>
     <string name="cache">Cache</string>
@@ -133,11 +139,9 @@
     <string name="clear_cache">Clear Cache</string>
     <string name="estimated_used_space">Estimated Used Space</string>
     <string name="advanced">Advanced</string>
-    <string name="box86_box64">Box86/Box64</string>
+    <string name="box64">Box64</string>
     <string name="system">System</string>
-    <string name="box86_preset">Box86 Preset</string>
     <string name="box64_preset">Box64 Preset</string>
-    <string name="box86_version">Box86 Version</string>
     <string name="box64_version">Box64 Version</string>
     <string name="letter">Letter</string>
     <string name="target_path">Target Path</string>
@@ -177,32 +181,84 @@
         <i><b>VKD3D</b></i> is a translation layer for Direct3D 12 API to Vulkan.<br /><br />
         <i><b>CNC DDraw</b></i> is an implementation of DirectDraw for better compatibility with classic games.
     ]]></string>
-    <string name="box86_64_env_var_help__dynarec_safeflags"><![CDATA[
+    <string name="box64_env_var_help__dynarec_safeflags"><![CDATA[
         Handling of flags on CALL/RET opcodes<br /><br />
         <b>0</b> : Treats CALL/RET as if it never needed flags (faster, unstable)<br />
         <b>1</b> : Most RET will need flags, most CALLS will not<br />
         <b>2</b> : All CALL/RET will need flags (slower)
     ]]></string>
-    <string name="box86_64_env_var_help__dynarec_fastnan">Generation of -NAN like on x86</string>
-    <string name="box86_64_env_var_help__dynarec_fastround">Generation of precise x86 rounding</string>
-    <string name="box86_64_env_var_help__dynarec_x87double">Use of Float/Double for x87 emulation</string>
-    <string name="box86_64_env_var_help__dynarec_bigblock"><![CDATA[
+    <string name="box64_env_var_help__dynarec_fastnan">Generation of -NAN like on x86</string>
+    <string name="box64_env_var_help__dynarec_fastround">Generation of precise x86 rounding</string>
+    <string name="box64_env_var_help__dynarec_x87double">Use of Float/Double for x87 emulation</string>
+    <string name="box64_env_var_help__dynarec_bigblock"><![CDATA[
         Dynarec building BigBlock<br /><br />
         <b>0</b> : Don\'t try to build block as big as possible<br />
         <b>1</b> : Build Dynarec block as big as possible<br />
         <b>2</b> : Build Dynarec block bigger (continue when block overlaps, but only for blocks in elf memory)<br />
         <b>3</b> : Build Dynarec block bigger (continue when block overlaps, for all types of memory)
     ]]></string>
-    <string name="box86_64_env_var_help__dynarec_strongmem"><![CDATA[
+    <string name="box64_env_var_help__dynarec_strongmem"><![CDATA[
         Simulation of Strong Memory model<br /><br />
         <b>0</b> : Don\'t try anything special<br />
         <b>1</b> : Enable some Memory Barrier when writing to memory (on some MOV opcode)<br />
         <b>2</b> : All 1 plus a Memory Barrier on every write to memory using MOV<br />
         <b>3</b> : All 2 plus Memory Barrier when reading from memory and on some SSE/SSE2 opcodes
     ]]></string>
-    <string name="box86_64_env_var_help__dynarec_forward">Defines the max allowed forward value when building Block</string>
-    <string name="box86_64_env_var_help__dynarec_callret">Optimization of CALL/RET opcodes</string>
-    <string name="box86_64_env_var_help__dynarec_wait">Defines whether or not Dynarec will wait for the FillBlock to be ready</string>
+    <string name="box64_env_var_help__dynarec_forward">Defines the max allowed forward value when building Block</string>
+    <string name="box64_env_var_help__dynarec_callret">Optimization of CALL/RET opcodes</string>
+    <string name="box64_env_var_help__dynarec_wait">Defines whether or not Dynarec will wait for the FillBlock to be ready</string>
+    <string name="box64_env_var_help__dynarec_weakbarrier"><![CDATA[
+        Tweak memory barriers to reduce performance impact of strong memory emulation<br /><br />
+        <b>0</b> : Use regular safe barriers<br />
+        <b>1</b> : Use weak barriers for mild performance boost<br />
+        <b>2</b> : Use weak barriers, additionally disable last write barriers]]></string>
+    <string name="box64_env_var_help__dynarec_aligned_atomics"><![CDATA[
+        Generate aligned atomics only (only available on Arm64 for now).<br /><br />
+        <b>0</b> : Generate unaligned atomics handling code.<br />
+        <b>1</b> : Generate aligned atomics only, which is faster and smaller code size, but will cause SIGBUS for LOCK prefixed opcodes operating on aligned data addresses.]]></string>
+    <string name="box64_env_var_help__dynarec_df"><![CDATA[
+        Enable or disable the use of deferred flags.<br /><br />
+        <b>0</b> : Disable the use of deferred flags.<br />
+        <b>1</b> : Enable the use of deferred flags.]]></string>
+    <string name="box64_env_var_help__dynarec_dirty"><![CDATA[
+        Allow continue running a block that is unprotected and potentially dirty.<br /><br />
+        <b>0</b> : Do not allow continue running a block that is unprotected and potentially dirty.<br />
+        <b>1</b> : Allow continue to run a dynablock that write data in the same page as code. It can gets faster in loading time of some game but can also get unexpected crashes.<br />
+        <b>2</b> : Will also, when it detect an HotPage, flag that page as NEVERCLEAN, and so it will not be write protected but Block build from that page will always be tested. It can be faster that way (but some SMC case might not be trapped).]]></string>
+    <string name="box64_env_var_help__dynarec_nativeflags"><![CDATA[
+        Enable or disable the use of native flags.<br /><br />
+        <b>0</b> : Do not use native flags.<br />
+        <b>1</b> : Use native flags when possible.]]></string>
+    <string name="box64_env_var_help__dynarec_pause"><![CDATA[
+        Enable x86 PAUSE emulation, may help the performance of spinlocks.<br /><br />
+        <b>0</b> : Ignore x86 PAUSE instruction.<br />
+        <b>1</b> : Use YIELD to emulate x86 PAUSE instruction.<br />
+        <b>2</b> : Use WFI to emulate x86 PAUSE instruction.<br />
+        <b>3</b> : Use SEVL+WFE to emulate x86 PAUSE instruction.
+    ]]></string>
+    <string name="box64_env_var_help__avx"><![CDATA[
+        AVX and AVX2 implemented, along with BMI1, BMI2, ADX, FMA, F16C and RDANDR extension!<br /><br />
+        <b>0</b> : Disable AVX extension<br />
+        <b>1</b> : enable AVX, BMI1, F16C and VAES extension.<br />
+        <b>2</b> : All 1 plus enable AVX2, BMI2, FMA, ADX,VPCLMULQDQ and RDRAND.<br />\
+    ]]></string>
+    <string name="box64_env_var_help__maxcpu">Maximum number of CPUs presented to programs by Box64</string>
+    <string name="box64_env_var_help__unityplayer">Detect UnityPlayer.dll and apply strongmem settings</string>
+    <string name="box64_env_var_help__mmap32">Force every memory allocation in 32bit address spaces</string>
+    <string name="fexcore_env_var_help__tsoenabled">Enables TSO IR ops (required for multithreaded apps).</string>
+    <string name="fexcore_env_var_help__vectortsoenabled">Makes vector load/stores atomic when TSO is enabled.</string>
+    <string name="fexcore_env_var_help__halfbarriertsoenabled">Uses half-barrier atomics for unaligned loads/stores under TSO.</string>
+    <string name="fexcore_env_var_help__memcpysettsoenabled">Makes REP MOVS / REP STOS atomic under TSO.</string>
+    <string name="fexcore_env_var_help__multiblock">Enables multiblock code compilation. Can cause longer JIT compilation and stutter.</string>
+    <string name="fexcore_env_var_help__hostfeatures">Controls CPU feature forcing.</string>
+    <string name="fexcore_env_var_help__smalltscscale">Scales TSC on low-frequency systems.</string>
+    <string name="fexcore_env_var_help__smc_checks">Self-Modifying Code checks.</string>
+    <string name="fexcore_env_var_help__volatilemetadata">Uses volatile metadata from PE files for TSO when available.</string>
+    <string name="fexcore_env_var_help__monohacks">Special SMC + JIT block hacks for Mono detection.</string>
+    <string name="fexcore_env_var_help__hidehypervisorbit">Hides CPUID hypervisor bit (useful for apps that crash with it).</string>
+    <string name="fexcore_env_var_help__disablel2cache">Disables FEXCore JIT L2 cache lookup, saving memory but introducing stutters.</string>
+    <string name="fexcore_env_var_help__dynamicl1cache">Switches FEXCore JIT L1 cache to be dynamically sized, saving memory but introducing stutters.</string>
+    <string name="fexcore_env_var_help__x87reducedprecision">Emulates X87 floating point using 64-bit precision. This reduces emulation accuracy and may result in rendering bugs.</string>
     <string name="columns">Columns</string>
     <string name="directinput_mapper_type">DirectInput Mapper Type</string>
     <string name="desktop">Desktop</string>
@@ -218,11 +274,365 @@
     <string name="enable_experimental_wow64_mode">Enable experimental WoW64 mode</string>
     <string name="logs">Logs</string>
     <string name="enable_wine_debug">Enable Wine debug</string>
-    <string name="enable_box86_64_logs">Enable Box86/Box64 logs</string>
+    <string name="enable_box64_logs">Enable Box64 logs</string>
     <string name="export">Export</string>
     <string name="logs_exported_to">Logs exported to</string>
     <string name="general">General</string>
     <string name="msg_warning_install_wine">Warning: Installing a new version of Wine is recommended for testing purposes only.</string>
     <string name="startup_selection">Startup Selection</string>
     <string name="wine_debug_channel">Wine Debug Channel</string>
+    <string name="game_controller">Game Controller</string>
+    <string name="as_button">Is Button</string>
+    <string name="as_axis">Is Axis</string>
+    <string name="both">Both</string>
+    <string name="trigger_type">Type</string>
+    <string name="experimental">Experimental</string>
+    <string name="glibc_exp_edition">Based On</string>
+    <string name="enabled_async">Enable Async</string>
+    <string name="enabled_async_cache">Enable Async Cache</string>
+    <string name="vkd3d_feature_level">VKD3D Feature Level</string>
+    <string name="filter">Filter</string>
+    <string name="all">All</string>
+    <string name="group">Group</string>
+    <string name="new_group">New Group</string>
+    <string name="import_group">Import Group</string>
+    <string name="new_file">New File</string>
+    <string name="new_item">New Item</string>
+    <string name="group_edit">Group Edit</string>
+    <string name="group_name">Group Name</string>
+    <string name="do_you_want_to_duplicate_this_group">Do you want to duplicate this group?</string>
+    <string name="do_you_want_to_remove_this_group">Do you want to remove this group?</string>
+    <string name="do_you_want_to_duplicate_this_process">Do you want to duplicate this process?</string>
+    <string name="do_you_want_to_remove_this_process">Do you want to remove this process?</string>
+    <string name="do_you_want_to_remove_this_variable">Do you want to remove this variable?</string>
+    <string name="variable_name">Variable Name</string>
+    <string name="variable_already_exists">Variable already exists</string>
+    <string name="cannot_remove_default_profile">Cannot remove default profile.</string>
+    <string name="cannot_edit_default_profile">Cannot edit default profile.</string>
+    <string name="do_you_want_to_restore_default_profile">Do you want to restore default profile?</string>
+    <string name="simulate_touch_screen">Simulate touch screen</string>
+    <string name="install_content">Install Content</string>
+    <string name="content_type">Content Type</string>
+    <string name="contents">Contents</string>
+    <string name="do_you_want_to_install_content">Do you want to install additional content?</string>
+    <string name="pls_make_sure_content_trustworthy">Contents contain executable files. Unsafe executable files may compromise your data or device security. Before installing, PLEASE make sure that the additional content you are installing is trustworthy.</string>
+    <string name="content_suffix_is_wcp_packed_xz_zst">The content files have the .wcp extension and are compressed using either xz or zst formats.</string>
+    <string name="installing_content">Installing Content…</string>
+    <string name="unable_to_install_content">Unable to install content.</string>
+    <string name="install_failed">Install Failed</string>
+    <string name="file_cannot_be_recognied">File cannot be recognized.</string>
+    <string name="profile_not_found_in_content">Profile not found in content.</string>
+    <string name="profile_cannot_be_recognized">Profile cannot be recognized</string>
+    <string name="content_already_exist">The content you\'re trying to install already exists.</string>
+    <string name="content_info">Content Info</string>
+    <string name="version_code">Version Code</string>
+    <string name="description">Description</string>
+    <string name="file_list">File List</string>
+    <string name="_continue">Continue</string>
+    <string name="content_installed_success">Content installed successfully!</string>
+    <string name="content_cannot_be_trusted">Content cannot be trusted.</string>
+    <string name="content_is_incomplete">Content is incomplete.</string>
+    <string name="warning_content_has_untrusted_files">Warning: The additional content contains untrusted files. Generally, the following files should not be modified. Please decide whether to proceed with the installation.</string>
+    <string name="warning">Warning</string>
+    <string name="do_you_want_to_remove_this_content">Do you want to remove this content?</string>
+    <string name="add_to_home_screen">Add to Home Screen</string>
+    <string name="shortcut_not_available">This shortcut is no longer available. Please delete or recreate it.</string>
+    <string name="enable_file_provider">Enable File Provider</string>
+    <string name="take_effect_next_startup">This option will take effect at the next startup.</string>
+    <string name="imagefs">Imagefs</string>
+    <string name="reinstall_imagefs">Reinstall Imagefs</string>
+    <string name="do_you_want_to_reinstall_imagefs">Do you want to reinstall imagefs? This operation will restore system files, your containers won\'t be changed.</string>
+    <string name="unable_to_remove_content_since_container_using">Unable to remove this content, because a container is currently using this Wine.</string>
+    <string name="get_more_contents_form_github">You can access https://github.com/longjunyu2/winlator/releases to get more contents.</string>
+    <string name="setup_failed">Setup failed</string>
+    <string name="graphics_driver_configuration">Graphics Driver Configuration</string>
+    <string name="select_graphics_driver_version">Select Graphics Driver Version:</string>
+    <string name="graphics_driver_version">Graphics Driver Version</string>
+    <string name="graphics_driver_available_extensions">Available Extensions</string>
+    <string name="add_to_homescreen">Add to Homescreen</string>
+    <string name="add_save">Add Save</string>
+    <string name="saves">Saves</string>
+    <string name="import_save">Import Save</string>
+    <string name="transfer">Transfer</string>
+    <string name="share">Share</string>
+    <string name="unregister">Unregister</string>
+    <string name="no_saves_to_display">No saves to display</string>
+    <string name="new_save">Register a Save</string>
+    <string name="save_path">Save Path</string>
+    <string name="save_title">Save Name</string>
+    <string name="save_container">Selected Container</string>
+    <string name="select_save_path">Locate Save Folder</string>
+    <string name="select_container_first">Please select the container containing your save.</string>
+    <string name="fill_all_fields">Path and Save Name are required</string>
+    <string name="invalid_path">Not a valid save directory path</string>
+    <string name="confirm_selection">Confirm Selection</string>
+    <string name="select_directory">Select your save directory</string>
+    <string name="invalid_container">Invalid Path</string>
+    <string name="up_directory">Up Directory</string>
+    <string name="edit_save_title">Update Save title</string>
+    <string name="edit_save">Save edit</string>
+    <string name="original_save_path">Registered save path</string>
+    <string name="updated_save_path">Updated save path</string>
+    <string name="confirmation">Confirmation</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="path_not_changed_prompt">The path has not been changed. Do you want to continue?</string>
+    <string name="save_transfer">Transfer Save</string>
+    <string name="select_container">Target Container:</string>
+    <string name="transfer_complete">Transfer complete</string>
+    <string name="transfer_failed">Transfer failed</string>
+    <string name="unable_to_transfer_save">Unable to transfer save</string>
+    <string name="spinner_container_selection">Transferring...</string>
+    <string name="name_required">Name is required</string>
+    <string name="exporting_save">Exporting save...</string>
+    <string name="importing_save">Importing save...</string>
+    <string name="_copy">copy</string>
+    <string name="backing_up_data">Backing up data...</string>
+    <string name="restoring_data">Restoring data...</string>
+    <string name="midi_sound_font">MIDI SoundFont</string>
+    <string name="sound">Sound</string>
+    <string name="do_you_want_to_remove_this_sound_font">Do you want to remove this soundfont?</string>
+    <string name="sound_font_removed_success">Soundfont removed successfully!</string>
+    <string name="sound_font_removed_failed">Soundfont removed failed!</string>
+    <string name="sound_font_installed_success">Soundfont installed successfully!</string>
+    <string name="sound_font_installed_failed">Soundfont installed failed!</string>
+    <string name="sound_font_already_exist">Soundfont you want to install is already exist.</string>
+    <string name="unable_to_install_soundfont">Unable to install soundfont</string>
+    <string name="installing_soundfont">Installing SoundFont…</string>
+    <string name="sound_font_bad_format">Bad SoundFont Format.</string>
+    <string name="cannot_remove_default_sound_font">Cannot remove default soundfont</string>
+    <string name="enable_dinput_for_wine_game">Enable DInput for Games in Wine</string>
+    <string name="enable_xinput_for_wine_game">Enable XInput for Games in Wine</string>
+    <string name="dinput_legacy">Legacy (Old Gamepads)</string>
+    <string name="dinput_modern">Modern (Xinput like)</string>
+    <string name="mixed">Mixed</string>
+    <string name="help_xinput"><![CDATA[
+        If your game utilizes the <i><b>XInput API</b></i> for game controller support, please enable this option.<br/><br/>
+        This option will affect both <i><b>virtual</b></i> (provided by Input Controls) and <i><b>physical</b></i> game controllers.
+    ]]></string>
+    <string name="help_dinput"><![CDATA[
+        If your game utilizes the <i><b>DInput API</b></i> for game controller support, please enable this option.<br/><br/>
+        This option will affect both <i><b>virtual</b></i> (provided by Input Controls) and <i><b>physical</b></i> game controllers.
+    ]]></string>
+    <string name="enable_xinput_and_dinput_same_time">Some games may support both APIs. Enabling both XInput and DInput simultaneously in such games may cause control issues, as seen in titles like The Binding of Isaac and the Resident Evil series.</string>
+    <string name="startup_normal">Normal (Load all services)</string>
+    <string name="startup_essential">Essential (Load only essential services)</string>
+    <string name="startup_aggressive">Aggressive (Stop services on startup)</string>
+    <string name="lc_all" translatable="false">LC_ALL</string>
+    <string name="help_trigger_mode"><![CDATA[
+        This option depends on the <i><b>Physical Controller</b></i> you are using.<br/><br/>
+        <i><b>Is Axis</b></i>: Check this if the trigger on your controller is linear (with a range of motion).<br/><br/>
+        <i><b>Is Button</b></i>: Check this If the trigger on your controller is a button (similar to a switch).<br/><br/>
+        <i><b>Note</b></i>: For linear triggers, using <i><b>Is Button</b></i> will result in the loss of linear data when mapping.<br/>
+    ]]></string>
+    <string name="toggle_orientation">Toggle Orientation</string>
+    <string name="help_file_provider"><![CDATA[
+        <i><b>File Provider</b></i> allows access to Winlator\'s internal data through android file manager.<br/><br/>
+    ]]></string>
+    <string name="reconfigure">Reconfigure</string>
+    <string name="do_you_want_to_reconfigure_wine">Do you want to reconfigure this container on the next startup? This will remove the timestamp to trigger Wine Configuration.</string>
+
+    <!-- OpenXR specific text -->
+    <string name="xr" translatable="false">XR</string>
+    <string name="primary_controller">Primary controller</string>
+    <string name="left_controller">Left controller</string>
+    <string name="right_controller">Right controller</string>
+    <string name="button_a">Button A</string>
+    <string name="button_b">Button B</string>
+    <string name="button_x">Button X</string>
+    <string name="button_y">Button Y</string>
+    <string name="button_grip">Grip button</string>
+    <string name="button_trigger">Trigger button</string>
+    <string name="thumbstick_left">Thumbstick left</string>
+    <string name="thumbstick_right">Thumbstick right</string>
+    <string name="thumbstick_up">Thumbstick up</string>
+    <string name="thumbstick_down">Thumbstick down</string>
+    <string name="secondary_executable">Path:</string>
+    <string name="enter_secondary_exec_path"> ex: "D:/Games/My Game/My Game.exe"</string>
+    <string name="exec_delay">Delayed Execution (seconds):</string>
+    <string name="enter_delay_seconds">Enter the delay in seconds:</string>
+    <string name="use_secondary_executable">Use secondary executable?</string>
+    <string name="secondary_exec">Secondary Executable</string>
+    <string name="secondary_exe_path_subtext">(Spaces in paths must be wrapped in quotes)</string>
+    <string name="pip_mode">PiP Mode</string>
+    <string name="configure">Configure</string>
+    <string name="enable_sendinput_mode">Use Windows SendInput Mode</string>
+    <string name="enable_touchscreen_timeout">Touchscreen Timeout (Requires Restart)</string>
+    <string name="enable_touchscreen_haptics">Enable Touchscreen Haptic Feedback</string>
+    <string name="help_steamgrid">SteamGrid API Key</string>
+    <string name="disable_xinput_for_shortcut">Disable Xinput (For Exclusive M/KB Control)</string>
+    <string name="fullscreen_stretched">Enable Fullscreen (Stretched)</string>
+    <string name="export_container">Export Container</string>
+    <string name="exporting_container">Exporting Container...</string>
+
+    <string name="brightness">Brightness</string>
+    <string name="contrast">Contrast</string>
+    <string name="gamma">Gamma</string>
+    <string name="color_adjustment">Color Adjustment</string>
+    <string name="enable_fxaa">Enable FXAA</string>
+    <string name="enable_crt_shader">Enable CRT Shader</string>
+
+    <string name="do_you_want_to_add_a_new_profile">Do you want to add a new profile?</string>
+
+    <string name="default_profile">Default Profile</string>
+
+    <string name="reset">Reset</string>
+
+    <string name="screen_effect">Screen Effects</string>
+
+    <string name="enable_toon_shader">Enable Toon Shader</string>
+    <string name="enable_ntsc_effect">Enable NTSC Effect</string>
+    <string name="enter_profile_name">Enter Profile Name</string>
+
+    <!-- In res/values/strings.xml -->
+    <!-- pending usage -->
+    <string name="configure_analog_sticks">Configure Analog Sticks</string>
+    <string name="analog_stick_settings">Analog Stick Settings</string>
+    <string name="left_analog_stick_settings">Left Analog Stick Settings</string>
+    <string name="right_analog_stick_settings">Right Analog Stick Settings</string>
+    <string name="deadzone">Deadzone: %1$d%%</string>
+    <string name="sensitivity">Sensitivity: %1$d%%</string>
+    <string name="invert_x_axis_left">Invert X Axis (Left Stick)</string>
+    <string name="invert_y_axis_left">Invert Y Axis (Left Stick)</string>
+    <string name="invert_x_axis_right">Invert X Axis (Right Stick)</string>
+    <string name="invert_y_axis_right">Invert Y Axis (Right Stick)</string>
+    <string name="save">Save</string>
+    <string name="use_xr">Use OpenXR integration</string>
+
+
+
+    <string name="not_connected">Not connected</string>
+    <string name="preferences_button_text">   PREFERENCES   </string>
+    <string name="help_button_text">   HELP   </string>
+    <string name="exit_button_text">   EXIT   </string>
+    <string name="extra_keys_config_desc">Here you can set value of extra-keys variable like in Termux app (read <a href="http://wiki.termux.com/wiki/Touch_Keyboard#Extra_Keys_Row">this</a>) and more \n
+E.g. <b>META</b> for <i>META key</i>, \n
+<b>KEYBOARD</b> for <i>soft keyboard toggling key</i>, \n
+<b>PREFERENCES</b> for <i>preferences opening key</i>, \n
+<b>MOUSE_HELPER</b> for <i>mouse helper toggling key</i>, \n
+<b>STYLUS_HELPER</b> for <i>stylus click override overlay toggling key</i>, \n
+<b>EXIT</b> for <i>application exit key</i>.</string>
+    <string name="notification_content_text">Pull down to show options</string>
+    <string name="notification_open_preferences">Preferences</string>
+    <string name="notification_exit">Exit</string>
+    <string name="notification_restart_activity">Restart</string>
+    <string name="notification_toggle_soft_keyboard">Toggle IME</string>
+    <string name="notification_toggle_additional_key_bar">Toggle additional keyboard</string>
+    <string name="notification_release_pointer_and_keyboard_capture">Release captures</string>
+    <string name="notification_toggle_fullscreen">Toggle fullscreen</string>
+
+    <string name="pref_main">Preferences</string>
+    <string name="pref_output">Output</string>
+    <string name="pref_pointer">Pointer</string>
+    <string name="pref_kbd">Keyboard</string>
+    <string name="pref_other">Other</string>
+    <string name="pref_version">Version</string>
+    <string name="pref_ekbar">Extra key bar preferences</string>
+    <string name="pref_userActions">Response to user actions</string>
+
+    <string name="pref_displayResolutionMode">Display resolution mode</string>
+    <string name="pref_displayScale">Display scale, %</string>
+    <string name="pref_displayResolutionExact">Display resolution</string>
+    <string name="pref_displayResolutionCustom">Display resolution</string>
+    <string name="pref_adjustResolution">Adjust the set resolution to fit screen orientation</string>
+    <string name="pref_displayStretch">Stretch to fit display</string>
+    <string name="pref_Reseed">Reseed screen while soft keyboard is open</string>
+    <string name="pref_Reseed_summary">The screen size will be adjusted while Soft Keyboard is open.</string>
+    <string name="pref_PIP">PIP mode</string>
+    <string name="pref_PIP_summary">Show app in picture-in-picture mode when home button or recents button is pressed</string>
+    <string name="pref_fullscreen">Fullscreen</string>
+    <string name="pref_fullscreen_summary">Toggle immersive mode in your device display</string>
+    <string name="pref_forceOrientation">Screen orientation</string>
+    <string name="pref_hideCutout">Hide display cutout (if any)</string>
+    <string name="pref_keepScreenOn">Keep Screen On</string>
+
+    <string name="pref_touchMode">Touchscreen input mode</string>
+    <string name="pref_scaleTouchpad">Apply display scale factor to touchpad</string>
+    <string name="pref_showStylusClickOverride">Show stylus click options</string>
+    <string name="pref_showStylusClickOverride_summary">Stylus touch override, left, middle or right click (stylus only)</string>
+    <string name="pref_stylusIsMouse">Enable stylus mouse mode</string>
+    <string name="pref_stylusIsMouse_summary">Make your stylus work like a mouse. When activated, stylus will only move the cursor and send mouse clicks, ignoring pressure, angle, and tilt.</string>
+    <string name="pref_stylusButtonContactModifierMode">Stylus button contact modifier mode</string>
+    <string name="pref_stylusButtonContactModifierMode_summary">Enable this option to send right or middle mouse buttons only when stylus touches the screen while the button is pressed.</string>
+    <string name="pref_showMouseHelper">Show mouse click helper overlay</string>
+    <string name="pref_showMouseHelper_summary">Onscreen mouse buttons usable with touchpad</string>
+    <string name="pref_pointerCapture">Capture external pointer devices when possible</string>
+    <string name="pref_pointerCapture_summary">Intercept all hardware pointer events. Pointer is back to Android after pressing Escape key.</string>
+    <string name="pref_transformCapturedPointer">Transform captured pointer movements</string>
+    <string name="pref_capturedPointerSpeedFactor">Captured pointer speed factor, %</string>
+    <string name="pref_tapToMove">Enable tap-to-move for touchpads</string>
+
+    <string name="pref_showAdditionalKbd">Show additional keyboard</string>
+    <string name="pref_showAdditionalKbd_summary">Show keyboard with additional keys.</string>
+    <string name="pref_showIMEWhileExternalConnected">Show IME with external keyboard</string>
+    <string name="pref_showIMEWhileExternalConnected_summary">Show software keyboard while hardware keyboard is connected.</string>
+    <string name="pref_preferScancodes">Prefer scancodes when possible</string>
+    <string name="pref_preferScancodes_summary">Let X server handle hardware keyboard layout (with DE settings or setxkbmap).</string>
+    <string name="pref_hardwareKbdScancodesWorkaround">Hardware keyboard scancodes workaround</string>
+    <string name="pref_hardwareKbdScancodesWorkaround_summary">Fixes scancodes on some devices. Might cause problems with multiple layouts.</string>
+    <string name="pref_dexMetaKeyCapture">Intercept system shortcuts</string>
+    <string name="pref_dexMetaKeyCapture_summary">Samsung Dex only. Allows interception of &quot;Alt+F4&quot;, &quot;Meta+D&quot;, &quot;Meta+E&quot;, etc.</string>
+    <string name="pref_enableAccessibilityService">Enable Accessibility service for intercepting system shortcuts manually.</string>
+    <string name="pref_enableAccessibilityService_summary">Open Accessibility settings.</string>
+    <string name="pref_enableAccessibilityServiceAutomatically">Enable Accessibility service for intercepting system shortcuts automatically.</string>
+    <string name="pref_enableAccessibilityServiceAutomatically_summary">Requires WRITE_SECURE_SETTINGS permission.</string>
+    <string name="pref_pauseKeyInterceptingWithEsc">Pause key intercepting with Esc key</string>
+    <string name="pref_filterOutWinkey">Filter out intercepted Win (Meta/Mod4) key.</string>
+    <string name="pref_filterOutWinkey_summary">Allows you to use Dex shortcuts while intercepting. Requires Accessibility service to work.</string>
+    <string name="pref_enableGboardCJK">Workaround to enable CJK Gboard</string>
+    <string name="pref_enableGboardCJK_summary">May require Android 14 and Gboard 14</string>
+
+    <string name="pref_clipboardEnable">Clipboard sharing</string>
+    <string name="pref_requestNotificationPermission">Request notification permission</string>
+    <string name="pref_xrMode">Meta Oculus XR mode</string>
+    <string name="pref_configureResponseToUserActions">Configure response to user actions</string>
+    <string name="pref_storeSecondaryDisplayPreferencesSeparately">Store preferences for secondary displays separately</string>
+    <string name="pref_storeSecondaryDisplayPreferencesSeparately_summary">Open this screen on display you want to configure</string>
+
+    <string name="pref_adjustHeightForEK">Adjust display height for extra keys bar</string>
+    <string name="pref_adjustHeightForEK_summary">May cause screen flickering during toggling EK bar.</string>
+    <string name="pref_useTermuxEKBarBehaviour">Deactivate special keys on additional key bar after each keypress</string>
+    <string name="pref_useTermuxEKBarBehaviour_summary">Use long-tap to lock special keys</string>
+    <string name="pref_opacityEKBar">Opacity of extra keys bar, %</string>
+    <string name="pref_extra_keys_config">Extra keys config</string>
+
+    <string name="pref_swipeUpAction">Three finger swipe up</string>
+    <string name="pref_swipeDownAction">Three finger swipe down</string>
+    <string name="pref_volumeUpAction">Volume up</string>
+    <string name="pref_volumeDownAction">Volume down</string>
+    <string name="pref_backButtonAction">Back button</string>
+    <string name="pref_notificationTapAction">Notification tap</string>
+    <string name="pref_notificationButton0Action">Notification first button</string>
+    <string name="pref_notificationButton1Action">Notification second button</string>
+    <string name="pref_mediaKeysAction">Media keys</string>
+
+    <string name="pref_summary_requiresExactOrCustom">Requires "display resolution mode" to be "exact" or "custom"</string>
+    <string name="pref_summary_requiresIntercepting">Requires intercepting system shortcuts with Dex mode or with Accessibility service</string>
+    <string name="pref_summary_requiresTrackpadAndNative">Requires "Touchscreen input mode" to be "Trackpad" and "Display resolution mode" to be not "native"</string>
+    <string name="fexcore_config">FEXCore</string>
+    <string name="fexcore_preset">FEXCore Preset</string>
+    <string name="adrenotools_gpu_drivers">Adrenotools GPU Drivers</string>
+    <string name="install_drivers">Install Drivers</string>
+    <string name="install_drivers_message">You will now be prompted to pick a driver. These must be the same ones used in other emulators like Yuzu, Dolphin, Citra, etc.</string>
+    <string name="install_drivers_warning">Be warned that because of limitations of current PC emulators, Qualcomm Drivers may not work on chipsets below 8 Gen2 without getting patched.</string>
+    <string name="enable_vulkan_api_dump">Enable dumping of Vulkan api calls to file.</string>
+    <string name="dll_emulator">32bit Emulator</string>
+    <string name="open_with_android_browser">Open Android Browser in Wine</string>
+    <string name="share_android_clipboard">Share Android Clipboard with Wine</string>
+    <string name="ddraw_wrapper">DDraw Wrapper</string>
+    <string name="fexcore_version">FEXCore Version</string>
+    <string name="graphics_driver_max_device_memory">Max Device Memory</string>
+    <string name="graphics_driver_sync_frame">Sync Every Frame</string>
+    <string name="graphics_driver_disable_present_wait">Disable KHR_present_wait</string>
+    <string name="graphics_driver_present_modes">Present Modes</string>
+    <string name="graphics_driver_resource_type">Memory Resource Type</string>
+    <string name="graphics_driver_vulkan_version">Vulkan Version</string>
+    <string name="graphics_driver_bcn_emulation">BCn Emulation</string>
+    <string name="graphics_driver_bcn_emulation_type">BCn Emulation Type</string>
+    <string name="graphics_driver_bcn_emulation_cache">BCn Emulation Cache</string>
+    <string name="vkbasalt">vkBasalt</string>
+    <string name="vkbasalt_sharpness_effects">Sharpness Effect</string>
+    <string name="vkbasalt_sharpness_level">Sharpness Level</string>
+    <string name="vkbasalt_sharpness_denoise">Sharpeness Denoise</string>
+    <string name="shutdown">Shutdown</string>
 </resources>

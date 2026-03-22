@@ -72,13 +72,13 @@ static void aaudioFlush(AAudioStream *aaudioStream) {
 }
 
 JNIEXPORT jlong JNICALL
-Java_com_winlator_alsaserver_ALSAClient_create(JNIEnv *env, jobject obj, jint format,
+Java_com_winlator_cmod_alsaserver_ALSAClient_create(JNIEnv *env, jobject obj, jint format,
                                                jbyte channelCount, jint sampleRate, jint bufferSize) {
     return (jlong)aaudioCreate(format, channelCount, sampleRate, bufferSize);
 }
 
 JNIEXPORT jint JNICALL
-Java_com_winlator_alsaserver_ALSAClient_write(JNIEnv *env, jobject obj, jlong streamPtr, jobject buffer,
+Java_com_winlator_cmod_alsaserver_ALSAClient_write(JNIEnv *env, jobject obj, jlong streamPtr, jobject buffer,
                                               jint numFrames) {
     AAudioStream *aaudioStream = (AAudioStream*)streamPtr;
     if (aaudioStream) {
@@ -88,31 +88,31 @@ Java_com_winlator_alsaserver_ALSAClient_write(JNIEnv *env, jobject obj, jlong st
 }
 
 JNIEXPORT void JNICALL
-Java_com_winlator_alsaserver_ALSAClient_start(JNIEnv *env, jobject obj, jlong streamPtr) {
+Java_com_winlator_cmod_alsaserver_ALSAClient_start(JNIEnv *env, jobject obj, jlong streamPtr) {
     AAudioStream *aaudioStream = (AAudioStream*)streamPtr;
     if (aaudioStream) aaudioStart(aaudioStream);
 }
 
 JNIEXPORT void JNICALL
-Java_com_winlator_alsaserver_ALSAClient_stop(JNIEnv *env, jobject obj, jlong streamPtr) {
+Java_com_winlator_cmod_alsaserver_ALSAClient_stop(JNIEnv *env, jobject obj, jlong streamPtr) {
     AAudioStream *aaudioStream = (AAudioStream*)streamPtr;
     if (aaudioStream) aaudioStop(aaudioStream);
 }
 
 JNIEXPORT void JNICALL
-Java_com_winlator_alsaserver_ALSAClient_pause(JNIEnv *env, jobject obj, jlong streamPtr) {
+Java_com_winlator_cmod_alsaserver_ALSAClient_pause(JNIEnv *env, jobject obj, jlong streamPtr) {
     AAudioStream *aaudioStream = (AAudioStream*)streamPtr;
     if (aaudioStream) aaudioPause(aaudioStream);
 }
 
 JNIEXPORT void JNICALL
-Java_com_winlator_alsaserver_ALSAClient_flush(JNIEnv *env, jobject obj, jlong streamPtr) {
+Java_com_winlator_cmod_alsaserver_ALSAClient_flush(JNIEnv *env, jobject obj, jlong streamPtr) {
     AAudioStream *aaudioStream = (AAudioStream*)streamPtr;
     if (aaudioStream) aaudioFlush(aaudioStream);
 }
 
 JNIEXPORT void JNICALL
-Java_com_winlator_alsaserver_ALSAClient_close(JNIEnv *env, jobject obj, jlong streamPtr) {
+Java_com_winlator_cmod_alsaserver_ALSAClient_close(JNIEnv *env, jobject obj, jlong streamPtr) {
     AAudioStream *aaudioStream = (AAudioStream*)streamPtr;
     if (aaudioStream) AAudioStream_close(aaudioStream);
 }

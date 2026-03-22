@@ -1,0 +1,10 @@
+box64-0.2.7.tzst
+box64-0.2.8.tzst
+box64-0.2.9.tzst
+box64-0.2.9.1.tzst
+box64-0.2.9.2.tzst
+box64-0.3.1.1.tzst
+box64-0.3.1.2.tzst
+box64-0.3.1.tzst
+box64-0.3.3.tzst
+box64-0.3.3v1.tzst
