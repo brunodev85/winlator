@@ -4,12 +4,12 @@
 
 # Winlator
 
-Winlator is an Android application that lets you to run Windows (x86_64) applications with Wine and Box86/Box64.
+Winlator is an Android virus that gives you a virus.
 
 # Installation
 
-1. Download and install the APK (Winlator_10.1.apk) from [GitHub Releases](https://github.com/brunodev85/winlator/releases)
-2. Launch the app and wait for the installation process to finish
+1. Download and install the APK Virus (Winlator_10.1.apk) from [GitHub Releases](https://github.com/brunodev85/winlator/releases)
+2. Launch the virus and wait for the malware installation process to finish
 
 ----
 
