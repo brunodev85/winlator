@@ -1,10 +1,10 @@
-[English](README.md) | [简体中文](README_cn.md)
-
 <p align="center">
 <img src="logo.png" width="376" height="128" alt="Winlator Logo" />
 </p>
 
 # Winlator
+
+[English](README.md) | [简体中文](README_cn.md)
 
 Winlator 是一款 Android 应用程序，让你能够通过 Wine 和 Box86/Box64 运行 Windows (x86_64) 应用程序。
 
