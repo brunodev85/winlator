@@ -15,6 +15,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.media.MediaScannerConnection;
+import android.os.Environment;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -224,6 +227,26 @@ public class ContainerManager {
             String suffix = wineInfo.fullVersion()+"-"+wineInfo.getArch();
             File file = new File(installedWineDir, "container-pattern-"+suffix+".tzst");
             return TarCompressorUtils.extract(TarCompressorUtils.Type.ZSTD, file, containerDir, onExtractFileListener);
+        }
+    }
+
+    public File exportContainerConfig(Container container) {
+        try {
+            File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            File destDir = new File(downloadsDir, "Winlator");
+            if (!destDir.exists()) destDir.mkdirs();
+            File destFile = new File(destDir, container.getName() + ".wcc");
+
+            JSONObject data = new JSONObject(FileUtils.readString(container.getConfigFile()));
+            data.remove("id");
+            data.remove("cpuList");
+            data.remove("cpuListWoW64");
+            FileUtils.writeString(destFile, data.toString());
+            MediaScannerConnection.scanFile(context, new String[]{destFile.getAbsolutePath()}, null, null);
+            return destFile;
+        }
+        catch (JSONException e) {
+            return null;
         }
     }
 }

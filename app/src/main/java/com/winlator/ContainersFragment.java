@@ -29,9 +29,14 @@ import com.winlator.container.Container;
 import com.winlator.container.ContainerManager;
 import com.winlator.contentdialog.ContentDialog;
 import com.winlator.contentdialog.StorageInfoDialog;
+import com.winlator.core.AppUtils;
+import com.winlator.core.FileUtils;
 import com.winlator.core.PreloaderDialog;
 import com.winlator.xenvironment.ImageFs;
 
+import org.json.JSONObject;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,6 +92,31 @@ public class ContainersFragment extends Fragment {
                 .addToBackStack(null)
                 .replace(R.id.FLFragmentContainer, new ContainerDetailFragment())
                 .commit();
+            return true;
+        }
+        else if (menuItem.getItemId() == R.id.containers_menu_import) {
+            ((MainActivity)getActivity()).setOpenFileCallback((uri) -> {
+                try {
+                    String content = FileUtils.readString(getContext(), uri);
+                    JSONObject data = new JSONObject(content);
+                    preloaderDialog.show(R.string.creating_container);
+                    manager.createContainerAsync(data, (container) -> {
+                        preloaderDialog.close();
+                        if (container != null) {
+                            loadContainersList();
+                        } else {
+                            AppUtils.showToast(getContext(), R.string.unable_to_import_config);
+                        }
+                    });
+                }
+                catch (Exception e) {
+                    AppUtils.showToast(getContext(), R.string.unable_to_import_config);
+                }
+            });
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("*/*");
+            getActivity().startActivityForResult(intent, MainActivity.OPEN_FILE_REQUEST_CODE);
             return true;
         }
         else return super.onOptionsItemSelected(menuItem);
@@ -162,6 +192,13 @@ public class ContainersFragment extends Fragment {
                             });
                         });
                         break;
+                    case R.id.container_export: {
+                        File exportedFile = manager.exportContainerConfig(container);
+                        if (exportedFile != null) {
+                            AppUtils.showToast(context, context.getString(R.string.config_exported_to, exportedFile.getName()));
+                        }
+                        break;
+                    }
                     case R.id.container_remove:
                         ContentDialog.confirm(getContext(), R.string.do_you_want_to_remove_this_container, () -> {
                             preloaderDialog.show(R.string.removing_container);
