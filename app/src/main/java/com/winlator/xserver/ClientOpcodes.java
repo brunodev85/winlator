@@ -31,6 +31,7 @@ public abstract class ClientOpcodes {
     public static final byte FREE_PIXMAP = 54;
     public static final byte CREATE_GC = 55;
     public static final byte CHANGE_GC = 56;
+    public static final byte SET_DASHES = 58;
     public static final byte SET_CLIP_RECTANGLES = 59;
     public static final byte FREE_GC = 60;
     public static final byte COPY_AREA = 62;
