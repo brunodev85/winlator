@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="screen_size_entries">
+        <item>Пользовательский</item>
+        <item>640x480 (4:3)</item>
+        <item>800x600 (4:3)</item>
+        <item>854x480 (16:9)</item>
+        <item>960x544 (16:9)</item>
+        <item>1024x768 (4:3)</item>
+        <item>1280x720 (16:9)</item>
+        <item>1280x800 (16:10)</item>
+        <item>1280x1024 (5:4)</item>
+        <item>1366x768 (16:9)</item>
+        <item>1440x900 (16:10)</item>
+        <item>1600x900 (16:9)</item>
+        <item>1920x1080 (16:9)</item>
+    </string-array>
+    <string-array name="graphics_driver_entries">
+        <item>Turnip (Adreno)</item>
+        <item>VirGL (Универсальный)</item>
+    </string-array>
+    <string-array name="audio_driver_entries">
+        <item>ALSA</item>
+        <item>PulseAudio</item>
+    </string-array>
+    <string-array name="binding_type_entries">
+        <item>Клавиатура</item>
+        <item>Мышь</item>
+        <item>Геймпад</item>
+    </string-array>
+    <string-array name="dxwrapper_entries">
+        <item>WineD3D</item>
+        <item>DXVK</item>
+        <item>VKD3D</item>
+        <item>CNC DDraw</item>
+    </string-array>
+    <string-array name="dxvk_version_entries">
+        <item>0.96</item>
+        <item>1.10.3 (По умолчанию)</item>
+        <item>2.3.1</item>
+    </string-array>
+    <string-array name="dxvk_max_device_memory_entries">
+        <item>0 (По умолчанию)</item>
+        <item>512 МБ</item>
+        <item>1024 МБ</item>
+        <item>2048 МБ</item>
+        <item>4096 МБ</item>
+    </string-array>
+    <string-array name="video_memory_size_entries">
+        <item>32 МБ</item>
+        <item>64 МБ</item>
+        <item>128 МБ</item>
+        <item>256 МБ</item>
+        <item>512 МБ</item>
+        <item>1024 МБ</item>
+        <item>2048 МБ</item>
+        <item>4096 МБ</item>
+    </string-array>
+    <string-array name="dxvk_framerate_entries">
+        <item>0 (По умолчанию)</item>
+        <item>30</item>
+        <item>60</item>
+        <item>120</item>
+    </string-array>
+    <string-array name="wincomponent_entries">
+        <item>Встроенный (Wine)</item>
+        <item>Нативный (Windows)</item>
+    </string-array>
+    <string-array name="box86_version_entries">
+        <item>0.3.2 (По умолчанию)</item>
+        <item>0.3.7</item>
+    </string-array>
+    <string-array name="box64_version_entries">
+        <item>0.2.8 (По умолчанию)</item>
+        <item>0.2.9</item>
+    </string-array>
+    <string-array name="dinput_mapper_type_entries">
+        <item>Стандартный (Старые геймпады)</item>
+        <item>XInput</item>
+    </string-array>
+    <string-array name="desktop_theme_entries">
+        <item>Светлая</item>
+        <item>Тёмная</item>
+    </string-array>
+    <string-array name="desktop_background_type_entries">
+        <item>Изображение</item>
+        <item>Однотонный цвет</item>
+    </string-array>
+    <string-array name="startup_selection_entries">
+        <item>Нормальный (загрузка всех сервисов)</item>
+        <item>Минимальный (загрузка только необходимых сервисов)</item>
+        <item>Агрессивный (остановка сервисов при запуске)</item>
+    </string-array>
+</resources>
