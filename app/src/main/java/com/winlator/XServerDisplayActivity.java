@@ -616,10 +616,10 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
             envVars.put("vblank_mode", "0");
 
             if (!GPUInformation.isAdreno6xx(this)) {
-                EnvVars userEnvVars = new EnvVars(container.getEnvVars());
-                String tuDebug = userEnvVars.get("TU_DEBUG");
-                if (!tuDebug.contains("sysmem")) userEnvVars.put("TU_DEBUG", (!tuDebug.isEmpty() ? tuDebug+"," : "")+"sysmem");
-                container.setEnvVars(userEnvVars.toString());
+                String tuDebug = new EnvVars(container.getEnvVars()).get("TU_DEBUG");
+                if (!tuDebug.contains("sysmem")) {
+                    envVars.put("TU_DEBUG", (!tuDebug.isEmpty() ? tuDebug + "," : "") + "sysmem");
+                }
             }
 
             boolean useDRI3 = preferences.getBoolean("use_dri3", true);
