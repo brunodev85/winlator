@@ -225,4 +225,5 @@
     <string name="msg_warning_install_wine">Warning: Installing a new version of Wine is recommended for testing purposes only.</string>
     <string name="startup_selection">Startup Selection</string>
     <string name="wine_debug_channel">Wine Debug Channel</string>
+    <string name="export_for_frontend">Export for frontend</string>
 </resources>
