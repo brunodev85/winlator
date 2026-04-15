@@ -21,6 +21,14 @@
             android:id="@+id/ETName"
             android:inputType="textCapSentences" />
 
+        <Button
+            style="@style/ButtonNeutral"
+            android:id="@+id/BTLoadGameProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="@string/load_game_profile" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
