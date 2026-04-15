@@ -35,6 +35,7 @@ import com.winlator.core.AppUtils;
 import com.winlator.core.Callback;
 import com.winlator.core.EnvVars;
 import com.winlator.core.FileUtils;
+import com.winlator.core.GPUInformation;
 import com.winlator.core.KeyValueSet;
 import com.winlator.core.PreloaderDialog;
 import com.winlator.core.StringUtils;
@@ -135,8 +136,9 @@ public class ContainerDetailFragment extends Fragment {
         vDXWrapperConfig.setTag(isEditMode() ? container.getDXWrapperConfig() : "");
 
         setupDXWrapperSpinner(sDXWrapper, vDXWrapperConfig);
-        loadGraphicsDriverSpinner(sGraphicsDriver, sDXWrapper, isEditMode() ? container.getGraphicsDriver() : Container.DEFAULT_GRAPHICS_DRIVER,
-            isEditMode() ? container.getDXWrapper() : Container.DEFAULT_DXWRAPPER);
+        String defaultGraphicsDriver = isEditMode() ? container.getGraphicsDriver() : GPUInformation.getRecommendedGraphicsDriver(context);
+        String defaultDXWrapper = isEditMode() ? container.getDXWrapper() : GPUInformation.getRecommendedDXWrapper(context);
+        loadGraphicsDriverSpinner(sGraphicsDriver, sDXWrapper, defaultGraphicsDriver, defaultDXWrapper);
 
         view.findViewById(R.id.BTHelpDXWrapper).setOnClickListener((v) -> AppUtils.showHelpBox(context, v, R.string.dxwrapper_help_content));
 
