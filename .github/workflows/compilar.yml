@@ -1,0 +1,23 @@
+name: Gerar APK Winlator
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Tornar Gradle Executavel
+        run: chmod +x ./gradlew
+      - name: Compilar APK
+        run: ./gradlew assembleDebug
+      - name: Upload do APK Pronto
+        uses: actions/upload-artifact@v4
+        with:
+          name: Winlator-Mod-10Hotfix
+          path: app/build/outputs/apk/debug/*.apk
