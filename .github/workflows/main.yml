@@ -1,0 +1,27 @@
+name: 自动编译（Windows 沙盒）
+
+on:
+  push:                # 你推送代码就自动触发
+  workflow_dispatch:   # 也可以手动点按钮触发
+
+jobs:
+  build:
+    runs-on: windows-latest   # 临时 Windows 虚拟机，用完即毁
+
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+
+      - name: 执行编译
+        run: |
+          # 在这里写上你的具体编译命令，例如：
+          # msbuild MyProject.sln /p:Configuration=Release
+          # 或者 cl.exe /EHsc main.cpp
+          echo "开始编译……"
+          你的编译命令           # <-- 改成你的
+
+      - name: 上传编译结果（可选）
+        uses: actions/upload-artifact@v4
+        with:
+          name: 编译好的文件
+          path: .               # 把当前目录所有文件打包，你可指定具体路径
