@@ -8,7 +8,7 @@ Winlator is an Android application that lets you to run Windows (x86_64) applica
 
 # Installation
 
-1. Download and install the APK (Winlator_11.1.apk) from [GitHub Releases](https://github.com/brunodev85/winlator/releases)
+1. Download and install the APK (Winlator_11.2.apk) from [GitHub Releases](https://github.com/brunodev85/winlator/releases)
 2. Launch the app and wait for the installation process to finish
 
 ----
@@ -23,7 +23,7 @@ Winlator is an Android application that lets you to run Windows (x86_64) applica
 
 # Useful Tips
 
-- If you are experiencing performance issues, try changing the Box64 preset to `Performance` in Container Settings -> Advanced Tab.
+- If you are experiencing instability issues, try changing the Box64 preset in Container Settings -> Advanced Tab.
 - For applications that use .NET Framework, try installing `Wine Mono` found in Start Menu -> System Tools -> Installers.
 - If some older games don't open, try adding the environment variable `MESA_EXTENSION_MAX_YEAR=2003` in Container Settings -> Environment Variables.
 - Try running the games using the shortcut on the Winlator home screen, there you can define individual settings for each game.
