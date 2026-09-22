@@ -2,6 +2,18 @@
 	<img src="logo.png" width="376" height="128" alt="Winlator Logo" />
 </p>
 
+<p align="center">
+	<a href="https://winlator.org/">
+		<img src="https://img.shields.io/badge/winlator-website-42a5f5" />
+	</a>
+	<a href="https://github.com/brunodev85/winlator/releases">
+		<img src="https://img.shields.io/github/downloads/brunodev85/winlator/v11.2.0/total.svg" />
+	</a>
+	<a href="https://github.com/brunodev85/winlator/stargazers">
+		<img src="https://img.shields.io/github/stars/brunodev85/winlator" />
+	</a>
+</p>
+
 # Winlator
 
 Winlator is an Android application that lets you to run Windows (x86_64) applications with Wine and Box86/Box64.
