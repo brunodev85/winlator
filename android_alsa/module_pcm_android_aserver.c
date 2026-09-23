@@ -304,9 +304,15 @@ static int android_aserver_hw_params(snd_pcm_ioplug_t* io, snd_pcm_hw_params_t* 
     if (min_buffer_size == 0) return 0;
     
     int frame_bytes = (snd_pcm_format_physical_width(format) * channels) / 8;
+    if (frame_bytes <= 0) return -EINVAL;
     
     snd_pcm_uframes_t buffer_size = min_buffer_size / frame_bytes;
-    snd_pcm_uframes_t period_size = buffer_size / frame_bytes;
+    unsigned int periods;
+    err = snd_pcm_hw_params_get_periods(params, &periods, 0);
+    if (err < 0) return err;
+    if (periods < 1 || buffer_size < periods) return -EINVAL;
+    
+    snd_pcm_uframes_t period_size = buffer_size / periods;
     
     snd_pcm_hw_params_t* refined_params;
     snd_pcm_hw_params_alloca(&refined_params);
