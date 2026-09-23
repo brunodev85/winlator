@@ -1,6 +1,6 @@
 [submodule "app"]
 	path = app
-	url = https://github.com/brunodev85/winlator-app
+	url = https://github.com/Ragnary78/winlator-app
 	branch = main
 [submodule "vortek"]
 	path = vortek
