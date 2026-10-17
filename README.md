@@ -4,13 +4,13 @@
 
 <p align="center">
 	<a href="https://winlator.org/">
-		<img src="https://img.shields.io/badge/winlator-website-42a5f5" />
+		<img src="https://img.shields.io/badge/winlator-website-42a5f5?style=flat-square" />
 	</a>
 	<a href="https://github.com/brunodev85/winlator/releases">
-		<img src="https://img.shields.io/github/downloads/brunodev85/winlator/v11.2.0/total.svg" />
+		<img src="https://img.shields.io/github/downloads/brunodev85/winlator/v11.2.0/total.svg?style=flat-square&label=downloads@v11.2" />
 	</a>
 	<a href="https://github.com/brunodev85/winlator/stargazers">
-		<img src="https://img.shields.io/github/stars/brunodev85/winlator" />
+		<img src="https://img.shields.io/github/stars/brunodev85/winlator?style=flat-square&logo=github&color=ffb300" />
 	</a>
 </p>
 
