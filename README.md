@@ -42,6 +42,7 @@ Winlator is an Android application that lets you to run Windows (x86_64) applica
 - To display low resolution games correctly, try to enabling the `Force Fullscreen` option in the shortcut settings.
 - To improve stability in games that uses Unity Engine, try changing the Box64 preset to `Stability` or in the shortcut settings add the exec argument `-force-gfx-direct`.
 - If you are experiencing audio crackling, try increasing the average latency in ALSA/PulseAudio configuration. Old games like Unreal Gold resolve audio issues by increasing this value to 90ms.
+- To reduce thermal throttling and eliminate shader compilation stutter in DirectX games, you can redirect the DXVK pipeline cache to RAM or an accelerated shared cache by adding `DXVK_SHARED_CACHE_PATH=/dev/shm` and `DXVK_SHARED_CACHE_NAME=default` in Container Settings -> Environment Variables.
 
 # Credits and Third-party apps
 
