@@ -5,3 +5,5 @@ dxvk-2.2.tzst
 dxvk-2.3.1.tzst
 dxvk-2.5.2.tzst
 dxvk-2.6.1.tzst
+dxvk-sarek-1.10.9.tzst
+dxvk-async-sarek-1.10.9.tzst
